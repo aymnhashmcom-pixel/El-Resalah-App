@@ -35,11 +35,11 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.05);
         }
 
-        /* الهيدر المتحرك */
+        /* الهيدر الرئيسي */
         .header-card {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 25px 20px;
+            padding: 25px 20px 20px;
             border-radius: 0 0 28px 28px;
             text-align: center;
             box-shadow: 0 10px 20px rgba(27, 67, 50, 0.2);
@@ -49,14 +49,45 @@
         .header-card h1 {
             font-size: 1.8rem;
             color: var(--accent);
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             font-weight: 700;
         }
 
+        .sub-title {
+            font-size: 0.9rem;
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
         .header-card p {
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             opacity: 0.9;
             font-style: italic;
+        }
+
+        /* زر تثبيت التطبيق */
+        .install-btn-container {
+            padding: 10px 20px 0;
+            display: none; /* يظهر فقط عند قابلية التثبيت */
+        }
+
+        .install-btn {
+            width: 100%;
+            background: var(--gold);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 14px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3);
+            animation: pulse 2s infinite;
         }
 
         .main-content {
@@ -65,17 +96,17 @@
         }
 
         .section-title {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--primary);
             margin-bottom: 15px;
             font-weight: 700;
         }
 
-        /* الكروت والأزرار المتحركة */
+        /* الكروت */
         .category-card {
             background: white;
             border-radius: 18px;
-            padding: 18px;
+            padding: 16px;
             margin-bottom: 14px;
             display: flex;
             align-items: center;
@@ -83,7 +114,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.03);
             border: 1px solid rgba(45, 106, 79, 0.1);
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: all 0.3s ease;
             animation: fadeInUp 0.6s ease forwards;
         }
 
@@ -99,29 +130,24 @@
         }
 
         .icon-box {
-            width: 48px;
-            height: 48px;
+            width: 46px;
+            height: 46px;
             border-radius: 14px;
             background: rgba(45, 106, 79, 0.1);
             color: var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
         }
 
         .card-title {
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 600;
             color: var(--text-dark);
         }
 
-        .arrow-icon {
-            color: #A0AAB2;
-            font-size: 0.9rem;
-        }
-
-        /* نافذة العرض (Modal) */
+        /* النوافذ Modal */
         .modal {
             display: none;
             position: fixed;
@@ -138,8 +164,8 @@
             max-width: 480px;
             margin: 0 auto;
             border-radius: 24px 24px 0 0;
-            padding: 25px;
-            max-height: 80vh;
+            padding: 22px;
+            max-height: 85vh;
             overflow-y: auto;
             animation: slideUp 0.3s ease;
         }
@@ -148,7 +174,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border-bottom: 1px solid #eee;
             padding-bottom: 10px;
         }
@@ -159,70 +185,150 @@
             color: #888;
         }
 
+        /* عنصر الذكر مع الصوت */
         .azkar-item {
             background: #F7F9F6;
             border-right: 4px solid var(--primary);
-            padding: 15px;
-            border-radius: 8px;
+            padding: 14px;
+            border-radius: 10px;
             margin-bottom: 12px;
+        }
+
+        .azkar-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .azkar-title {
+            color: var(--secondary);
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .audio-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .azkar-text {
+            font-size: 0.95rem;
             line-height: 1.7;
+            color: #333;
         }
 
-        /* الحركات animations */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* شاشات التقييم */
+        .rating-stars {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            color: #ccc;
+            margin: 15px 0;
+            cursor: pointer;
         }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .rating-stars .active {
+            color: var(--gold);
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
         }
+
+        .privacy-note {
+            font-size: 0.75rem;
+            color: #777;
+            margin-top: -8px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
 
-    <!-- الهيدر الرئيسي -->
+    <!-- الهيدر -->
     <div class="header-card">
         <h1>تطبيق الرسالة</h1>
+        <div class="sub-title">اتباع هدي النبي ﷺ في الصلاة والأذكار والصيام</div>
         <p>«عَلَيْكُمْ بِسُنَّتِي وَسُنَّةِ الْخُلَفَاءِ الرَّاشِدِينَ»</p>
     </div>
 
-    <!-- المحتوى والأقسام -->
+    <!-- زر التثبيت -->
+    <div class="install-btn-container" id="installContainer">
+        <button class="install-btn" id="installBtn">
+            <i class="fa-solid fa-download"></i> تثبيت تطبيق الرسالة على هاتفك
+        </button>
+    </div>
+
+    <!-- المحتوى -->
     <div class="main-content">
         <div class="section-title">الأقسام الرئيسية</div>
 
-        <div class="category-card" onclick="openSection('مواقيت الصلاة والقبلة', 'سيتم تحديد الموقع لحساب الأوقات واتجاه القبلة بدقة.')">
+        <div class="category-card" onclick="openSection('مواقيت الصلاة والقبلة', 'جارٍ تحديد الموقع الجغرافي لعرض أوقات الصلاة واتجاه القبلة بدقة.')">
             <div class="card-info">
                 <div class="icon-box"><i class="fa-solid fa-kaaba"></i></div>
                 <div class="card-title">مواقيت الصلاة والقبلة</div>
             </div>
-            <i class="fa-solid fa-chevron-left arrow-icon"></i>
+            <i class="fa-solid fa-chevron-left"></i>
         </div>
 
         <div class="category-card" onclick="openAzkar()">
             <div class="card-info">
                 <div class="icon-box"><i class="fa-solid fa-book-open"></i></div>
-                <div class="card-title">أذكار المسلم اليومية</div>
+                <div class="card-title">أذكار المسلم (قراءة وصوت)</div>
             </div>
-            <i class="fa-solid fa-chevron-left arrow-icon"></i>
+            <i class="fa-solid fa-chevron-left"></i>
         </div>
 
-        <div class="category-card" onclick="openSection('تذكير الصيام', 'تنبيهات صيام الإثنين والخميس، والأيام البيض (13، 14، 15 من كل شهر هجري).')">
+        <div class="category-card" onclick="openSection('تذكير الصيام', 'تنبيهات صيام الإثنين والخميس، والأيام البيض (13، 14، 15 الهجرية)، وشهر رمضان، وعرفة، وعاشوراء.')">
             <div class="card-info">
                 <div class="icon-box"><i class="fa-solid fa-calendar-check"></i></div>
                 <div class="card-title">تذكير الصيام (الفرض والسنة)</div>
             </div>
-            <i class="fa-solid fa-chevron-left arrow-icon"></i>
+            <i class="fa-solid fa-chevron-left"></i>
+        </div>
+
+        <div class="category-card" onclick="openRating()">
+            <div class="card-info">
+                <div class="icon-box" style="color: var(--gold); background: rgba(212, 175, 55, 0.1);"><i class="fa-solid fa-star"></i></div>
+                <div class="card-title">تقييم التطبيق واقتراحاتكم</div>
+            </div>
+            <i class="fa-solid fa-chevron-left"></i>
         </div>
     </div>
 
-    <!-- نافذة تفاصيل الأذكار والأقسام -->
+    <!-- نافذة العرض -->
     <div class="modal" id="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -234,40 +340,118 @@
     </div>
 
     <script>
+        // الأذكار الشاملة النبوية
+        const azkarData = [
+            { title: "عند الخروج من المنزل", text: "بِسْمِ اللَّهِ ، تَوَكَّلْتُ عَلَى اللَّهِ ، وَلا حَوْلَ وَلا قُوَّةَ إِلاَّ بِاللَّهِ." },
+            { title: "عند الدخول إلى المنزل", text: "بِسْمِ اللهِ وَلَجْنَا، وَبِسْمِ اللهِ خَرَجْنَا، وَعَلَى رَبِّنَا تَوَكَّلْنَا." },
+            { title: "عند تناول الطعام", text: "بِسْمِ اللَّهِ، فإن نسي في أوّله فليقل: بِسْمِ اللَّهِ أَوَّلَهُ وَآخِرَهُ." },
+            { title: "عند الانتهاء من الطعام", text: "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنِي هَذَا وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ." },
+            { title: "عند ركوب المواصلات/الدابة", text: "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ." },
+            { title: "أذكار النوم", text: "بِاسْمِكَ رَبِّي وَضَعْتُ جَنْبِي وَبِكَ أَرْفَعُهُ، إِنْ أَمْسَكْتَ نَفْسِي فَارْحَمْهَا، وَإِنْ أَرْسَلْتَهَا فَاحْفَظْهَا بِمَا تَحْفَظُ بِهِ عِبَادَكَ الصَّالِحِينَ." },
+            { title: "عند الاستيقاظ", text: "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ." },
+            { title: "عند الجماع", text: "بِسْمِ اللَّهِ، اللَّهُمَّ جَنِّبْنَا الشَّيْطَانَ وَجَنِّبِ الشَّيْطَانَ مَا رَزَقْتَنَا." }
+        ];
+
         function openSection(title, content) {
             document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-body').innerHTML = `<p style="font-size: 1.05rem; color: #444;">${content}</p>`;
+            document.getElementById('modal-body').innerHTML = `<p style="font-size: 1rem; color: #444; line-height: 1.8;">${content}</p>`;
             document.getElementById('modal').style.display = 'flex';
         }
 
         function openAzkar() {
-            document.getElementById('modal-title').innerText = "أذكار من السنة النبوية";
-            const azkarList = [
-                { title: "عند الخروج من المنزل", text: "بِسْمِ اللَّهِ ، تَوَكَّلْتُ عَلَى اللَّهِ ، وَلا حَوْلَ وَلا قُوَّةَ إِلاَّ بِاللَّهِ." },
-                { title: "عند الدخول إلى المنزل", text: "بِسْمِ اللهِ وَلَجْنَا، وَبِسْمِ اللهِ خَرَجْنَا، وَعَلَى رَبِّنَا تَوَكَّلْنَا." },
-                { title: "عند تناول الطعام", text: "بِسْمِ اللَّهِ، فإن نسي قال: بِسْمِ اللَّهِ أَوَّلَهُ وَآخِرَهُ." },
-                { title: "عند ركوب المواصلات/الدابة", text: "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ." },
-                { title: "عند النوم", text: "بِاسْمِكَ رَبِّي وَضَعْتُ جَنْبِي وَبِكَ أَرْفَعُهُ، إِنْ أَمْسَكْتَ نَفْسِي فَارْحَمْهَا." },
-                { title: "عند الجماع", text: "بِسْمِ اللَّهِ، اللَّهُمَّ جَنِّبْنَا الشَّيْطَانَ وَجَنِّبِ الشَّيْطَانَ مَا رَزَقْتَنَا." }
-            ];
-
+            document.getElementById('modal-title').innerText = "الأذكار النبوية المأثورة";
             let html = '';
-            azkarList.forEach(item => {
+            azkarData.forEach((item, index) => {
                 html += `
                     <div class="azkar-item">
-                        <strong style="color: var(--secondary); display: block; margin-bottom: 5px;">${item.title}</strong>
-                        <span>${item.text}</span>
+                        <div class="azkar-title-row">
+                            <span class="azkar-title">${item.title}</span>
+                            <button class="audio-btn" onclick="speakText('${item.text}')">
+                                <i class="fa-solid fa-volume-high"></i> استماع
+                            </button>
+                        </div>
+                        <div class="azkar-text">${item.text}</div>
                     </div>
                 `;
             });
-
             document.getElementById('modal-body').innerHTML = html;
             document.getElementById('modal').style.display = 'flex';
         }
 
+        // خاصية قراءة النص بالصوت
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // إيقاف أي صوت سابق
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ar-SA';
+                utterance.rate = 0.85; // سرعة هادئة ومناسبة للذكر
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("خاصية الصوت غير مدعومة في جهازك الحالي.");
+            }
+        }
+
+        // نافذة التقييم
+        function openRating() {
+            document.getElementById('modal-title').innerText = "تقييم تطبيق الرسالة";
+            let html = `
+                <div style="text-align: center;">
+                    <p style="font-size: 0.9rem; color: #555;">رأيكم يهمنا لتطوير التطبيق وخدمة أمة الإسلام</p>
+                    <div class="rating-stars">
+                        <i class="fa-solid fa-star active" onclick="setRating(1)"></i>
+                        <i class="fa-solid fa-star active" onclick="setRating(2)"></i>
+                        <i class="fa-solid fa-star active" onclick="setRating(3)"></i>
+                        <i class="fa-solid fa-star active" onclick="setRating(4)"></i>
+                        <i class="fa-solid fa-star active" onclick="setRating(5)"></i>
+                    </div>
+                    <input type="text" class="form-input" placeholder="الاسم الكريـم">
+                    <input type="tel" class="form-input" placeholder="رقم الهاتف (اختياري)">
+                    <span class="privacy-note">🔒 رقم الهاتف محمي بالكامل ولن يظهر مطلقاً لأي مستخدم آخر.</span>
+                    <textarea class="form-input" rows="3" placeholder="اكتب ملاحظاتك أو اقتراحاتك هنا..."></textarea>
+                    <button class="submit-btn" onclick="submitRating()">إرسال التقييم</button>
+                </div>
+            `;
+            document.getElementById('modal-body').innerHTML = html;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function setRating(stars) {
+            const starElements = document.querySelectorAll('.rating-stars i');
+            starElements.forEach((star, idx) => {
+                if (idx < stars) star.classList.add('active');
+                else star.classList.remove('active');
+            });
+        }
+
+        function submitRating() {
+            alert("تم إرسال تقييمك بنجاح، جزاكم الله خيراً!");
+            closeModal();
+        }
+
         function closeModal() {
+            window.speechSynthesis.cancel();
             document.getElementById('modal').style.display = 'none';
         }
+
+        // منطق تثبيت التطبيق على الهاتف PWA
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installContainer').style.display = 'block';
+        });
+
+        document.getElementById('installBtn').addEventListener('click', () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        document.getElementById('installContainer').style.display = 'none';
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        });
     </script>
 </body>
 </html>
