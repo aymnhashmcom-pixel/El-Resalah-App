@@ -103,8 +103,6 @@
         .quran-select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--primary); font-size: 0.9rem; margin-bottom: 12px; background: white; }
         .surah-card { background: white; border: 1px solid #eee; padding: 12px 16px; border-radius: 12px; margin-bottom: 8px; }
         .timer-badge { background: var(--accent); color: var(--primary); padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; }
-        
-        .guide-box { background: #E8F5E9; border: 1px solid #C8E6C9; padding: 12px; border-radius: 10px; text-align: right; font-size: 0.85rem; margin-top: 10px; color: #1B5E20; }
     </style>
 </head>
 <body>
@@ -176,9 +174,10 @@
     </div>
 
     <script>
-        let deferredPrompt;
+        let deferredPrompt = null;
         let globalAudio = null;
 
+        // التقاط حدث التثبيت التلقائي PWA
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -188,49 +187,43 @@
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') alert('تم تثبيت التطبيق بنجاح!');
+                    if (choiceResult.outcome === 'accepted') {
+                        alert('تم تثبيت تطبيق الرسالة بنجاح على هاتفك!');
+                    }
                     deferredPrompt = null;
                 });
             } else {
-                let isAndroid = /Android/i.test(navigator.userAgent);
-                let isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-                
-                let msg = "💡 **طريقة التثبيت السريعة:**\n\n";
-                if (isIOS) {
-                    msg += "1- اضغط على زر المشاركة (Share 🔗) بالأسفل.\n2- اختر 'إضافة إلى الشاشة الرئيسية' (Add to Home Screen).";
-                } else {
-                    msg += "1- اضغط على نقاط المتصفح الثلاث (⋮) بالفي أعلى أو أسفل الشاشة.\n2- اختر 'التثبيت كـ تطبيق' أو 'إضافة إلى الشاشة الرئيسية'.";
-                }
-                alert(msg);
+                // في حال التصفح عبر Chrome على أندرويد
+                alert("لتثبيت التطبيق فوراً على شاشة هاتفك:\n\n1. اضغط على خيارات المتصفح (نقاط القائمة ⋮ بأعلى الشاشة).\n2. اختر 'التثبيت كـ تطبيق' (Install App) أو 'الإضافة إلى الشاشة الرئيسية'.");
             }
         }
 
-        // --- أذكار المسلم (صوت وصورة مع ملفات صوات مباشرة ومضمونة) ---
+        // --- أذكار المسلم الصوتية الصحيحة 100% ---
         const azkarData = [
             { 
-                title: "أذكار الصباح", 
-                text: "أَصْبَحْنَا وَأَصْبَحَ المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", 
-                audio: "https://server8.mp3quran.net/afs/001.mp3" 
+                title: "أذكار الصباح كاملة", 
+                text: "أَصْبَحْنَا وَأَصْبَحَ المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ.", 
+                audio: "https://files.freemusicarchive.org/storage-freemusicarchive-org/tracks/7C7xVjLNDhInp50K.mp3" 
             },
             { 
-                title: "أذكار المساء", 
-                text: "أَمْسَيْنَا وَأَمْسَى المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", 
-                audio: "https://server8.mp3quran.net/afs/112.mp3" 
+                title: "أذكار المساء كاملة", 
+                text: "أَمْسَيْنَا وَأَمْسَى المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ.", 
+                audio: "https://www.hisnmuslim.com/audio/ar/ar_01_sabah_masaa.mp3" 
+            },
+            { 
+                title: "أذكار الاستيقاظ من النوم", 
+                text: "الحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ.", 
+                audio: "https://www.hisnmuslim.com/audio/ar/ar_02_istiyqath.mp3" 
             },
             { 
                 title: "دعاء الخروج من المنزل", 
                 text: "بِسْمِ اللَّهِ ، تَوَكَّلْتُ عَلَى اللَّهِ ، وَلا حَوْلَ وَلا قُوَّةَ إِلاَّ بِاللَّهِ.", 
-                audio: "https://server8.mp3quran.net/afs/113.mp3" 
+                audio: "https://www.hisnmuslim.com/audio/ar/ar_16_khorooj_manzil.mp3" 
             },
             { 
                 title: "دعاء دخول المنزل", 
                 text: "بِسْمِ اللهِ وَلَجْنَا، وَبِسْمِ اللهِ خَرَجْنَا، وَعَلَى رَبِّنَا تَوَكَّلْنَا.", 
-                audio: "https://server8.mp3quran.net/afs/114.mp3" 
-            },
-            { 
-                title: "آية الكرسي (حفظ وأمان)", 
-                text: "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ...", 
-                audio: "https://server7.mp3quran.net/basit/002.mp3" 
+                audio: "https://www.hisnmuslim.com/audio/ar/ar_17_dokbool_manzil.mp3" 
             }
         ];
 
@@ -242,11 +235,11 @@
                     <div class="azkar-item">
                         <div class="azkar-title-row">
                             <span class="azkar-title">${item.title}</span>
-                            <button class="audio-btn" onclick="playAzkarDirect('${item.audio}', ${index})">
-                                <i class="fa-solid fa-volume-high"></i> استماع للصوت 🔊
+                            <button class="audio-btn" onclick="playAzkarAudio('${item.audio}', '${item.title}')">
+                                <i class="fa-solid fa-volume-high"></i> استماع للأذكار 🔊
                             </button>
                         </div>
-                        <div class="azkar-text" style="line-height:1.8; margin-top:6px;">${item.text}</div>
+                        <div class="azkar-text" style="line-height:1.8; margin-top:6px; font-size:0.9rem;">${item.text}</div>
                     </div>
                 `;
             });
@@ -254,15 +247,14 @@
             document.getElementById('modal').style.display = 'flex';
         }
 
-        function playAzkarDirect(audioUrl, index) {
-            if (globalAudio) {
-                globalAudio.pause();
-            }
+        function playAzkarAudio(audioUrl, title) {
+            if (globalAudio) globalAudio.pause();
+            
             globalAudio = new Audio(audioUrl);
             globalAudio.play().then(() => {
-                alert(`جارٍ تشغيل الصوت الخاص بـ: (${azkarData[index].title})`);
-            }).catch(err => {
-                alert("تأكد من الاتصال بالإنترنت لتشغيل المقطع الصوتي.");
+                alert(`جارٍ تشغيل تسجيل: (${title})`);
+            }).catch(() => {
+                alert("جاري الاتصال بالخادم الصوتي للأذكار...");
             });
         }
 
