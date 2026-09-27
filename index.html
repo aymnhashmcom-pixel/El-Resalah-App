@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق الرسالة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #F7F9F6;
+            --primary: #1B4332;
+            --secondary: #2D6A4F;
+            --accent: #D8F3DC;
+            --gold: #D4AF37;
+            --text-dark: #2B2D42;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        /* الهيدر المتحرك */
+        .header-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px 20px;
+            border-radius: 0 0 28px 28px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(27, 67, 50, 0.2);
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .header-card h1 {
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .header-card p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            font-style: italic;
+        }
+
+        .main-content {
+            padding: 20px;
+            flex: 1;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        /* الكروت والأزرار المتحركة */
+        .category-card {
+            background: white;
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            border: 1px solid rgba(45, 106, 79, 0.1);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .category-card:active {
+            transform: scale(0.97);
+            background-color: #f0f7f4;
+        }
+
+        .card-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: rgba(45, 106, 79, 0.1);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .arrow-icon {
+            color: #A0AAB2;
+            font-size: 0.9rem;
+        }
+
+        /* نافذة العرض (Modal) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: flex-end;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            border-radius: 24px 24px 0 0;
+            padding: 25px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .close-btn {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #888;
+        }
+
+        .azkar-item {
+            background: #F7F9F6;
+            border-right: 4px solid var(--primary);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        /* الحركات animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- الهيدر الرئيسي -->
+    <div class="header-card">
+        <h1>تطبيق الرسالة</h1>
+        <p>«عَلَيْكُمْ بِسُنَّتِي وَسُنَّةِ الْخُلَفَاءِ الرَّاشِدِينَ»</p>
+    </div>
+
+    <!-- المحتوى والأقسام -->
+    <div class="main-content">
+        <div class="section-title">الأقسام الرئيسية</div>
+
+        <div class="category-card" onclick="openSection('مواقيت الصلاة والقبلة', 'سيتم تحديد الموقع لحساب الأوقات واتجاه القبلة بدقة.')">
+            <div class="card-info">
+                <div class="icon-box"><i class="fa-solid fa-kaaba"></i></div>
+                <div class="card-title">مواقيت الصلاة والقبلة</div>
+            </div>
+            <i class="fa-solid fa-chevron-left arrow-icon"></i>
+        </div>
+
+        <div class="category-card" onclick="openAzkar()">
+            <div class="card-info">
+                <div class="icon-box"><i class="fa-solid fa-book-open"></i></div>
+                <div class="card-title">أذكار المسلم اليومية</div>
+            </div>
+            <i class="fa-solid fa-chevron-left arrow-icon"></i>
+        </div>
+
+        <div class="category-card" onclick="openSection('تذكير الصيام', 'تنبيهات صيام الإثنين والخميس، والأيام البيض (13، 14، 15 من كل شهر هجري).')">
+            <div class="card-info">
+                <div class="icon-box"><i class="fa-solid fa-calendar-check"></i></div>
+                <div class="card-title">تذكير الصيام (الفرض والسنة)</div>
+            </div>
+            <i class="fa-solid fa-chevron-left arrow-icon"></i>
+        </div>
+    </div>
+
+    <!-- نافذة تفاصيل الأذكار والأقسام -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title" style="color: var(--primary);"></h3>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        function openSection(title, content) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-body').innerHTML = `<p style="font-size: 1.05rem; color: #444;">${content}</p>`;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function openAzkar() {
+            document.getElementById('modal-title').innerText = "أذكار من السنة النبوية";
+            const azkarList = [
+                { title: "عند الخروج من المنزل", text: "بِسْمِ اللَّهِ ، تَوَكَّلْتُ عَلَى اللَّهِ ، وَلا حَوْلَ وَلا قُوَّةَ إِلاَّ بِاللَّهِ." },
+                { title: "عند الدخول إلى المنزل", text: "بِسْمِ اللهِ وَلَجْنَا، وَبِسْمِ اللهِ خَرَجْنَا، وَعَلَى رَبِّنَا تَوَكَّلْنَا." },
+                { title: "عند تناول الطعام", text: "بِسْمِ اللَّهِ، فإن نسي قال: بِسْمِ اللَّهِ أَوَّلَهُ وَآخِرَهُ." },
+                { title: "عند ركوب المواصلات/الدابة", text: "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ." },
+                { title: "عند النوم", text: "بِاسْمِكَ رَبِّي وَضَعْتُ جَنْبِي وَبِكَ أَرْفَعُهُ، إِنْ أَمْسَكْتَ نَفْسِي فَارْحَمْهَا." },
+                { title: "عند الجماع", text: "بِسْمِ اللَّهِ، اللَّهُمَّ جَنِّبْنَا الشَّيْطَانَ وَجَنِّبِ الشَّيْطَانَ مَا رَزَقْتَنَا." }
+            ];
+
+            let html = '';
+            azkarList.forEach(item => {
+                html += `
+                    <div class="azkar-item">
+                        <strong style="color: var(--secondary); display: block; margin-bottom: 5px;">${item.title}</strong>
+                        <span>${item.text}</span>
+                    </div>
+                `;
+            });
+
+            document.getElementById('modal-body').innerHTML = html;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
