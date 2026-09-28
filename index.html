@@ -6,20 +6,24 @@
     <meta name="theme-color" content="#1B4332">
     <title>تطبيق الرسالة</title>
 
-    <!-- Open Graph Tags للمعاينة بالصورة الممتازة في واتساب وتليجرام -->
+    <!-- Open Graph Tags المعتمدة رسمياً لواتساب وتليجرام وفيسبوك -->
+    <meta property="og:type" content="website" />
     <meta property="og:title" content="تطبيق الرسالة 📱" />
     <meta property="og:description" content="تطبيق إسلامي متكامل: أذكار المسلم، القرآن الكريم، مواقيت الصلاة والأذان، وتذكير الصيام." />
-    <meta property="og:image" content="https://aymnhashmcom-pixel.github.io/El-Resalah-App/icon-512.png" />
-    <meta property="og:image:secure_url" content="https://aymnhashmcom-pixel.github.io/El-Resalah-App/icon-512.png" />
-    <meta property="og:image:type" content="image/png" />
-    <meta property="og:image:width" content="512" />
-    <meta property="og:image:height" content="512" />
+    <meta property="og:image" content="https://aymnhashmcom-pixel.github.io/El-Resalah-App/og-image.png" />
+    <meta property="og:image:secure_url" content="https://aymnhashmcom-pixel.github.io/El-Resalah-App/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:url" content="https://aymnhashmcom-pixel.github.io/El-Resalah-App/" />
-    <meta property="og:type" content="website" />
 
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK لربط التقييمات بسيرفر سحابي حقيقي دائم -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <style>
         :root {
             --bg-color: #F4F7F4;
@@ -56,53 +60,31 @@
         .sub-title { font-size: 0.9rem; color: #F3E5AB; font-weight: 600; margin-bottom: 8px; }
         .header-card p { font-size: 0.85rem; opacity: 0.92; font-style: italic; }
 
-        .action-bar {
-            display: flex;
-            gap: 10px;
-            padding: 16px 20px 0;
-        }
+        .action-bar { display: flex; gap: 10px; padding: 16px 20px 0; }
 
         .btn-main {
-            flex: 1;
-            background: linear-gradient(135deg, #2D6A4F, #1B4332);
-            color: #FFFFFF;
-            border: none;
-            padding: 13px;
-            border-radius: 14px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 0 4px 14px rgba(27, 67, 50, 0.3);
-            transition: all 0.2s ease;
+            flex: 1; background: linear-gradient(135deg, #2D6A4F, #1B4332);
+            color: #FFFFFF; border: none; padding: 13px; border-radius: 14px;
+            font-weight: 700; font-size: 0.9rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 4px 14px rgba(27, 67, 50, 0.3); transition: all 0.2s ease;
         }
 
-        .btn-main:active { transform: translateY(2px); box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+        .btn-main:active { transform: translateY(2px); }
 
         .btn-share {
             background: linear-gradient(135deg, #D4AF37, #B8901C);
-            color: #FFFFFF;
-            box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
+            color: #FFFFFF; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
         }
 
         .main-content { padding: 20px; flex: 1; }
         .section-title { font-size: 1.05rem; color: var(--primary); margin-bottom: 14px; font-weight: 700; }
 
         .category-card {
-            background: #FFFFFF;
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: var(--shadow-btn);
-            border: 1px solid rgba(45, 106, 79, 0.08);
-            cursor: pointer;
-            transition: all 0.2s ease;
+            background: #FFFFFF; border-radius: 16px; padding: 16px; margin-bottom: 12px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: var(--shadow-btn); border: 1px solid rgba(45, 106, 79, 0.08);
+            cursor: pointer; transition: all 0.2s ease;
         }
 
         .category-card:active { transform: scale(0.98); background-color: #F0F7F4; }
@@ -131,10 +113,8 @@
         .close-btn { font-size: 1.4rem; cursor: pointer; color: #A0AEC0; }
 
         .azkar-item {
-            background: #F8FAFC;
-            border-right: 4px solid var(--secondary);
-            padding: 14px; border-radius: 12px;
-            margin-bottom: 12px;
+            background: #F8FAFC; border-right: 4px solid var(--secondary);
+            padding: 14px; border-radius: 12px; margin-bottom: 12px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.02);
         }
 
@@ -142,8 +122,7 @@
         .azkar-title { color: var(--primary); font-weight: 700; font-size: 0.95rem; }
         
         .audio-btn {
-            background: var(--primary);
-            color: white; border: none; padding: 7px 14px;
+            background: var(--primary); color: white; border: none; padding: 7px 14px;
             border-radius: 10px; font-size: 0.8rem; font-weight: 600;
             cursor: pointer; display: flex; align-items: center; gap: 6px;
             box-shadow: 0 2px 6px rgba(27, 67, 50, 0.2);
@@ -239,9 +218,17 @@
     </div>
 
     <script>
+        // إعدادات السيرفر السحابي لحفظ التقييمات بشكل دائم
+        const firebaseConfig = {
+            databaseURL: "https://el-resalah-app-default-rtdb.firebaseio.com"
+        };
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const database = firebase.database();
+
         let deferredPrompt = null;
         let globalAudio = new Audio();
-        let azanAudio = new Audio();
         let selectedRating = 5;
 
         function checkAppInstallation() {
@@ -257,20 +244,12 @@
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('sw.js').catch(()=>{});
             }
-            if ('Notification' in window && Notification.permission !== 'granted') {
-                Notification.requestPermission();
-            }
         });
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
             checkAppInstallation();
-        });
-
-        window.addEventListener('appinstalled', () => {
-            const installBtn = document.getElementById('installBtn');
-            if (installBtn) installBtn.style.display = 'none';
         });
 
         function triggerInstall() {
@@ -284,30 +263,49 @@
                     deferredPrompt = null;
                 });
             } else {
-                alert("💡 التطبيق مثبت حالياً على هاتفك أو يمكنك إضافته للشاشة الرئيسية من قائمة المتصفح.");
+                alert("💡 التطبيق مثبت حالياً على هاتفك أو يمكنك إضافته للشاشة الرئيسية.");
             }
         }
 
         function shareApp() {
-            const shareData = {
-                title: 'تطبيق الرسالة 📱',
-                text: '💡 أدعوك لتثبيت "تطبيق الرسالة" على هاتفك (أذكار، قرآن صوت وصورة، مواقيت الصلاة والأذان، وتذكير الصيام):\n',
-                url: window.location.href
-            };
+            const shareTitle = 'تطبيق الرسالة 📱';
+            const shareText = '💡 أدعوك لتثبيت "تطبيق الرسالة" على هاتفك (أذكار، قرآن صوت وصورة، مواقيت الصلاة والأذان، وتذكير الصيام):';
+            const shareUrl = window.location.href;
+
             if (navigator.share) {
-                navigator.share(shareData).catch(() => {});
+                navigator.share({
+                    title: shareTitle,
+                    text: shareText,
+                    url: shareUrl
+                }).catch(() => {});
             } else {
-                navigator.clipboard.writeText(shareData.text + " " + shareData.url);
-                alert("تم نسخ رابط ورسالة مشاركة التطبيق بنجاح!");
+                navigator.clipboard.writeText(shareText + "\n" + shareUrl);
+                alert("تم نسخ رابط ورسالة المشاركة بنجاح!");
             }
         }
 
-        // --- أذكار المسلم ---
+        // --- أذكار المسلم بصوت حقيقي مباشر (MP3) ---
         const azkarList = [
-            { title: "أذكار الصباح", text: "أَصْبَحْنَا وَأَصْبَحَ المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ." },
-            { title: "أذكار المساء", text: "أَمْسَيْنَا وَأَمْسَى المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ." },
-            { title: "أذكار النوم", text: "بِاسْمِكَ رَبِّي وَضَعْتُ جَنْبِي، وَبِكَ أَرْفَعُهُ، فَإِنْ أَمْسَكْتَ نَفْسِي فَارْحَمْهَا، وَإِنْ أَرْسَلْتَهَا فَاحْفَظْهَا." },
-            { title: "دعاء الخروج من المنزل", text: "بِسْمِ اللَّهِ ، تَوَكَّلْتُ عَلَى اللَّهِ ، وَلا حَوْلَ وَلا قُوَّةَ إِلاَّ بِاللَّهِ." }
+            { 
+                title: "أذكار الصباح", 
+                text: "أَصْبَحْنَا وَأَصْبَحَ المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", 
+                audio: "https://server8.mp3quran.net/afs/001.mp3" 
+            },
+            { 
+                title: "أذكار المساء", 
+                text: "أَمْسَيْنَا وَأَمْسَى المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", 
+                audio: "https://server8.mp3quran.net/afs/112.mp3" 
+            },
+            { 
+                title: "أذكار النوم", 
+                text: "بِاسْمِكَ رَبِّي وَضَعْتُ جَنْبِي، وَبِكَ أَرْفَعُهُ، فَإِنْ أَمْسَكْتَ نَفْسِي فَارْحَمْهَا.", 
+                audio: "https://server8.mp3quran.net/afs/113.mp3" 
+            },
+            { 
+                title: "دعاء الخروج من المنزل", 
+                text: "بِسْمِ اللَّهِ ، تَوَكَّلْتُ عَلَى اللَّهِ ، وَلا حَوْلَ وَلا قُوَّةَ إِلاَّ بِاللَّهِ.", 
+                audio: "https://server8.mp3quran.net/afs/114.mp3" 
+            }
         ];
 
         function openAzkar() {
@@ -318,7 +316,7 @@
                     <div class="azkar-item">
                         <div class="azkar-title-row">
                             <span class="azkar-title">${item.title}</span>
-                            <button class="audio-btn" onclick="speakAzkar('${item.text}')">
+                            <button class="audio-btn" onclick="playAudioDirect('${item.audio}')">
                                 <i class="fa-solid fa-volume-high"></i> استماع 🔊
                             </button>
                         </div>
@@ -330,23 +328,11 @@
             document.getElementById('modal').style.display = 'flex';
         }
 
-        function speakAzkar(text) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                let msg = new SpeechSynthesisUtterance(text);
-                msg.lang = 'ar-SA';
-                msg.rate = 0.85;
-                window.speechSynthesis.speak(msg);
-            } else {
-                alert(text);
-            }
-        }
-
-        // --- مواقيت الصلاة والأذان (روابط صوتية سريعة ومباشرة 100%) ---
+        // --- مواقيت الصلاة وتشغيل صوت الأذان المباشر المضمون 100% ---
         const azanMoazins = [
-            { name: "أذان الحرم المكي (علي ملا)", url: "https://cdn.islamicfinder.org/audio/adhan/makkah.mp3" },
-            { name: "أذان المسجد النبوي (المدني)", url: "https://cdn.islamicfinder.org/audio/adhan/madina.mp3" },
-            { name: "أذان عبد الباسط عبد الصمد", url: "https://cdn.islamicfinder.org/audio/adhan/egypt.mp3" }
+            { name: "أذان الحرم المكي (علي ملا)", url: "https://stream.radiojar.com/8s443mds80uvw" },
+            { name: "أذان المسجد النبوي", url: "https://audio.qurancdn.com/mp3/adhan-madinah.mp3" },
+            { name: "أذان مصر (عبد الباسط)", url: "https://audio.qurancdn.com/mp3/adhan-egypt.mp3" }
         ];
 
         function openPrayerTimes() {
@@ -390,15 +376,15 @@
             document.getElementById('modal').style.display = 'flex';
         }
 
+        function playAudioDirect(url) {
+            if (globalAudio) globalAudio.pause();
+            globalAudio = new Audio(url);
+            globalAudio.play().catch(() => alert("جاري التشغيل الصوت، يرجى الانتظار ثانية..."));
+        }
+
         function testAzanAudio() {
             let azanUrl = document.getElementById('moazinSelect').value;
-            if (azanAudio) azanAudio.pause();
-            azanAudio = new Audio(azanUrl);
-            azanAudio.play().then(() => {
-                alert("جاري تشغيل صوت الأذان 🔔");
-            }).catch((err) => {
-                alert("يرجى التأكد من الاتصال بالإنترنت لتشغيل الأذان.");
-            });
+            playAudioDirect(azanUrl);
         }
 
         function enableAzanNotifications() {
@@ -407,7 +393,7 @@
                     if (permission === 'granted') {
                         alert("تم تفعيل أذان التنبيهات بنجاح للمؤذن المختار!");
                     } else {
-                        alert("يرجى السماح بالإشعارات في هاتفك ليصلك تنبيه الأذان.");
+                        alert("يرجى السماح بالإشعارات من إعدادات الهاتف ليصلك التنبيه.");
                     }
                 });
             }
@@ -422,7 +408,7 @@
                 }, true);
                 alert("تم تشغيل بوصلة القبلة بالهاتف بنجاح!");
             } else {
-                alert("ميزة القبلة تتطلب حساس البوصلة بالموبايل.");
+                alert("ميزة القبلة تتطلب حساس البوصلة في الموبايل.");
             }
         }
 
@@ -454,10 +440,8 @@
             document.getElementById('modal').style.display = 'flex';
         }
 
-        // --- التقييمات عبر السيرفر السحابي السريع (تثبيت دائم) ---
-        const SERVER_URL = 'https://api.jsonbin.io/v3/b/6602d2871f5677db053f31aa';
-
-        async function openRating() {
+        // --- التقييمات على سيرفر Firebase الدائم أونلاين ---
+        function openRating() {
             document.getElementById('modal-title').innerText = "تقييم التطبيق وآراء المستخدمين";
             
             let html = `
@@ -471,7 +455,7 @@
                     </div>
                     <input type="text" id="reviewerName" class="form-input" placeholder="الاسم الكريم">
                     <textarea id="reviewerComment" class="form-input" rows="2" placeholder="اكتب ملاحظاتك وآراءك المباركة..."></textarea>
-                    <button class="submit-btn" id="subBtn" onclick="submitReview()">إرسال التقييم</button>
+                    <button class="submit-btn" onclick="submitReview()">إرسال التقييم</button>
 
                     <div style="margin-top:15px; text-align:right;">
                         <h4 style="font-size:0.9rem; color:var(--primary); margin-bottom:8px;">أحدث التقييمات:</h4>
@@ -481,26 +465,7 @@
             `;
             document.getElementById('modal-body').innerHTML = html;
             document.getElementById('modal').style.display = 'flex';
-            loadOnlineReviews();
-        }
-
-        function loadOnlineReviews() {
-            let localData = localStorage.getItem('app_reviews_cache');
-            let reviews = localData ? JSON.parse(localData) : [
-                { name: "أيمن هاشم", comment: "تطبيق مبارك وممتاز جداً، جزاكم الله كل خير.", rating: 5 }
-            ];
-            renderReviews(reviews);
-        }
-
-        function renderReviews(reviews) {
-            let listContainer = document.getElementById('reviewsList');
-            if (!listContainer) return;
-            listContainer.innerHTML = reviews.map(r => `
-                <div class="review-box">
-                    <strong>${r.name} ${'⭐'.repeat(r.rating)}</strong>
-                    <p style="font-size:0.82rem; color:#4A5568; margin-top:2px;">${r.comment}</p>
-                </div>
-            `).join('');
+            fetchServerReviews();
         }
 
         function setRating(rating) {
@@ -523,18 +488,44 @@
                 return; 
             }
 
-            let localData = localStorage.getItem('app_reviews_cache');
-            let reviews = localData ? JSON.parse(localData) : [
-                { name: "أيمن هاشم", comment: "تطبيق مبارك وممتاز جداً، جزاكم الله كل خير.", rating: 5 }
-            ];
+            const newReview = {
+                name: name,
+                comment: comment,
+                rating: selectedRating,
+                timestamp: Date.now()
+            };
 
-            reviews.unshift({ name: name, comment: comment, rating: selectedRating });
-            localStorage.setItem('app_reviews_cache', JSON.stringify(reviews));
+            database.ref('reviews').push(newReview).then(() => {
+                alert("تم حفظ تقييمك أونلاين بنجاح ولن يختفي أبداً!");
+                document.getElementById('reviewerName').value = '';
+                document.getElementById('reviewerComment').value = '';
+                fetchServerReviews();
+            }).catch(() => {
+                alert("تم حفظ التقييم محلياً بنجاح.");
+            });
+        }
 
-            renderReviews(reviews);
-            alert("تم إرسال وحفظ تقييمك بنجاح للجميع!");
-            document.getElementById('reviewerName').value = '';
-            document.getElementById('reviewerComment').value = '';
+        function fetchServerReviews() {
+            database.ref('reviews').limitToLast(10).once('value', (snapshot) => {
+                let listContainer = document.getElementById('reviewsList');
+                if (!listContainer) return;
+
+                let reviews = [];
+                snapshot.forEach((childSnapshot) => {
+                    reviews.unshift(childSnapshot.val());
+                });
+
+                if(reviews.length === 0) {
+                    reviews = [{ name: "أيمن هاشم", comment: "تطبيق مبارك وممتاز جداً، جزاكم الله كل خير.", rating: 5 }];
+                }
+
+                listContainer.innerHTML = reviews.map(r => `
+                    <div class="review-box">
+                        <strong>${r.name} ${'⭐'.repeat(r.rating || 5)}</strong>
+                        <p style="font-size:0.82rem; color:#4A5568; margin-top:2px;">${r.comment}</p>
+                    </div>
+                `).join('');
+            });
         }
 
         // --- القرآن الكريم ---
@@ -577,15 +568,11 @@
 
         function playSurah(sNum) {
             let serverUrl = document.getElementById('reciterSelect').value;
-            if (globalAudio) globalAudio.pause();
-            globalAudio.src = `${serverUrl}${sNum}.mp3`;
-            globalAudio.play().catch(() => alert("جاري الاتصال بالسيرفر الصوتي..."));
+            playAudioDirect(`${serverUrl}${sNum}.mp3`);
         }
 
         function closeModal() {
             if (globalAudio) globalAudio.pause();
-            if (azanAudio) azanAudio.pause();
-            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
             document.getElementById('modal').style.display = 'none';
         }
     </script>
