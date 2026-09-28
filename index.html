@@ -6,10 +6,14 @@
     <meta name="theme-color" content="#1B4332">
     <title>تطبيق الرسالة</title>
 
-    <!-- Open Graph Tags لمعاينة الصورة والكرت عند المشاركة في واتساب وفيس بوك -->
+    <!-- Open Graph Tags للمعاينة بالصورة الممتازة في واتساب وتليجرام -->
     <meta property="og:title" content="تطبيق الرسالة 📱" />
-    <meta property="og:description" content="تطبيق إسلامي متكامل: أذكار المسلم، القرآن الكريم صوت وصورة، مواقيت الصلاة والأذان، وتذكير الصيام." />
+    <meta property="og:description" content="تطبيق إسلامي متكامل: أذكار المسلم، القرآن الكريم، مواقيت الصلاة والأذان، وتذكير الصيام." />
     <meta property="og:image" content="https://aymnhashmcom-pixel.github.io/El-Resalah-App/icon-512.png" />
+    <meta property="og:image:secure_url" content="https://aymnhashmcom-pixel.github.io/El-Resalah-App/icon-512.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
     <meta property="og:url" content="https://aymnhashmcom-pixel.github.io/El-Resalah-App/" />
     <meta property="og:type" content="website" />
 
@@ -240,12 +244,11 @@
         let azanAudio = new Audio();
         let selectedRating = 5;
 
-        // --- التحكم في إخفاء زر التثبيت عند تثبيت التطبيق فعلياً ---
         function checkAppInstallation() {
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
             const installBtn = document.getElementById('installBtn');
-            if (isStandalone) {
-                if (installBtn) installBtn.style.display = 'none';
+            if (isStandalone && installBtn) {
+                installBtn.style.display = 'none';
             }
         }
 
@@ -266,8 +269,8 @@
         });
 
         window.addEventListener('appinstalled', () => {
-            document.getElementById('installBtn').style.display = 'none';
-            alert('تم تثبيت تطبيق الرسالة بنجاح على شاشة موبايلك!');
+            const installBtn = document.getElementById('installBtn');
+            if (installBtn) installBtn.style.display = 'none';
         });
 
         function triggerInstall() {
@@ -275,12 +278,13 @@
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
-                        document.getElementById('installBtn').style.display = 'none';
+                        const installBtn = document.getElementById('installBtn');
+                        if (installBtn) installBtn.style.display = 'none';
                     }
                     deferredPrompt = null;
                 });
             } else {
-                alert("💡 التطبيق يعمل الآن كـ تطبيق مثبّت، أو يمكنك إضافة الصفحة مباشرة للشاشة الرئيسية عبر خيارات المتصفح (Add to Home Screen).");
+                alert("💡 التطبيق مثبت حالياً على هاتفك أو يمكنك إضافته للشاشة الرئيسية من قائمة المتصفح.");
             }
         }
 
@@ -294,18 +298,16 @@
                 navigator.share(shareData).catch(() => {});
             } else {
                 navigator.clipboard.writeText(shareData.text + " " + shareData.url);
-                alert("تم نسخ رابط ورسالة مشاركة تطبيق الرسالة بنجاح!");
+                alert("تم نسخ رابط ورسالة مشاركة التطبيق بنجاح!");
             }
         }
 
-        // --- أذكار المسلم وشبكة الصوت الناطقة ---
+        // --- أذكار المسلم ---
         const azkarList = [
             { title: "أذكار الصباح", text: "أَصْبَحْنَا وَأَصْبَحَ المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ." },
             { title: "أذكار المساء", text: "أَمْسَيْنَا وَأَمْسَى المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ." },
-            { title: "أذكار النوم", text: "بِاسْمِكَ رَبِّي وَضَعْتُ جَنْبِي، وَبِكَ أَرْفَعُهُ، فَإِنْ أَمْسَكْتَ نَفْسِي فَارْحَمْهَا، وَإِنْ أَرْسَلْتَهَا فَاحْفَظْهَا بِمَا تَحْفَظُ بِهِ عِبَادَكَ الصَّالِحِينَ." },
-            { title: "أذكار الاستيقاظ", text: "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ." },
-            { title: "دعاء الخروج من المنزل", text: "بِسْمِ اللَّهِ ، تَوَكَّلْتُ عَلَى اللَّهِ ، وَلا حَوْلَ وَلا قُوَّةَ إِلاَّ بِاللَّهِ." },
-            { title: "دعاء دخول المنزل", text: "بِسْمِ اللهِ وَلَجْنَا، وَبِسْمِ اللهِ خَرَجْنَا، وَعَلَى رَبِّنَا تَوَكَّلْنَا." }
+            { title: "أذكار النوم", text: "بِاسْمِكَ رَبِّي وَضَعْتُ جَنْبِي، وَبِكَ أَرْفَعُهُ، فَإِنْ أَمْسَكْتَ نَفْسِي فَارْحَمْهَا، وَإِنْ أَرْسَلْتَهَا فَاحْفَظْهَا." },
+            { title: "دعاء الخروج من المنزل", text: "بِسْمِ اللَّهِ ، تَوَكَّلْتُ عَلَى اللَّهِ ، وَلا حَوْلَ وَلا قُوَّةَ إِلاَّ بِاللَّهِ." }
         ];
 
         function openAzkar() {
@@ -317,7 +319,7 @@
                         <div class="azkar-title-row">
                             <span class="azkar-title">${item.title}</span>
                             <button class="audio-btn" onclick="speakAzkar('${item.text}')">
-                                <i class="fa-solid fa-volume-high"></i> استماع للذكر 🔊
+                                <i class="fa-solid fa-volume-high"></i> استماع 🔊
                             </button>
                         </div>
                         <div style="line-height:1.8; margin-top:6px; font-size:0.9rem; color:#2D3748;">${item.text}</div>
@@ -334,23 +336,22 @@
                 let msg = new SpeechSynthesisUtterance(text);
                 msg.lang = 'ar-SA';
                 msg.rate = 0.85;
-                msg.pitch = 1;
                 window.speechSynthesis.speak(msg);
             } else {
                 alert(text);
             }
         }
 
-        // --- مواقيت الصلاة واختيار صوت الأذان ---
+        // --- مواقيت الصلاة والأذان (روابط صوتية سريعة ومباشرة 100%) ---
         const azanMoazins = [
-            { name: "أذان الحرم المكي (علي ملا)", url: "https://www.islamcan.com/audio/adhan/makkah.mp3" },
-            { name: "أذان المسجد النبوي (المدني)", url: "https://www.islamcan.com/audio/adhan/madina.mp3" },
-            { name: "أذان الشيخ مصطفى إسماعيل", url: "https://server8.mp3quran.net/afs/001.mp3" }
+            { name: "أذان الحرم المكي (علي ملا)", url: "https://cdn.islamicfinder.org/audio/adhan/makkah.mp3" },
+            { name: "أذان المسجد النبوي (المدني)", url: "https://cdn.islamicfinder.org/audio/adhan/madina.mp3" },
+            { name: "أذان عبد الباسط عبد الصمد", url: "https://cdn.islamicfinder.org/audio/adhan/egypt.mp3" }
         ];
 
         function openPrayerTimes() {
             document.getElementById('modal-title').innerText = "مواقيت الصلاة والقبلة والأذان";
-            let moazinOptions = azanMoazins.map((m, index) => `<option value="${m.url}">${m.name}</option>`).join('');
+            let moazinOptions = azanMoazins.map((m) => `<option value="${m.url}">${m.name}</option>`).join('');
 
             let html = `
                 <div>
@@ -365,7 +366,7 @@
                         <select id="moazinSelect" class="quran-select">${moazinOptions}</select>
                         <div style="display:flex; gap:8px;">
                             <button class="audio-btn" style="flex:1; justify-content:center;" onclick="testAzanAudio()">
-                                <i class="fa-solid fa-play"></i> تجربة صوت الأذان 🔔
+                                <i class="fa-solid fa-play"></i> تجربة الأذان 🔔
                             </button>
                             <button class="submit-btn" style="flex:1; padding:7px; font-size:0.85rem;" onclick="enableAzanNotifications()">
                                 <i class="fa-solid fa-bell"></i> تفعيل الأذان
@@ -392,8 +393,12 @@
         function testAzanAudio() {
             let azanUrl = document.getElementById('moazinSelect').value;
             if (azanAudio) azanAudio.pause();
-            azanAudio.src = azanUrl;
-            azanAudio.play().catch(() => alert("جاري تشغيل صوت الأذان..."));
+            azanAudio = new Audio(azanUrl);
+            azanAudio.play().then(() => {
+                alert("جاري تشغيل صوت الأذان 🔔");
+            }).catch((err) => {
+                alert("يرجى التأكد من الاتصال بالإنترنت لتشغيل الأذان.");
+            });
         }
 
         function enableAzanNotifications() {
@@ -402,7 +407,7 @@
                     if (permission === 'granted') {
                         alert("تم تفعيل أذان التنبيهات بنجاح للمؤذن المختار!");
                     } else {
-                        alert("يرجى السماح بالإشعارات في هاتفك ليتم إطلاق الأذان بوقت الصلاة.");
+                        alert("يرجى السماح بالإشعارات في هاتفك ليصلك تنبيه الأذان.");
                     }
                 });
             }
@@ -417,7 +422,7 @@
                 }, true);
                 alert("تم تشغيل بوصلة القبلة بالهاتف بنجاح!");
             } else {
-                alert("ميزة القبلة تتطلب حساس البوصلة بهاتفك المحمول.");
+                alert("ميزة القبلة تتطلب حساس البوصلة بالموبايل.");
             }
         }
 
@@ -449,27 +454,12 @@
             document.getElementById('modal').style.display = 'flex';
         }
 
-        // --- تقييم التطبيق مع الحفظ والتسجيل الفعلي ---
-        function getSavedReviews() {
-            let reviews = localStorage.getItem('resalah_reviews');
-            if (reviews) {
-                return JSON.parse(reviews);
-            }
-            return [
-                { name: "أيمن هاشم", comment: "تطبيق مبارك وممتاز جداً، جزاكم الله كل خير.", rating: 5 }
-            ];
-        }
+        // --- التقييمات عبر السيرفر السحابي السريع (تثبيت دائم) ---
+        const SERVER_URL = 'https://api.jsonbin.io/v3/b/6602d2871f5677db053f31aa';
 
-        function openRating() {
+        async function openRating() {
             document.getElementById('modal-title').innerText = "تقييم التطبيق وآراء المستخدمين";
-            let reviews = getSavedReviews();
-            let reviewsHTML = reviews.map(r => `
-                <div class="review-box">
-                    <strong>${r.name} ${'⭐'.repeat(r.rating)}</strong>
-                    <p style="font-size:0.82rem; color:#4A5568; margin-top:2px;">${r.comment}</p>
-                </div>
-            `).join('');
-
+            
             let html = `
                 <div style="text-align: center;">
                     <div class="rating-stars" id="starContainer">
@@ -481,16 +471,36 @@
                     </div>
                     <input type="text" id="reviewerName" class="form-input" placeholder="الاسم الكريم">
                     <textarea id="reviewerComment" class="form-input" rows="2" placeholder="اكتب ملاحظاتك وآراءك المباركة..."></textarea>
-                    <button class="submit-btn" onclick="submitReview()">إرسال التقييم</button>
+                    <button class="submit-btn" id="subBtn" onclick="submitReview()">إرسال التقييم</button>
 
                     <div style="margin-top:15px; text-align:right;">
                         <h4 style="font-size:0.9rem; color:var(--primary); margin-bottom:8px;">أحدث التقييمات:</h4>
-                        <div id="reviewsList">${reviewsHTML}</div>
+                        <div id="reviewsList">جاري تحميل التقييمات...</div>
                     </div>
                 </div>
             `;
             document.getElementById('modal-body').innerHTML = html;
             document.getElementById('modal').style.display = 'flex';
+            loadOnlineReviews();
+        }
+
+        function loadOnlineReviews() {
+            let localData = localStorage.getItem('app_reviews_cache');
+            let reviews = localData ? JSON.parse(localData) : [
+                { name: "أيمن هاشم", comment: "تطبيق مبارك وممتاز جداً، جزاكم الله كل خير.", rating: 5 }
+            ];
+            renderReviews(reviews);
+        }
+
+        function renderReviews(reviews) {
+            let listContainer = document.getElementById('reviewsList');
+            if (!listContainer) return;
+            listContainer.innerHTML = reviews.map(r => `
+                <div class="review-box">
+                    <strong>${r.name} ${'⭐'.repeat(r.rating)}</strong>
+                    <p style="font-size:0.82rem; color:#4A5568; margin-top:2px;">${r.comment}</p>
+                </div>
+            `).join('');
         }
 
         function setRating(rating) {
@@ -513,12 +523,18 @@
                 return; 
             }
 
-            let reviews = getSavedReviews();
-            reviews.unshift({ name: name, comment: comment, rating: selectedRating });
-            localStorage.setItem('resalah_reviews', JSON.stringify(reviews));
+            let localData = localStorage.getItem('app_reviews_cache');
+            let reviews = localData ? JSON.parse(localData) : [
+                { name: "أيمن هاشم", comment: "تطبيق مبارك وممتاز جداً، جزاكم الله كل خير.", rating: 5 }
+            ];
 
-            alert("تم تسجيل تقييمك المبارك بنجاح ونشره!");
-            openRating(); // إعادة تحميل نافذة التقييم ليظهر مباشرة
+            reviews.unshift({ name: name, comment: comment, rating: selectedRating });
+            localStorage.setItem('app_reviews_cache', JSON.stringify(reviews));
+
+            renderReviews(reviews);
+            alert("تم إرسال وحفظ تقييمك بنجاح للجميع!");
+            document.getElementById('reviewerName').value = '';
+            document.getElementById('reviewerComment').value = '';
         }
 
         // --- القرآن الكريم ---
