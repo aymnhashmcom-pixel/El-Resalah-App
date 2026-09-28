@@ -1,0 +1,23 @@
+{
+  "name": "تطبيق الرسالة",
+  "short_name": "الرسالة",
+  "description": "اتباع هدي النبي ﷺ في الصلاة والأذكار والصيام",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1B4332",
+  "theme_color": "#1B4332",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
