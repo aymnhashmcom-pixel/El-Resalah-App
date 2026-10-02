@@ -135,8 +135,12 @@
         .quran-select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--secondary); font-size: 0.88rem; margin-bottom: 12px; background: white; }
         .surah-card { background: white; border: 1px solid #EDF2F7; padding: 12px 14px; border-radius: 12px; margin-bottom: 8px; }
 
-        .star-rating { display: flex; justify-content: center; gap: 8px; font-size: 1.8rem; color: #CBD5E0; margin: 15px 0; cursor: pointer; }
+        .star-rating { display: flex; justify-content: center; gap: 8px; font-size: 1.8rem; color: #CBD5E0; margin: 12px 0; cursor: pointer; }
         .star-rating .fa-star.active { color: #D4AF37; }
+
+        .saved-rating-card {
+            background: #FFFDF0; border: 1px solid #F6AD55; border-radius: 12px; padding: 12px; margin-top: 10px; text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -202,7 +206,6 @@
         let deferredPrompt = null;
         const installBtn = document.getElementById('installBtn');
 
-        // الإخفاء التلقائي للزر إذا كان التطبيق مثبتاً بالفعل ويعمل كـ PWA
         if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
             if (installBtn) installBtn.style.display = 'none';
         }
@@ -232,28 +235,28 @@
             deferredPrompt = null;
         });
 
-        // --- إدارة تشغيل الصوت ---
-        let currentAudio = null;
+        // --- إدارة الصوت والمشغل المباشر ---
+        let currentAudio = new Audio();
 
         function stopAudio() {
             if (currentAudio) {
                 currentAudio.pause();
                 currentAudio.currentTime = 0;
-                currentAudio = null;
             }
         }
 
         function playAudio(url) {
             stopAudio();
-            currentAudio = new Audio(url);
+            currentAudio.src = url;
+            currentAudio.load();
             
             let playPromise = currentAudio.play();
             if (playPromise !== undefined) {
                 playPromise.then(() => {
-                    console.log("تم بدء تشغيل الصوت بنجاح");
+                    console.log("تم تشغيل الصوت بنجاح");
                 }).catch(err => {
-                    console.error("خطأ تشغيل الصوت:", err);
-                    alert("يرجى الضغط على زر التشغيل مرة أخرى للتحقق من تشغيل الصوت.");
+                    console.error("تعذر تشغيل الصوت:", err);
+                    alert("اضغط مرة أخرى للتأكيد وسيقوم الصوت بالعمل فوراً.");
                 });
             }
         }
@@ -269,13 +272,31 @@
             }
         }
 
-        // --- تقييم التطبيق ---
+        // --- تقييم التطبيق والتثبيت في LocalStorage ---
         let selectedRating = 0;
+
         function openRatingModal() {
             document.getElementById('modal-title').innerText = "تقييم التطبيق";
+            const savedData = localStorage.getItem('elresalah_user_rating');
+            
+            let existingRatingHTML = '';
+            if (savedData) {
+                const parsed = JSON.parse(savedData);
+                const starsStr = '⭐'.repeat(parsed.stars);
+                existingRatingHTML = `
+                    <div class="saved-rating-card">
+                        <strong style="color:var(--primary); font-size:0.95rem;">تقييمك المسجل حالياً:</strong>
+                        <div style="font-size:1.2rem; margin:4px 0;">${starsStr}</div>
+                        <div><strong>الاسم:</strong> ${parsed.name}</div>
+                        ${parsed.comment ? `<div style="font-size:0.85rem; color:#4A5568; margin-top:4px;">"${parsed.comment}"</div>` : ''}
+                    </div>
+                `;
+            }
+
             let html = `
-                <div style="text-align: center; padding: 10px 0;">
-                    <p style="font-weight: 600; color: #4A5568;">نسعد برأيك وتقييمك لتطبيق الرسالة</p>
+                <div style="padding: 5px 0;">
+                    <p style="font-weight: 600; color: #4A5568; text-align:center;">نسعد برأيك وتقييمك لتطبيق الرسالة</p>
+                    
                     <div class="star-rating" id="starContainer">
                         <i class="fa-solid fa-star" onclick="setRating(1)"></i>
                         <i class="fa-solid fa-star" onclick="setRating(2)"></i>
@@ -283,8 +304,12 @@
                         <i class="fa-solid fa-star" onclick="setRating(4)"></i>
                         <i class="fa-solid fa-star" onclick="setRating(5)"></i>
                     </div>
+
+                    <input type="text" class="form-input" id="userName" placeholder="الاسم الكريم..." />
                     <textarea class="form-input" id="ratingComment" rows="3" placeholder="ملاحظاتك أو اقتراحاتك لتطوير التطبيق (اختياري)..."></textarea>
-                    <button class="submit-btn" onclick="submitRating()">إرسال التقييم</button>
+                    
+                    <button class="submit-btn" onclick="submitRating()">حفظ وإرسال التقييم</button>
+                    ${existingRatingHTML}
                 </div>
             `;
             document.getElementById('modal-body').innerHTML = html;
@@ -305,11 +330,28 @@
         }
 
         function submitRating() {
+            const nameInput = document.getElementById('userName').value.trim();
+            const commentInput = document.getElementById('ratingComment').value.trim();
+
             if (selectedRating === 0) {
-                alert('يرجى اختيار التقييم بالنجوم أولاً.');
+                alert('يرجى اختيار عدد النجوم للتقييم أولاً.');
                 return;
             }
-            alert('جزاك الله خيراً! تم تسليم تقييمك بنجاح.');
+            if (!nameInput) {
+                alert('يرجى كتابة الاسم الكريم.');
+                return;
+            }
+
+            const ratingObject = {
+                name: nameInput,
+                stars: selectedRating,
+                comment: commentInput,
+                date: new Date().toLocaleDateString('ar-EG')
+            };
+
+            // حفظ التقييم محلياً ليبقى ثابتاً
+            localStorage.setItem('elresalah_user_rating', JSON.stringify(ratingObject));
+            alert('جزاك الله خيراً يا ' + nameInput + '! تم حفظ وتثبيت تقييمك بنجاح.');
             closeModal();
         }
 
@@ -331,7 +373,6 @@
 
         function openQuran() {
             document.getElementById('modal-title').innerText = "القرآن الكريم";
-            
             let reciterOptions = reciters.map(r => `<option value="${r.url}">${r.name}</option>`).join('');
             
             let surahList = surahs.map(s => `
@@ -385,7 +426,6 @@
         // --- مواقيت الصلاة والأذان ---
         function openPrayerTimes() {
             document.getElementById('modal-title').innerText = "مواقيت الصلاة والأذان";
-            // استخدام رابط صوت الأذان مباشر وموثوق عبر HTTPS
             const azanUrl = "https://www.islamcan.com/common/adhan/audio/adhan-makkah.mp3";
 
             let html = `
@@ -398,7 +438,7 @@
 
                     <div style="margin-top:14px; background:#F8FAFC; padding:12px; border-radius:12px; border:1px solid #E2E8F0;">
                         <button class="submit-btn" onclick="playAudio('${azanUrl}')">
-                            <i class="fa-solid fa-play"></i> استماع لصوت الأذان 🔔
+                            <i class="fa-solid fa-play"></i> تشغيل الأذان بصوت مكة المكرمة 🔔
                         </button>
                     </div>
                 </div>
@@ -412,7 +452,7 @@
             document.getElementById('modal').style.display = 'none';
         }
 
-        // تفعيل الـ Service Worker
+        // تسجيل الـ Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js').then(reg => {
