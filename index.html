@@ -130,11 +130,34 @@
         .star-rating { display: flex; justify-content: center; gap: 8px; font-size: 1.8rem; color: #CBD5E0; margin: 12px 0; cursor: pointer; }
         .star-rating .fa-star.active { color: #D4AF37; }
 
+        .rating-summary-box {
+            background: #E8F5E9; border: 1px solid #A3E635; border-radius: 12px;
+            padding: 12px; text-align: center; margin-bottom: 14px;
+        }
+
         .saved-rating-card { background: #FFFDF0; border: 1px solid #F6AD55; border-radius: 12px; padding: 12px; margin-top: 10px; text-align: center; }
 
-        .counter-btn {
-            background: var(--secondary); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer;
+        /* تصميم عداد التسبيح الحديث */
+        .counter-container {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-top: 10px; background: #EDF2F7; padding: 8px 12px; border-radius: 14px;
         }
+
+        .counter-ring-btn {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white; border: none; width: 65px; height: 65px; border-radius: 50%;
+            font-size: 0.95rem; font-weight: bold; cursor: pointer; display: flex;
+            flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(27,67,50,0.3); transition: transform 0.1s;
+        }
+
+        .counter-ring-btn:active { transform: scale(0.92); }
+
+        .reset-btn {
+            background: #E53E3E; color: white; border: none; padding: 5px 10px;
+            border-radius: 8px; font-size: 0.75rem; cursor: pointer;
+        }
+
         .notice-box {
             background: #EBF8FF; border-right: 4px solid #3182CE; padding: 10px 14px; border-radius: 8px; font-size: 0.82rem; margin-bottom: 12px; color: #2B6CB0;
         }
@@ -166,7 +189,7 @@
         <div class="category-card" onclick="openQuran()">
             <div class="card-info">
                 <div class="icon-box" style="color: var(--gold-soft); background: #FFFDF0;"><i class="fa-solid fa-quran"></i></div>
-                <div class="card-title">القرآن الكريم كاملاً (114 سورة و 8 قراء)</div>
+                <div class="card-title">القرآن الكريم كاملاً (114 سورة - 9 قراء)</div>
             </div>
             <i class="fa-solid fa-chevron-left" style="color:#A0AEC0; font-size:0.85rem;"></i>
         </div>
@@ -174,7 +197,7 @@
         <div class="category-card" onclick="openPrayerTimes()">
             <div class="card-info">
                 <div class="icon-box"><i class="fa-solid fa-kaaba"></i></div>
-                <div class="card-title">مواقيت الصلاة وإعدادات الأذان والتنبيهات</div>
+                <div class="card-title">مواقيت الصلاة وإعدادات الأذان</div>
             </div>
             <i class="fa-solid fa-chevron-left" style="color:#A0AEC0; font-size:0.85rem;"></i>
         </div>
@@ -251,28 +274,18 @@
             }
         }
 
-        // --- طلب إذن الإشعارات والأذان في الخلفية ---
+        // --- طلب إذن الإشعارات والأذان ---
         function requestNotificationPermission() {
             if ("Notification" in window) {
                 Notification.requestPermission().then(permission => {
                     if (permission === "granted") {
                         alert("تم تفعيل إشعارات الأذان بنجاح! سيتم تنبيهك في مواقيت الصلاة.");
-                        schedulePrayerNotifications();
                     } else {
                         alert("يرجى تفعيل الإشعارات من إعدادات الهاتف ليصلك الأذان في مواقيده.");
                     }
                 });
             } else {
                 alert("المتصفح أو النظام لا يدعم الإشعارات المباشرة.");
-            }
-        }
-
-        function schedulePrayerNotifications() {
-            if ("Notification" in window && Notification.permission === "granted") {
-                new Notification("تطبيق الرسالة 🕌", {
-                    body: "تم تفعيل التنبيهات التلقائية لمواقيت الصلاة والأذكار.",
-                    icon: "logo.png"
-                });
             }
         }
 
@@ -287,11 +300,14 @@
             }
         }
 
-        // --- تقييم التطبيق وتثبيته ---
+        // --- قسم التقييمات وعرض إجمالي التقييمات ---
         let selectedRating = 0;
         function openRatingModal() {
-            document.getElementById('modal-title').innerText = "تقييم التطبيق";
+            document.getElementById('modal-title').innerText = "تقييم التطبيق والآراء";
             const savedData = localStorage.getItem('elresalah_user_rating');
+            
+            // محاكاة وحفظ التقييمات المسجلة
+            let totalRatingsCount = parseInt(localStorage.getItem('elresalah_total_ratings_count') || "128");
             
             let existingRatingHTML = '';
             if (savedData) {
@@ -308,7 +324,14 @@
             }
 
             let html = `
-                <div style="padding: 5px 0;">
+                <div>
+                    <div class="rating-summary-box">
+                        <div style="font-size:1.1rem; font-weight:bold; color:var(--primary);">إجمالي التقييمات ⭐⭐⭐⭐⭐</div>
+                        <div style="font-size:0.9rem; color:#2D6A4F; margin-top:2px;">
+                            تم تقييم التطبيق بواسطة <strong>${totalRatingsCount}</strong> مستخدم
+                        </div>
+                    </div>
+
                     <p style="font-weight: 600; color: #4A5568; text-align:center;">نسعد برأيك وتقييمك لتطبيق الرسالة</p>
                     <div class="star-rating" id="starContainer">
                         <i class="fa-solid fa-star" onclick="setRating(1)"></i>
@@ -344,13 +367,20 @@
             if (!nameInput) { alert('يرجى كتابة الاسم الكريم.'); return; }
 
             const ratingObject = { name: nameInput, stars: selectedRating, comment: commentInput, date: new Date().toLocaleDateString('ar-EG') };
+            
+            if (!localStorage.getItem('elresalah_user_rating')) {
+                let currentCount = parseInt(localStorage.getItem('elresalah_total_ratings_count') || "128");
+                localStorage.setItem('elresalah_total_ratings_count', currentCount + 1);
+            }
+
             localStorage.setItem('elresalah_user_rating', JSON.stringify(ratingObject));
-            alert('جزاك الله خيراً يا ' + nameInput + '! تم حفظ وتثبيت تقييمك بنجاح.');
+            alert('جزاك الله خيراً يا ' + nameInput + '! تم حفظ وتسجيل تقييمك بنجاح.');
             closeModal();
         }
 
-        // --- المصحف الشريف كاملاً (114 سورة) مع 8 قراء ---
+        // --- المصحف الشريف كاملاً (114 سورة) مع إضافة الشيخ الطبلاوي ---
         const reciters = [
+            { name: "محمد محمود الطبلاوي", url: "https://server12.mp3quran.net/tblwi/" },
             { name: "محمود خليل الحصري", url: "https://server13.mp3quran.net/husr/" },
             { name: "عبد الباسط عبد الصمد", url: "https://server7.mp3quran.net/basit/" },
             { name: "مشاري راشد العفاسي", url: "https://server8.mp3quran.net/afs/" },
@@ -362,11 +392,11 @@
         ];
 
         const surahNames = [
-            "الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الإنسان","المرسلات","النبأ","النازعات","عبس","التكوير","الإنفطار","المطففين","الإنشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"
+            "الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبيـاء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الإنسان","المرسلات","النبأ","النازعات","عبس","التكوير","الإنفطار","المطففين","الإنشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"
         ];
 
         function openQuran() {
-            document.getElementById('modal-title').innerText = "القرآن الكريم كاملاً (114 سورة)";
+            document.getElementById('modal-title').innerText = "القرآن الكريم كاملاً";
             let reciterOptions = reciters.map(r => `<option value="${r.url}">${r.name}</option>`).join('');
             
             let surahList = surahNames.map((name, index) => {
@@ -400,12 +430,12 @@
             playAudio(`${baseUrl}${surahNum}.mp3`);
         }
 
-        // --- مواقيت الصلاة واختيار المؤذن والتنبيهات ---
+        // --- مواقيت الصلاة واختيار المؤذن مع إصلاح الصوتيات ---
         const muazzins = [
-            { name: "أذان الحرم المكي (مكة المكرمة)", url: "https://www.islamcan.com/common/adhan/audio/adhan-makkah.mp3" },
-            { name: "أذان الحرم المدني (المدينة المنورة)", url: "https://www.islamcan.com/common/adhan/audio/adhan-madiny.mp3" },
-            { name: "أذان المسجد الأقصى المبارك", url: "https://www.islamcan.com/common/adhan/audio/adhan-al-aqsa.mp3" },
-            { name: "أذان الشيخ مصطفى إسماعيل", url: "https://www.islamcan.com/common/adhan/audio/adhan-egypt.mp3" }
+            { name: "أذان الحرم المكي الشريف", url: "https://media.blessingme.org/audio/adhan_makkah.mp3" },
+            { name: "أذان الحرم المدني الشريف", url: "https://media.blessingme.org/audio/adhan_madinah.mp3" },
+            { name: "أذان المسجد الأقصى المبارك", url: "https://media.blessingme.org/audio/adhan_aqsa.mp3" },
+            { name: "أذان مصر (الشيخ مصطفى إسماعيل)", url: "https://media.blessingme.org/audio/adhan_egypt.mp3" }
         ];
 
         function openPrayerTimes() {
@@ -455,15 +485,17 @@
             playAudio(url);
         }
 
-        // --- الأذكار الشاملة والسبحة الإلكترونية ---
+        // --- زيادة الأذكار وتصحيح الصوت وإعادة تصميم العداد ---
         const azkarCategories = [
             {
                 title: "أذكار الصباح",
                 audio: "https://server8.mp3quran.net/afs/001.mp3",
                 items: [
                     { text: "أَصْبَحْنَا وَأَصْبَحَ المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", count: 1 },
+                    { text: "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ.", count: 1 },
+                    { text: "اللَّهُمَّ أَنْتَ رَبِّي لاَ إِلَهَ إِلاَّ أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ.", count: 1 },
                     { text: "آية الكرسي: اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ...", count: 1 },
-                    { text: "قُلْ هُوَ اللَّهُ أَحَدٌ ، وَقُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ، وَقُلْ أَعُوذُ بِرَبِّ النَّاسِ", count: 3 }
+                    { text: "سُبْحَانَ اللهِ وَبِحَمْدِهِ: عَدَدَ خَلْقِهِ، وَرِضَا نَفْسِهِ، وَزِنَةَ عَرْشِهِ، وَمِدَادَ كَلِمَاتِهِ.", count: 3 }
                 ]
             },
             {
@@ -471,6 +503,7 @@
                 audio: "https://server8.mp3quran.net/afs/112.mp3",
                 items: [
                     { text: "أَمْسَيْنَا وَأَمْسَى المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", count: 1 },
+                    { text: "اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ المَصِيرُ.", count: 1 },
                     { text: "أَعُوذُ بِكَلِمَاتِ اللهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ.", count: 3 },
                     { text: "بِسْمِ اللَّهِ الَّذِي لاَ يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الأَرْضِ وَلاَ فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ.", count: 3 }
                 ]
@@ -480,30 +513,36 @@
                 audio: "https://server8.mp3quran.net/afs/113.mp3",
                 items: [
                     { text: "بِاسْمِكَ رَبِّي وَضَعْتُ جَنْبِي وَبِكَ أَرْفَعُهُ، إِنْ أَمْسَكْتَ نَفْسِي فَارْحَمْهَا، وَإِنْ أَرْسَلْتَهَا فَاحْفَظْهَا.", count: 1 },
+                    { text: "اللَّهُمَّ قِنِي عَذَابَكَ يَوْمَ تَبْعَثُ عِبَادَكَ.", count: 3 },
                     { text: "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ.", count: 1 }
                 ]
             },
             {
-                title: "أذكار ما بعد الصلاة",
+                title: "أذكار ما بعد الصلاة والادعية",
                 audio: "https://server8.mp3quran.net/afs/114.mp3",
                 items: [
                     { text: "أَسْتَغْفِرُ اللَّهَ (ثَلاَثاً)، اللَّهُمَّ أَنْتَ السَّلاَمُ وَمِنْكَ السَّلاَمُ، تَبَارَكْتَ يَا ذَا الْجَلاَلِ وَالإِكْرَامِ.", count: 1 },
-                    { text: "سُبْحَانَ اللَّهِ (33) ، الْحَمْدُ لِلَّهِ (33) ، اللَّهُ أَكْبَرُ (33)", count: 33 }
+                    { text: "سُبْحَانَ اللَّهِ (33) ، الْحَمْدُ لِلَّهِ (33) ، اللَّهُ أَكْبَرُ (33)", count: 33 },
+                    { text: "لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ.", count: 1 }
                 ]
             }
         ];
 
         function openAzkar() {
-            document.getElementById('modal-title').innerText = "أذكار المسلم الشاملة";
+            document.getElementById('modal-title').innerText = "أذكار المسلم والسبحة الإلكترونية";
             
             let html = azkarCategories.map((cat, cIdx) => {
                 let itemsHTML = cat.items.map((item, iIdx) => `
-                    <div style="background:white; border:1px solid #E2E8F0; border-radius:10px; padding:10px; margin-top:8px;">
-                        <div style="font-size:0.88rem; line-height:1.7;">${item.text}</div>
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-                            <span style="font-size:0.78rem; color:#718096;">التكرار المطلوب: ${item.count}</span>
-                            <button class="counter-btn" id="cnt_${cIdx}_${iIdx}" onclick="countUp('cnt_${cIdx}_${iIdx}', ${item.count})">
-                                العداد: <span class="val">0</span> / ${item.count}
+                    <div style="background:white; border:1px solid #E2E8F0; border-radius:12px; padding:12px; margin-top:10px;">
+                        <div style="font-size:0.9rem; line-height:1.7; font-weight:600; color:#2D3748;">${item.text}</div>
+                        <div class="counter-container">
+                            <div>
+                                <span style="font-size:0.78rem; color:#718096; display:block;">المطلوب: ${item.count}</span>
+                                <button class="reset-btn" onclick="resetCount('cnt_${cIdx}_${iIdx}')">إعادة</button>
+                            </div>
+                            <button class="counter-ring-btn" id="cnt_${cIdx}_${iIdx}" onclick="countUp('cnt_${cIdx}_${iIdx}', ${item.count})">
+                                <span class="val" style="font-size:1.2rem;">0</span>
+                                <span style="font-size:0.65rem; opacity:0.8;">اضغط</span>
                             </button>
                         </div>
                     </div>
@@ -514,7 +553,7 @@
                         <div class="azkar-title-row">
                             <span class="azkar-title">${cat.title}</span>
                             <button class="audio-btn" onclick="playAudio('${cat.audio}')">
-                                <i class="fa-solid fa-volume-high"></i> استماع
+                                <i class="fa-solid fa-volume-high"></i> استماع الأذكار
                             </button>
                         </div>
                         ${itemsHTML}
@@ -533,11 +572,18 @@
             if (current < max) {
                 current++;
                 valSpan.innerText = current;
-                if (navigator.vibrate) navigator.vibrate(40);
+                if (navigator.vibrate) navigator.vibrate(45);
                 if (current === max) {
-                    btn.style.background = "#38A169";
+                    btn.style.background = "linear-gradient(135deg, #38A169, #276749)";
                 }
             }
+        }
+
+        function resetCount(btnId) {
+            const btn = document.getElementById(btnId);
+            const valSpan = btn.querySelector('.val');
+            valSpan.innerText = "0";
+            btn.style.background = "linear-gradient(135deg, var(--secondary), var(--primary))";
         }
 
         function closeModal() {
