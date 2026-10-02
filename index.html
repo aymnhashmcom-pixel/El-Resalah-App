@@ -8,7 +8,7 @@
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="تطبيق الرسالة 📱" />
-    <meta property="og:description" content="تطبيق إسلامي متكامل: أذكار المسلم، القرآن الكريم كاملاً، مواقيت الصلاة والأذان بمؤذنين متعددين، وتذكير الصيام." />
+    <meta property="og:description" content="تطبيق إسلامي متكامل: أذكار المسلم، القرآن الكريم كاملاً، مواقيت الصلاة والأذان والإقامة، وتذكير الأذكار والصيام." />
     <meta property="og:image" content="https://aymnhashmcom-pixel.github.io/El-Resalah-App/share-thumb.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -54,7 +54,7 @@
         .sub-title { font-size: 0.9rem; color: #F3E5AB; font-weight: 600; margin-bottom: 8px; }
         .header-card p { font-size: 0.85rem; opacity: 0.92; font-style: italic; }
 
-        /* شريط العداد التنازلي للصلاة */
+        /* شريط العداد التنازلي للصلاة والأذكار */
         .next-prayer-banner {
             background: #C59B27;
             color: #FFFFFF;
@@ -67,6 +67,19 @@
             font-size: 0.88rem;
             font-weight: 700;
             box-shadow: 0 4px 10px rgba(197, 155, 39, 0.3);
+        }
+
+        .azkar-timer-banner {
+            background: #2D6A4F;
+            color: #FFFFFF;
+            margin: 8px 20px 0;
+            padding: 8px 16px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.82rem;
+            font-weight: 700;
         }
 
         .action-bar { display: flex; gap: 8px; padding: 16px 20px 0; flex-wrap: wrap; }
@@ -198,6 +211,12 @@
         <span id="nextPrayerCountdown" style="font-family: monospace; font-size: 1rem;">--:--:--</span>
     </div>
 
+    <!-- شريط العداد الزمني للأذكار -->
+    <div class="azkar-timer-banner">
+        <span><i class="fa-solid fa-moon"></i> <span id="azkarTimerTitle">جاري احتساب موعد الأذكار...</span></span>
+        <span id="azkarCountdown" style="font-family: monospace; font-size: 0.9rem;">--:--:--</span>
+    </div>
+
     <div class="action-bar">
         <button id="installBtn" class="btn-main" onclick="installApp()">
             <i class="fa-solid fa-download"></i> تثبيت التطبيق
@@ -224,7 +243,7 @@
         <div class="category-card" onclick="openPrayerTimes()">
             <div class="card-info">
                 <div class="icon-box"><i class="fa-solid fa-kaaba"></i></div>
-                <div class="card-title">مواقيت الصلاة والأذان بمؤذنين متعددين</div>
+                <div class="card-title">مواقيت الصلاة، الأذان، والإقامة حسب المحافظة</div>
             </div>
             <i class="fa-solid fa-chevron-left" style="color:#A0AEC0; font-size:0.85rem;"></i>
         </div>
@@ -232,7 +251,7 @@
         <div class="category-card" onclick="openAzkar()">
             <div class="card-info">
                 <div class="icon-box"><i class="fa-solid fa-book-open"></i></div>
-                <div class="card-title">أذكار المسلم الناطقة والسبحة الإلكترونية</div>
+                <div class="card-title">أذكار المسلم الناطقة والتلقائية والسبحة الإلكترونية</div>
             </div>
             <i class="fa-solid fa-chevron-left" style="color:#A0AEC0; font-size:0.85rem;"></i>
         </div>
@@ -257,6 +276,79 @@
     </div>
 
     <script>
+        // --- بيانات المحافظات وفوارق الدقائق عن القاهرة ---
+        const egyptGovernorates = [
+            { name: "القاهرة", offset: 0 },
+            { name: "الجيزة", offset: 0 },
+            { name: "الإسكندرية", offset: 4 },
+            { name: "القليوبية", offset: 0 },
+            { name: "الشرقية", offset: -1 },
+            { name: "الدقهلية", offset: -1 },
+            { name: "البحيرة", offset: 3 },
+            { name: "الغربية", offset: 1 },
+            { name: "المنوفية", offset: 1 },
+            { name: "كفر الشيخ", offset: 2 },
+            { name: "الفيوم", offset: 1 },
+            { name: "بني سويف", offset: 1 },
+            { name: "المنيا", offset: 2 },
+            { name: "أسيوط", offset: 3 },
+            { name: "سوهاج", offset: 3 },
+            { name: "قنا", offset: 2 },
+            { name: "الأقصر", offset: 2 },
+            { name: "أسوان", offset: 3 },
+            { name: "بورسعيد", offset: -5 },
+            { name: "الإسماعيلية", offset: -4 },
+            { name: "السويس", offset: -3 },
+            { name: "دمياط", offset: -3 },
+            { name: "شمال سيناء (العريش)", offset: -10 },
+            { name: "جنوب سيناء (شرم الشيخ)", offset: -9 },
+            { name: "البحر الأحمر (الغردقة)", offset: -6 },
+            { name: "الوادي الجديد", offset: 12 },
+            { name: "مطروح", offset: 15 }
+        ];
+
+        // المواقيت الأساسية لمدينة القاهرة
+        const baseCairoPrayers = [
+            { name: "الفجر", baseTime: "05:19", iqamaDelay: 20 },
+            { name: "الظهر", baseTime: "12:46", iqamaDelay: 15 },
+            { name: "العصر", baseTime: "16:12", iqamaDelay: 15 },
+            { name: "المغرب", baseTime: "18:46", iqamaDelay: 10 },
+            { name: "العشاء", baseTime: "20:03", iqamaDelay: 15 }
+        ];
+
+        function getSelectedGovernorate() {
+            return localStorage.getItem('elresalah_selected_gov') || "القاهرة";
+        }
+
+        function calculatePrayerTimes() {
+            const currentGovName = getSelectedGovernorate();
+            const gov = egyptGovernorates.find(g => g.name === currentGovName) || egyptGovernorates[0];
+            
+            return baseCairoPrayers.map(p => {
+                const [h, m] = p.baseTime.split(':').map(Number);
+                let totalMinutes = h * 60 + m + gov.offset;
+                
+                let newH = Math.floor(totalMinutes / 60) % 24;
+                let newM = totalMinutes % 60;
+                if (newM < 0) { newM += 60; newH -= 1; }
+                
+                const timeFormatted = `${String(newH).padStart(2, '0')}:${String(newM).padStart(2, '0')}`;
+                
+                // حساب وقت الإقامة
+                let iqamaMinutes = totalMinutes + p.iqamaDelay;
+                let iqamaH = Math.floor(iqamaMinutes / 60) % 24;
+                let iqamaM = iqamaMinutes % 60;
+                const iqamaFormatted = `${String(iqamaH).padStart(2, '0')}:${String(iqamaM).padStart(2, '0')}`;
+
+                return {
+                    name: p.name,
+                    time: timeFormatted,
+                    iqamaTime: iqamaFormatted,
+                    iqamaDelay: p.iqamaDelay
+                };
+            });
+        }
+
         // --- إدارة PWA وتثبيت التطبيق ---
         let deferredPrompt = null;
         const installBtn = document.getElementById('installBtn');
@@ -285,7 +377,7 @@
             }
         }
 
-        // --- مشغل الصوت العام الشامل ---
+        // --- مشغل الصوت العام الشامل وإدارة الخلفية ---
         const audioPlayer = document.getElementById('globalAudioPlayer');
 
         document.body.addEventListener('click', function unlockAudio() {
@@ -318,24 +410,31 @@
 
             audioPlayer.src = url;
             audioPlayer.load();
-            
+
+            // دعم التحكم بالأصوات عند قفل الشاشة والعمل بالخلفية
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: label,
+                    artist: "تطبيق الرسالة",
+                    album: "الأذان والأذكار والقرآن الكريم",
+                    artwork: [{ src: "https://aymnhashmcom-pixel.github.io/El-Resalah-App/share-thumb.jpg", sizes: "512x512", type: "image/jpeg" }]
+                });
+            }
+
             let playPromise = audioPlayer.play();
             if (playPromise !== undefined) {
                 playPromise.then(() => {
                     console.log("تم تشغيل الصوت بنجاح");
                 }).catch(error => {
                     console.log("خطأ في التشغيل:", error);
-                    alert("اضغط على الصفحة مرة واحدة ثم أعد المحاولة للسماح بالتشغيل الصوتي.");
+                    alert("اضغط على الصفحة مرة واحدة للسماح بالتشغيل الصوتي تلقائياً.");
                 });
             }
         }
 
-        // --- نطق الأذكار بالصوت والمحاكات الصوتية المباشرة ---
+        // --- نطق الأذكار بالمحاكاة الصوتية والأصوات المباشرة ---
         function speakText(text, title, directAudioUrl = null) {
             stopAudio();
-            const statusBar = document.getElementById('audioPlayerStatus');
-            const statusLabel = document.getElementById('audioPlayingLabel');
-            
             if (directAudioUrl) {
                 playAudioUrl(directAudioUrl, title);
                 return;
@@ -343,6 +442,8 @@
 
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
+                const statusBar = document.getElementById('audioPlayerStatus');
+                const statusLabel = document.getElementById('audioPlayingLabel');
 
                 if (statusBar) statusBar.style.display = 'flex';
                 if (statusLabel) statusLabel.innerText = 'جاري نطق: ' + title;
@@ -350,7 +451,6 @@
                 let utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = 'ar-SA';
                 utterance.rate = 0.85;
-                utterance.pitch = 1.0;
 
                 utterance.onend = function() {
                     if (statusBar) statusBar.style.display = 'none';
@@ -358,7 +458,6 @@
 
                 utterance.onerror = function() {
                     if (statusBar) statusBar.style.display = 'none';
-                    alert('تعذر نطق النص. يرجى تفعيل الصوت والمحرك الصوتي في جهازك.');
                 };
 
                 window.speechSynthesis.speak(utterance);
@@ -372,9 +471,9 @@
             if ("Notification" in window) {
                 Notification.requestPermission().then(permission => {
                     if (permission === "granted") {
-                        alert("تم تفعيل إشعارات الأذان بنجاح!");
+                        alert("تم تفعيل إشعارات الأذان والإقامة والأذكار بنجاح!");
                     } else {
-                        alert("يرجى تفعيل الإشعارات من إعدادات الهاتف ليصلك الأذان في مواقيده.");
+                        alert("يرجى تفعيل الإشعارات من إعدادات الهاتف ليصلك الأذان والأذكار في مواقيتها.");
                     }
                 });
             } else {
@@ -384,7 +483,7 @@
 
         // --- مشاركة التطبيق ---
         function shareApp() {
-            const shareText = '💡 أدعوك لتثبيت "تطبيق الرسالة" على هاتفك (أذكار ناطقة، القرآن الكريم كاملاً، مواقيت الصلاة والأذان):\nhttps://aymnhashmcom-pixel.github.io/El-Resalah-App/';
+            const shareText = '💡 أدعوك لتثبيت "تطبيق الرسالة" على هاتفك (أذكار ناطقة، القرآن الكريم كاملاً، مواقيت الصلاة والأذان والإقامة):\nhttps://aymnhashmcom-pixel.github.io/El-Resalah-App/';
             if (navigator.share) {
                 navigator.share({ title: 'تطبيق الرسالة', text: shareText, url: 'https://aymnhashmcom-pixel.github.io/El-Resalah-App/' });
             } else {
@@ -538,17 +637,12 @@
             { name: "أذان مصر (الشيخ مصطفى إسماعيل)", url: "https://www.islamcan.com/audio/adhan/azan8.mp3" }
         ];
 
-        const prayerTimes = [
-            { name: "الفجر", time: "05:19" },
-            { name: "الظهر", time: "12:46" },
-            { name: "العصر", time: "16:12" },
-            { name: "المغرب", time: "18:46" },
-            { name: "العشاء", time: "20:03" }
-        ];
-
         let lastTriggeredPrayer = "";
+        let lastTriggeredIqama = "";
+        let lastTriggeredAzkar = "";
 
         function updatePrayerTimer() {
+            const currentPrayerTimes = calculatePrayerTimes();
             const now = new Date();
             const currentMinutes = now.getHours() * 60 + now.getMinutes();
             const currentSeconds = now.getSeconds();
@@ -556,7 +650,7 @@
             let nextPrayer = null;
             let nextPrayerTimeMinutes = 0;
 
-            for (let p of prayerTimes) {
+            for (let p of currentPrayerTimes) {
                 const [h, m] = p.time.split(':').map(Number);
                 const pMinutes = h * 60 + m;
                 if (pMinutes > currentMinutes) {
@@ -566,9 +660,8 @@
                 }
             }
 
-            // إذا انتهت جميع صلوات اليوم، تكون الصلاة القادمة هي الفجر للغد
             if (!nextPrayer) {
-                nextPrayer = prayerTimes[0];
+                nextPrayer = currentPrayerTimes[0];
                 const [h, m] = nextPrayer.time.split(':').map(Number);
                 nextPrayerTimeMinutes = (24 * 60) + (h * 60 + m);
             }
@@ -589,28 +682,78 @@
             if (titleEl) titleEl.innerText = `متبقي على صلاة ${nextPrayer.name}`;
             if (timerEl) timerEl.innerText = countdownStr;
 
-            // كارت إضافي في مودال المواقيت عند فتحها
-            const modalNextPrayerEl = document.getElementById('modalNextPrayerBox');
-            if (modalNextPrayerEl) {
-                modalNextPrayerEl.innerHTML = `
-                    <div style="background: #FFFDF0; border: 1px solid #C59B27; border-radius: 12px; padding: 10px 14px; text-align: center; margin-bottom: 12px; color: #1B4332;">
-                        <span style="font-weight: bold; font-size: 0.92rem;">الصلاة القادمة: صلاة ${nextPrayer.name}</span>
-                        <div style="font-size: 1.1rem; color: #C59B27; font-weight: 800; margin-top: 2px;">متبقي ${hoursRemaining > 0 ? hoursRemaining + ' ساعة و ' : ''}${minutesRemaining} دقيقة و ${secondsRemaining} ثانية</div>
-                    </div>
-                `;
-            }
+            // تحديث عداد أذكار الصباح والمساء
+            updateAzkarTimer(currentPrayerTimes, currentMinutes, currentSeconds);
 
-            // الفحص التلقائي لموعد الأذان
+            // الفحص التلقائي لموعد الأذان والإقامة
             const hoursStr = formatTwoDigits(now.getHours());
             const minutesStr = formatTwoDigits(now.getMinutes());
             const currentTimeStr = `${hoursStr}:${minutesStr}`;
 
-            prayerTimes.forEach(p => {
+            currentPrayerTimes.forEach(p => {
                 if (p.time === currentTimeStr && lastTriggeredPrayer !== p.name + "_" + currentTimeStr) {
                     lastTriggeredPrayer = p.name + "_" + currentTimeStr;
                     triggerAdhanNotification(p.name);
                 }
+                if (p.iqamaTime === currentTimeStr && lastTriggeredIqama !== p.name + "_" + currentTimeStr) {
+                    lastTriggeredIqama = p.name + "_" + currentTimeStr;
+                    triggerIqamaNotification(p.name);
+                }
             });
+        }
+
+        // عداد موعد الأذكار التلقائي (الصباح بعد الفجر، والمساء بعد العصر)
+        function updateAzkarTimer(prayers, currentMinutes, currentSeconds) {
+            const fajr = prayers.find(p => p.name === "الفجر");
+            const asr = prayers.find(p => p.name === "العصر");
+
+            const [fH, fM] = fajr.time.split(':').map(Number);
+            const fajrMins = fH * 60 + fM;
+
+            const [aH, aM] = asr.time.split(':').map(Number);
+            const asrMins = aH * 60 + aM;
+
+            let targetAzkar = "";
+            let targetMins = 0;
+
+            if (currentMinutes < fajrMins) {
+                targetAzkar = "أذكار الصباح (بعد الفجر)";
+                targetMins = fajrMins;
+            } else if (currentMinutes < asrMins) {
+                targetAzkar = "أذكار المساء (بعد العصر)";
+                targetMins = asrMins;
+            } else {
+                targetAzkar = "أذكار الصباح (غداً بعد الفجر)";
+                targetMins = (24 * 60) + fajrMins;
+            }
+
+            let diffSecs = (targetMins * 60) - (currentMinutes * 60 + currentSeconds);
+            if (diffSecs < 0) diffSecs = 0;
+
+            const h = Math.floor(diffSecs / 3600);
+            const m = Math.floor((diffSecs % 3600) / 60);
+            const s = diffSecs % 60;
+
+            const formatTwoDigits = (num) => String(num).padStart(2, '0');
+            
+            const azkarTitleEl = document.getElementById('azkarTimerTitle');
+            const azkarCountdownEl = document.getElementById('azkarCountdown');
+
+            if (azkarTitleEl) azkarTitleEl.innerText = `متبقي على ${targetAzkar}`;
+            if (azkarCountdownEl) azkarCountdownEl.innerText = `${formatTwoDigits(h)}:${formatTwoDigits(m)}:${formatTwoDigits(s)}`;
+
+            // التنبيه والتشغيل التلقائي للأذكار
+            const hoursStr = formatTwoDigits(Math.floor(currentMinutes / 60));
+            const minutesStr = formatTwoDigits(currentMinutes % 60);
+            const currentTimeStr = `${hoursStr}:${minutesStr}`;
+
+            if (currentTimeStr === fajr.time && lastTriggeredAzkar !== "fajr_" + currentTimeStr) {
+                lastTriggeredAzkar = "fajr_" + currentTimeStr;
+                triggerAzkarNotification("أذكار الصباح", "https://server8.mp3quran.net/afs/113.mp3");
+            } else if (currentTimeStr === asr.time && lastTriggeredAzkar !== "asr_" + currentTimeStr) {
+                lastTriggeredAzkar = "asr_" + currentTimeStr;
+                triggerAzkarNotification("أذكار المساء", "https://server8.mp3quran.net/afs/114.mp3");
+            }
         }
 
         setInterval(updatePrayerTimer, 1000);
@@ -620,51 +763,101 @@
             playAudioUrl(savedUrl, `أذان صلاة ${prayerName}`);
 
             if ("Notification" in window && Notification.permission === "granted") {
-                new Notification(`حان الآن موعد صلاة ${prayerName}`, {
-                    body: "الله أكبر الله أكبر.. حان وقت الصلاة",
-                    icon: "https://aymnhashmcom-pixel.github.io/El-Resalah-App/share-thumb.jpg"
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.showNotification(`حان الآن موعد صلاة ${prayerName}`, {
+                        body: `الله أكبر الله أكبر.. حان وقت الصلاة بحسب توقيت ${getSelectedGovernorate()}`,
+                        icon: "https://aymnhashmcom-pixel.github.io/El-Resalah-App/share-thumb.jpg",
+                        vibrate: [200, 100, 200]
+                    });
+                });
+            }
+        }
+
+        function triggerIqamaNotification(prayerName) {
+            speakText(`حان الآن موعد إقامة صلاة ${prayerName}`, `إقامة صلاة ${prayerName}`);
+
+            if ("Notification" in window && Notification.permission === "granted") {
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.showNotification(`حان الآن موعد إقامة صلاة ${prayerName}`, {
+                        body: `قد قامت الصلاة.. قد قامت الصلاة`,
+                        icon: "https://aymnhashmcom-pixel.github.io/El-Resalah-App/share-thumb.jpg",
+                        vibrate: [300, 100, 300]
+                    });
+                });
+            }
+        }
+
+        function triggerAzkarNotification(title, audioUrl) {
+            playAudioUrl(audioUrl, title);
+
+            if ("Notification" in window && Notification.permission === "granted") {
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.showNotification(`حان الآن موعد ${title}`, {
+                        body: `اضغط للاستماع وقراءة ${title}`,
+                        icon: "https://aymnhashmcom-pixel.github.io/El-Resalah-App/share-thumb.jpg"
+                    });
                 });
             }
         }
 
         function openPrayerTimes() {
-            document.getElementById('modal-title').innerText = "مواقيت الصلاة والأذان";
+            document.getElementById('modal-title').innerText = "مواقيت الصلاة والأذان والإقامة";
+            const currentGov = getSelectedGovernorate();
             const savedMuazzin = localStorage.getItem('elresalah_selected_muazzin') || muazzins[0].url;
+            const computedPrayers = calculatePrayerTimes();
+
+            let govOptions = egyptGovernorates.map(g => `
+                <option value="${g.name}" ${g.name === currentGov ? 'selected' : ''}>محافظة ${g.name}</option>
+            `).join('');
 
             let muazzinOptions = muazzins.map(m => `
                 <option value="${m.url}" ${m.url === savedMuazzin ? 'selected' : ''}>${m.name}</option>
             `).join('');
 
+            let prayerCardsHTML = computedPrayers.map(p => `
+                <div class="prayer-time-card">
+                    <div>
+                        <strong>صلاة ${p.name}</strong>
+                        <div style="font-size:0.75rem; opacity:0.85; margin-top:2px;">الإقامة: ${p.iqamaTime} (بعد ${p.iqamaDelay} د)</div>
+                    </div>
+                    <span style="font-weight:bold; font-size:1.05rem;">${p.time}</span>
+                </div>
+            `).join('');
+
             let html = `
                 <div>
-                    <div id="modalNextPrayerBox"></div>
-
-                    <div class="notice-box">
-                        <i class="fa-solid fa-bell"></i> سيتم تشغيل الأذان تلقائياً في موقته وعند تجربة التشغيل بالأسفل.
+                    <div style="margin-bottom:12px; background:#E8F5E9; padding:10px; border-radius:12px; border:1px solid #2D6A4F;">
+                        <label style="font-weight:bold; color:var(--primary); display:block; margin-bottom:4px;">اختر المحافظة لتعديل التوقيت:</label>
+                        <select id="govSelect" class="quran-select" style="margin-bottom:0;" onchange="changeGovernorate(this.value)">${govOptions}</select>
                     </div>
 
-                    <div class="prayer-time-card"><span>الفجر</span><span>05:19 ص</span></div>
-                    <div class="prayer-time-card"><span>الظهر</span><span>12:46 م</span></div>
-                    <div class="prayer-time-card"><span>العصر</span><span>04:12 م</span></div>
-                    <div class="prayer-time-card"><span>المغرب</span><span>06:46 م</span></div>
-                    <div class="prayer-time-card"><span>العشاء</span><span>08:03 م</span></div>
+                    <div class="notice-box">
+                        <i class="fa-solid fa-bell"></i> تم تفعيل الأذان والإقامة لتعمل تلقائياً بحسب توقيت ${currentGov}.
+                    </div>
+
+                    ${prayerCardsHTML}
 
                     <div style="margin-top:14px; background:#F8FAFC; padding:12px; border-radius:12px; border:1px solid #E2E8F0;">
                         <label style="font-weight:bold; color:var(--primary); display:block; margin-bottom:6px;">اختر المؤذن المفضّل:</label>
                         <select id="muazzinSelect" class="quran-select" onchange="saveMuazzin(this.value)">${muazzinOptions}</select>
 
                         <button class="submit-btn" onclick="playCurrentMuazzin()">
-                            <i class="fa-solid fa-volume-high"></i> تشغيل صوت الأذان المختار 🔔
+                            <i class="fa-solid fa-volume-high"></i> تجربة صوت الأذان المختار 🔔
                         </button>
 
                         <button class="submit-btn" style="background:#2B6CB0; margin-top:8px;" onclick="requestNotificationPermission()">
-                            <i class="fa-solid fa-bell"></i> تفعيل إشعارات الأذان المباشرة
+                            <i class="fa-solid fa-bell"></i> تفعيل إشعارات الأذان والإقامة بالخلفية
                         </button>
                     </div>
                 </div>
             `;
             document.getElementById('modal-body').innerHTML = html;
             document.getElementById('modal').style.display = 'flex';
+        }
+
+        function changeGovernorate(govName) {
+            localStorage.setItem('elresalah_selected_gov', govName);
+            openPrayerTimes();
             updatePrayerTimer();
         }
 
@@ -679,7 +872,7 @@
             playAudioUrl(url, muazzinName);
         }
 
-        // --- الأذكار المباشرة الناطقة مع ملفات صوتية سريعة استجابة ---
+        // --- الأذكار المباشرة الناطقة مع تصحيح الملفات الصوتية والرابط التلقائي ---
         const azkarCategories = [
             {
                 title: "أذكار الصباح",
@@ -688,7 +881,7 @@
                 items: [
                     { text: "أَصْبَحْنَا وَأَصْبَحَ المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", count: 1 },
                     { text: "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ.", count: 1 },
-                    { text: "اللَّهُمَّ أَنْتَ رَبِّي لاَ إِلَهَ إِلاَّ أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ.", count: 1 }
+                    { text: "اللَّهُمَّ أَنْتَ رَبِّي لاَ إِلَهَ إِلاَّ أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ.", count: 1 }
                 ]
             },
             {
@@ -706,7 +899,7 @@
                 textToRead: "أستغفر الله، أستغفر الله، أستغفر الله. اللهم أنت السلام ومنك السلام تباركت يا ذا الجلال والإكرام.",
                 audioUrl: null,
                 items: [
-                    { text: "أَسْتَغْفِرُ اللَّهَ (ثَلاَثاً)، اللَّهُمَّ أَنْتَ السَّلاَمُ وَمِنْكَ السَّلاَمُ.", count: 1 },
+                    { text: "أَسْتَغْفِرُ اللَّهَ (ثَلاَثاً)، اللَّهُمَّ أَنْتَ السَّلاَمُ وَمِنْكَ السَّلاَمُ تَبَارَكْتَ يَا ذَا الْجَلاَلِ وَالإِكْرَامِ.", count: 1 },
                     { text: "سُبْحَانَ اللَّهِ (33) ، الْحَمْدُ لِلَّهِ (33) ، اللَّهُ أَكْبَرُ (33)", count: 33 }
                 ]
             }
@@ -775,7 +968,7 @@
             document.getElementById('modal').style.display = 'none';
         }
 
-        // تسجيل Service Worker
+        // تسجيل Service Worker للعمل في الخلفية
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js').then(reg => {
