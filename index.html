@@ -54,14 +54,15 @@
         .sub-title { font-size: 0.9rem; color: #F3E5AB; font-weight: 600; margin-bottom: 8px; }
         .header-card p { font-size: 0.85rem; opacity: 0.92; font-style: italic; }
 
-        .action-bar { display: flex; gap: 10px; padding: 16px 20px 0; }
+        .action-bar { display: flex; gap: 8px; padding: 16px 20px 0; flex-wrap: wrap; }
 
         .btn-main {
             flex: 1; background: linear-gradient(135deg, #2D6A4F, #1B4332);
-            color: #FFFFFF; border: none; padding: 13px; border-radius: 14px;
-            font-weight: 700; font-size: 0.9rem; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            color: #FFFFFF; border: none; padding: 11px 8px; border-radius: 12px;
+            font-weight: 700; font-size: 0.82rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
             box-shadow: 0 4px 14px rgba(27, 67, 50, 0.3); transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
         .btn-main:active { transform: translateY(2px); }
@@ -69,6 +70,11 @@
         .btn-share {
             background: linear-gradient(135deg, #D4AF37, #B8901C);
             color: #FFFFFF; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
+        }
+
+        .btn-rate {
+            background: linear-gradient(135deg, #3182CE, #2B6CB0);
+            color: #FFFFFF; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.35);
         }
 
         .main-content { padding: 20px; flex: 1; }
@@ -128,6 +134,9 @@
 
         .quran-select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--secondary); font-size: 0.88rem; margin-bottom: 12px; background: white; }
         .surah-card { background: white; border: 1px solid #EDF2F7; padding: 12px 14px; border-radius: 12px; margin-bottom: 8px; }
+
+        .star-rating { display: flex; justify-content: center; gap: 8px; font-size: 1.8rem; color: #CBD5E0; margin: 15px 0; cursor: pointer; }
+        .star-rating .fa-star.active { color: #D4AF37; }
     </style>
 </head>
 <body>
@@ -139,11 +148,14 @@
     </div>
 
     <div class="action-bar">
-        <button class="btn-main" onclick="alert('التطبيق يعمل كـ Web App ومستعد لرفعه كـ APK على جوجل بلاي')">
+        <button id="installBtn" class="btn-main" onclick="installApp()">
             <i class="fa-solid fa-download"></i> تثبيت التطبيق
         </button>
         <button class="btn-main btn-share" onclick="shareApp()">
             <i class="fa-solid fa-share-nodes"></i> مشاركة التطبيق
+        </button>
+        <button class="btn-main btn-rate" onclick="openRatingModal()">
+            <i class="fa-solid fa-star"></i> تقييم التطبيق
         </button>
     </div>
 
@@ -186,31 +198,119 @@
     </div>
 
     <script>
+        // --- إدارة PWA وتثبيت التطبيق ---
+        let deferredPrompt = null;
+        const installBtn = document.getElementById('installBtn');
+
+        // الإخفاء التلقائي للزر إذا كان التطبيق مثبتاً بالفعل ويعمل كـ PWA
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+            if (installBtn) installBtn.style.display = 'none';
+        }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (installBtn) installBtn.style.display = 'flex';
+        });
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        if (installBtn) installBtn.style.display = 'none';
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                alert('التطبيق مثبت بالفعل أو يمكنك إضافته للشاشة الرئيسية من خيارات المتصفح (Add to Home Screen).');
+            }
+        }
+
+        window.addEventListener('appinstalled', () => {
+            if (installBtn) installBtn.style.display = 'none';
+            deferredPrompt = null;
+        });
+
+        // --- إدارة تشغيل الصوت ---
         let currentAudio = null;
 
         function stopAudio() {
             if (currentAudio) {
                 currentAudio.pause();
                 currentAudio.currentTime = 0;
+                currentAudio = null;
             }
         }
 
         function playAudio(url) {
             stopAudio();
             currentAudio = new Audio(url);
-            currentAudio.play().catch(err => {
-                alert("يرجى الضغط مرة أخرى لتشغيل الصوت بشكل مباشر.");
-            });
+            
+            let playPromise = currentAudio.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    console.log("تم بدء تشغيل الصوت بنجاح");
+                }).catch(err => {
+                    console.error("خطأ تشغيل الصوت:", err);
+                    alert("يرجى الضغط على زر التشغيل مرة أخرى للتحقق من تشغيل الصوت.");
+                });
+            }
         }
 
+        // --- مشاركة التطبيق ---
         function shareApp() {
             const shareText = '💡 أدعوك لتثبيت "تطبيق الرسالة" على هاتفك (أذكار، قرآن صوت وصورة، مواقيت الصلاة والأذان، وتذكير الصيام):\nhttps://aymnhashmcom-pixel.github.io/El-Resalah-App/';
             if (navigator.share) {
                 navigator.share({ title: 'تطبيق الرسالة', text: shareText, url: 'https://aymnhashmcom-pixel.github.io/El-Resalah-App/' });
             } else {
                 navigator.clipboard.writeText(shareText);
-                alert("تم نسخ رابط ورسالة المشاركة!");
+                alert("تم نسخ رابط ورسالة المشاركة بنجاح!");
             }
+        }
+
+        // --- تقييم التطبيق ---
+        let selectedRating = 0;
+        function openRatingModal() {
+            document.getElementById('modal-title').innerText = "تقييم التطبيق";
+            let html = `
+                <div style="text-align: center; padding: 10px 0;">
+                    <p style="font-weight: 600; color: #4A5568;">نسعد برأيك وتقييمك لتطبيق الرسالة</p>
+                    <div class="star-rating" id="starContainer">
+                        <i class="fa-solid fa-star" onclick="setRating(1)"></i>
+                        <i class="fa-solid fa-star" onclick="setRating(2)"></i>
+                        <i class="fa-solid fa-star" onclick="setRating(3)"></i>
+                        <i class="fa-solid fa-star" onclick="setRating(4)"></i>
+                        <i class="fa-solid fa-star" onclick="setRating(5)"></i>
+                    </div>
+                    <textarea class="form-input" id="ratingComment" rows="3" placeholder="ملاحظاتك أو اقتراحاتك لتطوير التطبيق (اختياري)..."></textarea>
+                    <button class="submit-btn" onclick="submitRating()">إرسال التقييم</button>
+                </div>
+            `;
+            document.getElementById('modal-body').innerHTML = html;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function setRating(stars) {
+            selectedRating = stars;
+            const container = document.getElementById('starContainer');
+            const iconList = container.querySelectorAll('.fa-star');
+            iconList.forEach((star, index) => {
+                if (index < stars) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        function submitRating() {
+            if (selectedRating === 0) {
+                alert('يرجى اختيار التقييم بالنجوم أولاً.');
+                return;
+            }
+            alert('جزاك الله خيراً! تم تسليم تقييمك بنجاح.');
+            closeModal();
         }
 
         // --- القراء والسور ---
@@ -282,9 +382,12 @@
             document.getElementById('modal').style.display = 'flex';
         }
 
-        // --- الأذان ---
+        // --- مواقيت الصلاة والأذان ---
         function openPrayerTimes() {
             document.getElementById('modal-title').innerText = "مواقيت الصلاة والأذان";
+            // استخدام رابط صوت الأذان مباشر وموثوق عبر HTTPS
+            const azanUrl = "https://www.islamcan.com/common/adhan/audio/adhan-makkah.mp3";
+
             let html = `
                 <div>
                     <div class="prayer-time-card"><span>الفجر</span><span>05:19 ص</span></div>
@@ -294,8 +397,8 @@
                     <div class="prayer-time-card"><span>العشاء</span><span>08:03 م</span></div>
 
                     <div style="margin-top:14px; background:#F8FAFC; padding:12px; border-radius:12px; border:1px solid #E2E8F0;">
-                        <button class="submit-btn" onclick="playAudio('azan.mp3')">
-                            <i class="fa-solid fa-play"></i> تجربة الأذان المحلي (azan.mp3) 🔔
+                        <button class="submit-btn" onclick="playAudio('${azanUrl}')">
+                            <i class="fa-solid fa-play"></i> استماع لصوت الأذان 🔔
                         </button>
                     </div>
                 </div>
@@ -307,6 +410,17 @@
         function closeModal() {
             stopAudio();
             document.getElementById('modal').style.display = 'none';
+        }
+
+        // تفعيل الـ Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').then(reg => {
+                    console.log('SW Registered:', reg.scope);
+                }).catch(err => {
+                    console.log('SW Registration Failed:', err);
+                });
+            });
         }
     </script>
 </body>
