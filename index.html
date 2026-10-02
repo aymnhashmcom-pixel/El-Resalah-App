@@ -127,6 +127,7 @@
         }
 
         .prayer-time-card { background: var(--primary); color: white; padding: 12px 18px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .prayer-time-card.active-prayer { background: #C59B27; font-weight: bold; }
         .form-input { width: 100%; padding: 11px; border: 1px solid #E2E8F0; border-radius: 10px; margin-bottom: 10px; font-size: 0.88rem; }
         .submit-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 6px; }
 
@@ -216,8 +217,8 @@
         </div>
     </div>
 
-    <!-- عنصر مشغل الصوت المخفي المباشر -->
-    <audio id="globalAudioPlayer" preload="auto" crossorigin="anonymous"></audio>
+    <!-- مشغل الصوت المباشر الشامل -->
+    <audio id="globalAudioPlayer" preload="auto"></audio>
 
     <div class="modal" id="modal">
         <div class="modal-content">
@@ -229,7 +230,7 @@
             
             <div id="audioPlayerStatus" class="audio-player-bar">
                 <span id="audioPlayingLabel" style="font-size:0.82rem;">جاري التشغيل...</span>
-                <button onclick="stopAudio()" style="background:#E53E3E; color:white; border:none; padding:4px 10px; border-radius:6px; font-size:0.75rem; cursor:pointer;">إيقاف 🛑</button>
+                <button onclick="stopAudio()" style="background:#E53E3E; color:white; border:none; padding:5px 12px; border-radius:6px; font-size:0.8rem; font-weight:bold; cursor:pointer;">إيقاف 🛑</button>
             </div>
         </div>
     </div>
@@ -263,8 +264,17 @@
             }
         }
 
-        // --- مشغل الصوت العام الشامل وتفادي منع التشغيل ---
+        // --- مشغل الصوت العام الشامل ---
         const audioPlayer = document.getElementById('globalAudioPlayer');
+
+        // السماح بالتشغيل الصوتي وتجاوز حظر المتصفحات للتشغيل التلقائي
+        document.body.addEventListener('click', function unlockAudio() {
+            audioPlayer.play().then(() => {
+                audioPlayer.pause();
+                audioPlayer.currentTime = 0;
+            }).catch(() => {});
+            document.body.removeEventListener('click', unlockAudio);
+        }, { once: true });
 
         function stopAudio() {
             if (audioPlayer) {
@@ -274,13 +284,17 @@
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
             }
-            document.getElementById('audioPlayerStatus').style.display = 'none';
+            const statusBar = document.getElementById('audioPlayerStatus');
+            if (statusBar) statusBar.style.display = 'none';
         }
 
         function playAudioUrl(url, label) {
             stopAudio();
-            document.getElementById('audioPlayerStatus').style.display = 'flex';
-            document.getElementById('audioPlayingLabel').innerText = 'جاري تشغيل: ' + label;
+            const statusBar = document.getElementById('audioPlayerStatus');
+            const statusLabel = document.getElementById('audioPlayingLabel');
+            
+            if (statusBar) statusBar.style.display = 'flex';
+            if (statusLabel) statusLabel.innerText = 'جاري تشغيل: ' + label;
 
             audioPlayer.src = url;
             audioPlayer.load();
@@ -290,8 +304,8 @@
                 playPromise.then(() => {
                     console.log("تم تشغيل الصوت بنجاح");
                 }).catch(error => {
-                    console.log("إيقاف التشغيل التلقائي:", error);
-                    alert("اضغط مرة أخرى على زر الاستماع لتأكيد تشغيل الصوت على هاتفك.");
+                    console.log("خطأ في التشغيل التلقائي:", error);
+                    alert("اضغط مرة أخرى لتأكيد تشغيل الصوت على جهازك.");
                 });
             }
         }
@@ -300,11 +314,12 @@
         function speakText(text, title) {
             stopAudio();
             if ('speechSynthesis' in window) {
-                // إلغاء أي نطق قديم
                 window.speechSynthesis.cancel();
 
-                document.getElementById('audioPlayerStatus').style.display = 'flex';
-                document.getElementById('audioPlayingLabel').innerText = 'جاري نطق: ' + title;
+                const statusBar = document.getElementById('audioPlayerStatus');
+                const statusLabel = document.getElementById('audioPlayingLabel');
+                if (statusBar) statusBar.style.display = 'flex';
+                if (statusLabel) statusLabel.innerText = 'جاري نطق: ' + title;
 
                 let utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = 'ar-SA';
@@ -312,11 +327,11 @@
                 utterance.pitch = 1.0;
 
                 utterance.onend = function() {
-                    document.getElementById('audioPlayerStatus').style.display = 'none';
+                    if (statusBar) statusBar.style.display = 'none';
                 };
 
                 utterance.onerror = function() {
-                    document.getElementById('audioPlayerStatus').style.display = 'none';
+                    if (statusBar) statusBar.style.display = 'none';
                     alert('يرجى التأكد من تفعيل محرك النطق العربي (TTS) في إعدادات الهاتف.');
                 };
 
@@ -326,7 +341,7 @@
             }
         }
 
-        // --- طلب إذن الإشعارات ---
+        // --- طلب إذن الإشعارات والأذان التلقائي ---
         function requestNotificationPermission() {
             if ("Notification" in window) {
                 Notification.requestPermission().then(permission => {
@@ -433,7 +448,7 @@
             openRatingModal();
         }
 
-        // --- المصحف الشريف المباشر السريع (تم تعديل سيرفر الطبلاوي لسيرفرcdn مباشر) ---
+        // --- المصحف الشريف المباشر (تعديل سيرفر الشيخ الطبلاوي وسائر القراء) ---
         const reciters = [
             { name: "محمد محمود الطبلاوي", url: "https://server10.mp3quran.net/tblwi/" },
             { name: "محمود خليل الحصري", url: "https://server13.mp3quran.net/husr/" },
@@ -489,13 +504,51 @@
             playAudioUrl(fullAudioUrl, `سورة ${surahName} بصوت ${reciterName}`);
         }
 
-        // --- المؤذنين بروابط موثوقة تعمل بدون حظر متصفحات ---
+        // --- المؤذنين ومواقيت الصلاة المباشرة ---
         const muazzins = [
-            { name: "أذان الحرم المكي الشريف", url: "https://media.islambit.com/adhan/makkah.mp3" },
-            { name: "أذان الحرم المدني الشريف", url: "https://media.islambit.com/adhan/madinah.mp3" },
-            { name: "أذان المسجد الأقصى المبارك", url: "https://media.islambit.com/adhan/alaqsa.mp3" },
-            { name: "أذان مصر (الشيخ مصطفى إسماعيل)", url: "https://media.islambit.com/adhan/egypt.mp3" }
+            { name: "أذان الحرم المكي الشريف", url: "https://www.islamcan.com/audio/adhan/azan1.mp3" },
+            { name: "أذان الحرم المدني الشريف", url: "https://www.islamcan.com/audio/adhan/azan2.mp3" },
+            { name: "أذان المسجد الأقصى المبارك", url: "https://www.islamcan.com/audio/adhan/azan3.mp3" },
+            { name: "أذان مصر (الشيخ مصطفى إسماعيل)", url: "https://www.islamcan.com/audio/adhan/azan8.mp3" }
         ];
+
+        const prayerTimes = [
+            { name: "الفجر", time: "05:19" },
+            { name: "الظهر", time: "12:46" },
+            { name: "العصر", time: "16:12" },
+            { name: "المغرب", time: "18:46" },
+            { name: "العشاء", time: "20:03" }
+        ];
+
+        let lastTriggeredPrayer = "";
+
+        function checkPrayerTimesAuto() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const currentTimeStr = `${hours}:${minutes}`;
+
+            prayerTimes.forEach(p => {
+                if (p.time === currentTimeStr && lastTriggeredPrayer !== p.name + "_" + currentTimeStr) {
+                    lastTriggeredPrayer = p.name + "_" + currentTimeStr;
+                    triggerAdhanNotification(p.name);
+                }
+            });
+        }
+
+        setInterval(checkPrayerTimesAuto, 10000);
+
+        function triggerAdhanNotification(prayerName) {
+            const savedUrl = localStorage.getItem('elresalah_selected_muazzin') || muazzins[0].url;
+            playAudioUrl(savedUrl, `أذان صلاة ${prayerName}`);
+
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification(`حان الآن موعد صلاة ${prayerName}`, {
+                    body: "الله أكبر الله أكبر.. حان وقت الصلاة",
+                    icon: "https://aymnhashmcom-pixel.github.io/El-Resalah-App/share-thumb.jpg"
+                });
+            }
+        }
 
         function openPrayerTimes() {
             document.getElementById('modal-title').innerText = "مواقيت الصلاة والأذان";
@@ -508,7 +561,7 @@
             let html = `
                 <div>
                     <div class="notice-box">
-                        <i class="fa-solid fa-bell"></i> يمكنك الاستماع لصوت الأذان المختار وتفعيله للتنبيهات.
+                        <i class="fa-solid fa-bell"></i> سيتم تشغيل الأذان تلقائياً في موقته وعند تجربة التشغيل بالأسفل.
                     </div>
 
                     <div class="prayer-time-card"><span>الفجر</span><span>05:19 ص</span></div>
@@ -559,7 +612,7 @@
             },
             {
                 title: "أذكار المساء",
-                textToRead: "أرسينا وأمسى الملك لله والحمد لله لا إله إلا الله وحده لا شريك له. اللهم بك أمسينا وبك أصبحنا وبك نحيا وبك نموت وإليك المصير.",
+                textToRead: "أمسينَا وأمسى الملك لله والحمد لله لا إله إلا الله وحده لا شريك له. اللهم بك أمسينا وبك أصبحنا وبك نحيا وبك نموت وإليك المصير.",
                 items: [
                     { text: "أَمْسَيْنَا وَأَمْسَى المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", count: 1 },
                     { text: "اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ المَصِيرُ.", count: 1 },
