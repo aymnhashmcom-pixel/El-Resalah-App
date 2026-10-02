@@ -8,7 +8,7 @@
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="تطبيق الرسالة 📱" />
-    <meta property="og:description" content="تطبيق إسلامي متكامل: أذكار المسلم، القرآن الكريم كاملاً، مواقيت الصلاة والأذان والإقامة، وتذكير الأذكار والصيام." />
+    <meta property="og:description" content="تطبيق إسلامي متكامل: أذكار المسلم، القرآن الكريم كاملاً، مواقيت الصلاة والأذان والإقامة، وتحديد اتجاه القبلة." />
     <meta property="og:image" content="https://aymnhashmcom-pixel.github.io/El-Resalah-App/share-thumb.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -54,7 +54,6 @@
         .sub-title { font-size: 0.9rem; color: #F3E5AB; font-weight: 600; margin-bottom: 8px; }
         .header-card p { font-size: 0.85rem; opacity: 0.92; font-style: italic; }
 
-        /* شريط العداد التنازلي للصلاة والأذكار */
         .next-prayer-banner {
             background: #C59B27;
             color: #FFFFFF;
@@ -155,7 +154,6 @@
         }
 
         .prayer-time-card { background: var(--primary); color: white; padding: 12px 18px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .prayer-time-card.active-prayer { background: #C59B27; font-weight: bold; border: 2px solid #FFFDF0; }
         .form-input { width: 100%; padding: 11px; border: 1px solid #E2E8F0; border-radius: 10px; margin-bottom: 10px; font-size: 0.88rem; }
         .submit-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 6px; }
 
@@ -194,6 +192,22 @@
 
         .notice-box {
             background: #EBF8FF; border-right: 4px solid #3182CE; padding: 10px 14px; border-radius: 8px; font-size: 0.82rem; margin-bottom: 12px; color: #2B6CB0;
+        }
+
+        /* تصميم البوصلة */
+        .compass-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0;
+        }
+        .compass-disc {
+            width: 200px; height: 200px; border-radius: 50%; border: 6px solid var(--primary);
+            position: relative; background: #FFFDF0; box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            display: flex; align-items: center; justify-content: center; transition: transform 0.2s ease-out;
+        }
+        .compass-arrow {
+            width: 8px; height: 90px; background: #E53E3E; position: absolute; top: 10px; border-radius: 4px;
+        }
+        .kaaba-icon-box {
+            position: absolute; font-size: 1.8rem; color: var(--gold-soft); top: 25px;
         }
     </style>
 </head>
@@ -248,6 +262,14 @@
             <i class="fa-solid fa-chevron-left" style="color:#A0AEC0; font-size:0.85rem;"></i>
         </div>
 
+        <div class="category-card" onclick="openQiblaCompass()">
+            <div class="card-info">
+                <div class="icon-box" style="color:#C59B27;"><i class="fa-solid fa-compass"></i></div>
+                <div class="card-title">تحديد اتجاه القبلة الشريفة</div>
+            </div>
+            <i class="fa-solid fa-chevron-left" style="color:#A0AEC0; font-size:0.85rem;"></i>
+        </div>
+
         <div class="category-card" onclick="openAzkar()">
             <div class="card-info">
                 <div class="icon-box"><i class="fa-solid fa-book-open"></i></div>
@@ -276,7 +298,6 @@
     </div>
 
     <script>
-        // --- بيانات المحافظات وفوارق الدقائق عن القاهرة ---
         const egyptGovernorates = [
             { name: "القاهرة", offset: 0 },
             { name: "الجيزة", offset: 0 },
@@ -307,7 +328,6 @@
             { name: "مطروح", offset: 15 }
         ];
 
-        // المواقيت الأساسية لمدينة القاهرة
         const baseCairoPrayers = [
             { name: "الفجر", baseTime: "05:19", iqamaDelay: 20 },
             { name: "الظهر", baseTime: "12:46", iqamaDelay: 15 },
@@ -334,7 +354,6 @@
                 
                 const timeFormatted = `${String(newH).padStart(2, '0')}:${String(newM).padStart(2, '0')}`;
                 
-                // حساب وقت الإقامة
                 let iqamaMinutes = totalMinutes + p.iqamaDelay;
                 let iqamaH = Math.floor(iqamaMinutes / 60) % 24;
                 let iqamaM = iqamaMinutes % 60;
@@ -349,7 +368,6 @@
             });
         }
 
-        // --- إدارة PWA وتثبيت التطبيق ---
         let deferredPrompt = null;
         const installBtn = document.getElementById('installBtn');
 
@@ -377,7 +395,6 @@
             }
         }
 
-        // --- مشغل الصوت العام الشامل وإدارة الخلفية ---
         const audioPlayer = document.getElementById('globalAudioPlayer');
 
         document.body.addEventListener('click', function unlockAudio() {
@@ -411,7 +428,6 @@
             audioPlayer.src = url;
             audioPlayer.load();
 
-            // دعم التحكم بالأصوات عند قفل الشاشة والعمل بالخلفية
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: label,
@@ -423,16 +439,12 @@
 
             let playPromise = audioPlayer.play();
             if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    console.log("تم تشغيل الصوت بنجاح");
-                }).catch(error => {
-                    console.log("خطأ في التشغيل:", error);
+                playPromise.then(() => {}).catch(error => {
                     alert("اضغط على الصفحة مرة واحدة للسماح بالتشغيل الصوتي تلقائياً.");
                 });
             }
         }
 
-        // --- نطق الأذكار بالمحاكاة الصوتية والأصوات المباشرة ---
         function speakText(text, title, directAudioUrl = null) {
             stopAudio();
             if (directAudioUrl) {
@@ -452,13 +464,8 @@
                 utterance.lang = 'ar-SA';
                 utterance.rate = 0.85;
 
-                utterance.onend = function() {
-                    if (statusBar) statusBar.style.display = 'none';
-                };
-
-                utterance.onerror = function() {
-                    if (statusBar) statusBar.style.display = 'none';
-                };
+                utterance.onend = function() { if (statusBar) statusBar.style.display = 'none'; };
+                utterance.onerror = function() { if (statusBar) statusBar.style.display = 'none'; };
 
                 window.speechSynthesis.speak(utterance);
             } else {
@@ -466,14 +473,13 @@
             }
         }
 
-        // --- طلب إذن الإشعارات والأذان التلقائي ---
         function requestNotificationPermission() {
             if ("Notification" in window) {
                 Notification.requestPermission().then(permission => {
                     if (permission === "granted") {
                         alert("تم تفعيل إشعارات الأذان والإقامة والأذكار بنجاح!");
                     } else {
-                        alert("يرجى تفعيل الإشعارات من إعدادات الهاتف ليصلك الأذان والأذكار في مواقيتها.");
+                        alert("يرجى تفعيل الإشعارات من إعدادات الهاتف يصلك الأذان والأذكار في مواقيتها.");
                     }
                 });
             } else {
@@ -481,9 +487,8 @@
             }
         }
 
-        // --- مشاركة التطبيق ---
         function shareApp() {
-            const shareText = '💡 أدعوك لتثبيت "تطبيق الرسالة" على هاتفك (أذكار ناطقة، القرآن الكريم كاملاً، مواقيت الصلاة والأذان والإقامة):\nhttps://aymnhashmcom-pixel.github.io/El-Resalah-App/';
+            const shareText = '💡 أدعوك لتثبيت "تطبيق الرسالة" على هاتفك (أذكار ناطقة، القرآن الكريم كاملاً، مواقيت الصلاة والأذان والإقامة، وتحديد القبلة):\nhttps://aymnhashmcom-pixel.github.io/El-Resalah-App/';
             if (navigator.share) {
                 navigator.share({ title: 'تطبيق الرسالة', text: shareText, url: 'https://aymnhashmcom-pixel.github.io/El-Resalah-App/' });
             } else {
@@ -492,7 +497,6 @@
             }
         }
 
-        // --- التقييمات ---
         const defaultRatingsList = [
             { name: "زياد", stars: 5, comment: "ممتاز جزاكم الله خير", date: "2026-03-25" },
             { name: "أحمد علي", stars: 5, comment: "تطبيق رائع ومفيد جداً بارك الله فيكم", date: "2026-03-28" },
@@ -573,7 +577,7 @@
             openRatingModal();
         }
 
-        // --- المصحف الشريف المباشر (إصلاح رابط الشيخ الطبلاوي وسائر القراء) ---
+        /* المصحف الشريف - السيرفرات المعتمدة للشيخ الطبلاوي وكبار القراء */
         const reciters = [
             { name: "محمد محمود الطبلاوي", url: "https://server10.mp3quran.net/tblwi/" },
             { name: "محمود خليل الحصري", url: "https://server13.mp3quran.net/husr/" },
@@ -629,13 +633,15 @@
             playAudioUrl(fullAudioUrl, `سورة ${surahName} بصوت ${reciterName}`);
         }
 
-        // --- المؤذنين ومواقيت الصلاة المباشرة والعداد التنازلي ---
         const muazzins = [
             { name: "أذان الحرم المكي الشريف", url: "https://www.islamcan.com/audio/adhan/azan1.mp3" },
             { name: "أذان الحرم المدني الشريف", url: "https://www.islamcan.com/audio/adhan/azan2.mp3" },
             { name: "أذان المسجد الأقصى المبارك", url: "https://www.islamcan.com/audio/adhan/azan3.mp3" },
             { name: "أذان مصر (الشيخ مصطفى إسماعيل)", url: "https://www.islamcan.com/audio/adhan/azan8.mp3" }
         ];
+
+        // صوت الإقامة المباشر
+        const iqamaAudioUrl = "https://www.islamcan.com/audio/adhan/iqama.mp3";
 
         let lastTriggeredPrayer = "";
         let lastTriggeredIqama = "";
@@ -682,10 +688,8 @@
             if (titleEl) titleEl.innerText = `متبقي على صلاة ${nextPrayer.name}`;
             if (timerEl) timerEl.innerText = countdownStr;
 
-            // تحديث عداد أذكار الصباح والمساء
             updateAzkarTimer(currentPrayerTimes, currentMinutes, currentSeconds);
 
-            // الفحص التلقائي لموعد الأذان والإقامة
             const hoursStr = formatTwoDigits(now.getHours());
             const minutesStr = formatTwoDigits(now.getMinutes());
             const currentTimeStr = `${hoursStr}:${minutesStr}`;
@@ -702,7 +706,6 @@
             });
         }
 
-        // عداد موعد الأذكار التلقائي (الصباح بعد الفجر، والمساء بعد العصر)
         function updateAzkarTimer(prayers, currentMinutes, currentSeconds) {
             const fajr = prayers.find(p => p.name === "الفجر");
             const asr = prayers.find(p => p.name === "العصر");
@@ -742,17 +745,16 @@
             if (azkarTitleEl) azkarTitleEl.innerText = `متبقي على ${targetAzkar}`;
             if (azkarCountdownEl) azkarCountdownEl.innerText = `${formatTwoDigits(h)}:${formatTwoDigits(m)}:${formatTwoDigits(s)}`;
 
-            // التنبيه والتشغيل التلقائي للأذكار
             const hoursStr = formatTwoDigits(Math.floor(currentMinutes / 60));
             const minutesStr = formatTwoDigits(currentMinutes % 60);
             const currentTimeStr = `${hoursStr}:${minutesStr}`;
 
             if (currentTimeStr === fajr.time && lastTriggeredAzkar !== "fajr_" + currentTimeStr) {
                 lastTriggeredAzkar = "fajr_" + currentTimeStr;
-                triggerAzkarNotification("أذكار الصباح", "https://server8.mp3quran.net/afs/113.mp3");
+                triggerAzkarNotification("أذكار الصباح", "https://media.blubrry.com/muslim_azkar/archive.org/download/Azkar_Sabah_And_Masaa/Azkar_Sabah.mp3");
             } else if (currentTimeStr === asr.time && lastTriggeredAzkar !== "asr_" + currentTimeStr) {
                 lastTriggeredAzkar = "asr_" + currentTimeStr;
-                triggerAzkarNotification("أذكار المساء", "https://server8.mp3quran.net/afs/114.mp3");
+                triggerAzkarNotification("أذكار المساء", "https://media.blubrry.com/muslim_azkar/archive.org/download/Azkar_Sabah_And_Masaa/Azkar_Masaa.mp3");
             }
         }
 
@@ -774,7 +776,7 @@
         }
 
         function triggerIqamaNotification(prayerName) {
-            speakText(`حان الآن موعد إقامة صلاة ${prayerName}`, `إقامة صلاة ${prayerName}`);
+            playAudioUrl(iqamaAudioUrl, `إقامة صلاة ${prayerName}`);
 
             if ("Notification" in window && Notification.permission === "granted") {
                 navigator.serviceWorker.ready.then(registration => {
@@ -844,6 +846,9 @@
                         <button class="submit-btn" onclick="playCurrentMuazzin()">
                             <i class="fa-solid fa-volume-high"></i> تجربة صوت الأذان المختار 🔔
                         </button>
+                        <button class="submit-btn" style="background:#2D6A4F; margin-top:6px;" onclick="playAudioUrl('${iqamaAudioUrl}', 'إقامة الصلاة')">
+                            <i class="fa-solid fa-bullhorn"></i> تجربة صوت إقامة الصلاة 🕌
+                        </button>
 
                         <button class="submit-btn" style="background:#2B6CB0; margin-top:8px;" onclick="requestNotificationPermission()">
                             <i class="fa-solid fa-bell"></i> تفعيل إشعارات الأذان والإقامة بالخلفية
@@ -872,12 +877,58 @@
             playAudioUrl(url, muazzinName);
         }
 
-        // --- الأذكار المباشرة الناطقة مع تصحيح الملفات الصوتية والرابط التلقائي ---
+        /* بوصلة اتجاه القبلة */
+        function openQiblaCompass() {
+            document.getElementById('modal-title').innerText = "تحديد اتجاه القبلة الشريفة";
+            
+            let html = `
+                <div class="compass-container">
+                    <p style="font-size:0.85rem; color:#4A5568; margin-bottom:12px; text-align:center;">
+                        ضع الهاتف بشكل أفقياً واستدر حتى يتجه الرمز الذهبي نحو الأعلى لتحديد القبلة.
+                    </p>
+                    <div class="compass-disc" id="compassDisc">
+                        <div class="compass-arrow"></div>
+                        <div class="kaaba-icon-box"><i class="fa-solid fa-kaaba"></i></div>
+                    </div>
+                    <div id="compassDegree" style="margin-top:14px; font-weight:bold; color:var(--primary); font-size:1rem;">
+                        جاري قراءة بوصلة الجهاز...
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-body').innerHTML = html;
+            document.getElementById('modal').style.display = 'flex';
+
+            if (window.DeviceOrientationEvent) {
+                window.addEventListener('deviceorientation', handleCompass, true);
+            } else {
+                document.getElementById('compassDegree').innerText = "عذراً، حساس البوصلة غير مدعوم على هذا الجهاز.";
+            }
+        }
+
+        function handleCompass(event) {
+            let heading = event.alpha;
+            if (typeof event.webkitCompassHeading !== "undefined") {
+                heading = event.webkitCompassHeading; // لأجهزة آيفون
+            }
+            if (heading !== null && heading !== undefined) {
+                let compassDisc = document.getElementById('compassDisc');
+                let compassDegree = document.getElementById('compassDegree');
+                if (compassDisc && compassDegree) {
+                    // اتجاه مكة التقريبي من مصر حوالي 136 درجة
+                    let qiblaAngle = 136;
+                    let rotateDeg = qiblaAngle - heading;
+                    compassDisc.style.transform = `rotate(${rotateDeg}deg)`;
+                    compassDegree.innerText = `الزاوية الحالية: ${Math.round(heading)}°`;
+                }
+            }
+        }
+
+        /* الأذكار المباشرة الناطقة مع الملفات الصوتية الصحيحة الأذان والأذكار */
         const azkarCategories = [
             {
                 title: "أذكار الصباح",
                 textToRead: "أصبحنا وأصبح الملك لله والحمد لله لا إله إلا الله وحده لا شريك له. اللهم بك أصبحنا وبك أمسينا وبك نحيا وبك نموت وإليك النشور.",
-                audioUrl: "https://server8.mp3quran.net/afs/113.mp3",
+                audioUrl: "https://media.blubrry.com/muslim_azkar/archive.org/download/Azkar_Sabah_And_Masaa/Azkar_Sabah.mp3",
                 items: [
                     { text: "أَصْبَحْنَا وَأَصْبَحَ المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", count: 1 },
                     { text: "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ.", count: 1 },
@@ -887,7 +938,7 @@
             {
                 title: "أذكار المساء",
                 textToRead: "أمسينَا وأمسى الملك لله والحمد لله لا إله إلا الله وحده لا شريك له. اللهم بك أمسينا وبك أصبحنا وبك نحيا وبك نموت وإليك المصير.",
-                audioUrl: "https://server8.mp3quran.net/afs/114.mp3",
+                audioUrl: "https://media.blubrry.com/muslim_azkar/archive.org/download/Azkar_Sabah_And_Masaa/Azkar_Masaa.mp3",
                 items: [
                     { text: "أَمْسَيْنَا وَأَمْسَى المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", count: 1 },
                     { text: "اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ المَصِيرُ.", count: 1 },
@@ -895,7 +946,7 @@
                 ]
             },
             {
-                title: "أذكار ما بعد الصلاة والادعية",
+                title: "أذكار ما بعد الصلاة والأدعية",
                 textToRead: "أستغفر الله، أستغفر الله، أستغفر الله. اللهم أنت السلام ومنك السلام تباركت يا ذا الجلال والإكرام.",
                 audioUrl: null,
                 items: [
@@ -965,10 +1016,12 @@
 
         function closeModal() {
             stopAudio();
+            if (window.DeviceOrientationEvent) {
+                window.removeEventListener('deviceorientation', handleCompass, true);
+            }
             document.getElementById('modal').style.display = 'none';
         }
 
-        // تسجيل Service Worker للعمل في الخلفية
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js').then(reg => {
