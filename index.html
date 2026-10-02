@@ -54,6 +54,21 @@
         .sub-title { font-size: 0.9rem; color: #F3E5AB; font-weight: 600; margin-bottom: 8px; }
         .header-card p { font-size: 0.85rem; opacity: 0.92; font-style: italic; }
 
+        /* شريط العداد التنازلي للصلاة */
+        .next-prayer-banner {
+            background: #C59B27;
+            color: #FFFFFF;
+            margin: 14px 20px 0;
+            padding: 10px 16px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.88rem;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(197, 155, 39, 0.3);
+        }
+
         .action-bar { display: flex; gap: 8px; padding: 16px 20px 0; flex-wrap: wrap; }
 
         .btn-main {
@@ -127,7 +142,7 @@
         }
 
         .prayer-time-card { background: var(--primary); color: white; padding: 12px 18px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .prayer-time-card.active-prayer { background: #C59B27; font-weight: bold; }
+        .prayer-time-card.active-prayer { background: #C59B27; font-weight: bold; border: 2px solid #FFFDF0; }
         .form-input { width: 100%; padding: 11px; border: 1px solid #E2E8F0; border-radius: 10px; margin-bottom: 10px; font-size: 0.88rem; }
         .submit-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 6px; }
 
@@ -175,6 +190,12 @@
         <h1>تطبيق الرسالة</h1>
         <div class="sub-title">اتباع هدي النبي ﷺ في الصلاة والأذكار والصيام</div>
         <p>«عَلَيْكُمْ بِسُنَّتِي وَسُنَّةِ الْخُلَفَاءِ الرَّاشِدِينَ»</p>
+    </div>
+
+    <!-- شريط العداد الزمني للصلاة القادمة -->
+    <div class="next-prayer-banner">
+        <span><i class="fa-regular fa-clock"></i> <span id="nextPrayerTitle">جاري تحضير الصلاة القادمة...</span></span>
+        <span id="nextPrayerCountdown" style="font-family: monospace; font-size: 1rem;">--:--:--</span>
     </div>
 
     <div class="action-bar">
@@ -267,7 +288,6 @@
         // --- مشغل الصوت العام الشامل ---
         const audioPlayer = document.getElementById('globalAudioPlayer');
 
-        // السماح بالتشغيل الصوتي وتجاوز حظر المتصفحات للتشغيل التلقائي
         document.body.addEventListener('click', function unlockAudio() {
             audioPlayer.play().then(() => {
                 audioPlayer.pause();
@@ -304,20 +324,26 @@
                 playPromise.then(() => {
                     console.log("تم تشغيل الصوت بنجاح");
                 }).catch(error => {
-                    console.log("خطأ في التشغيل التلقائي:", error);
-                    alert("اضغط مرة أخرى لتأكيد تشغيل الصوت على جهازك.");
+                    console.log("خطأ في التشغيل:", error);
+                    alert("اضغط على الصفحة مرة واحدة ثم أعد المحاولة للسماح بالتشغيل الصوتي.");
                 });
             }
         }
 
-        // --- نطق الأذكار باللغة العربية المباشرة ---
-        function speakText(text, title) {
+        // --- نطق الأذكار بالصوت والمحاكات الصوتية المباشرة ---
+        function speakText(text, title, directAudioUrl = null) {
             stopAudio();
+            const statusBar = document.getElementById('audioPlayerStatus');
+            const statusLabel = document.getElementById('audioPlayingLabel');
+            
+            if (directAudioUrl) {
+                playAudioUrl(directAudioUrl, title);
+                return;
+            }
+
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
 
-                const statusBar = document.getElementById('audioPlayerStatus');
-                const statusLabel = document.getElementById('audioPlayingLabel');
                 if (statusBar) statusBar.style.display = 'flex';
                 if (statusLabel) statusLabel.innerText = 'جاري نطق: ' + title;
 
@@ -332,7 +358,7 @@
 
                 utterance.onerror = function() {
                     if (statusBar) statusBar.style.display = 'none';
-                    alert('يرجى التأكد من تفعيل محرك النطق العربي (TTS) في إعدادات الهاتف.');
+                    alert('تعذر نطق النص. يرجى تفعيل الصوت والمحرك الصوتي في جهازك.');
                 };
 
                 window.speechSynthesis.speak(utterance);
@@ -448,7 +474,7 @@
             openRatingModal();
         }
 
-        // --- المصحف الشريف المباشر (تعديل سيرفر الشيخ الطبلاوي وسائر القراء) ---
+        // --- المصحف الشريف المباشر (إصلاح رابط الشيخ الطبلاوي وسائر القراء) ---
         const reciters = [
             { name: "محمد محمود الطبلاوي", url: "https://server10.mp3quran.net/tblwi/" },
             { name: "محمود خليل الحصري", url: "https://server13.mp3quran.net/husr/" },
@@ -504,7 +530,7 @@
             playAudioUrl(fullAudioUrl, `سورة ${surahName} بصوت ${reciterName}`);
         }
 
-        // --- المؤذنين ومواقيت الصلاة المباشرة ---
+        // --- المؤذنين ومواقيت الصلاة المباشرة والعداد التنازلي ---
         const muazzins = [
             { name: "أذان الحرم المكي الشريف", url: "https://www.islamcan.com/audio/adhan/azan1.mp3" },
             { name: "أذان الحرم المدني الشريف", url: "https://www.islamcan.com/audio/adhan/azan2.mp3" },
@@ -522,11 +548,62 @@
 
         let lastTriggeredPrayer = "";
 
-        function checkPrayerTimesAuto() {
+        function updatePrayerTimer() {
             const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const currentTimeStr = `${hours}:${minutes}`;
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            const currentSeconds = now.getSeconds();
+
+            let nextPrayer = null;
+            let nextPrayerTimeMinutes = 0;
+
+            for (let p of prayerTimes) {
+                const [h, m] = p.time.split(':').map(Number);
+                const pMinutes = h * 60 + m;
+                if (pMinutes > currentMinutes) {
+                    nextPrayer = p;
+                    nextPrayerTimeMinutes = pMinutes;
+                    break;
+                }
+            }
+
+            // إذا انتهت جميع صلوات اليوم، تكون الصلاة القادمة هي الفجر للغد
+            if (!nextPrayer) {
+                nextPrayer = prayerTimes[0];
+                const [h, m] = nextPrayer.time.split(':').map(Number);
+                nextPrayerTimeMinutes = (24 * 60) + (h * 60 + m);
+            }
+
+            let diffSeconds = (nextPrayerTimeMinutes * 60) - (currentMinutes * 60 + currentSeconds);
+            if (diffSeconds < 0) diffSeconds = 0;
+
+            const hoursRemaining = Math.floor(diffSeconds / 3600);
+            const minutesRemaining = Math.floor((diffSeconds % 3600) / 60);
+            const secondsRemaining = diffSeconds % 60;
+
+            const formatTwoDigits = (num) => String(num).padStart(2, '0');
+            const countdownStr = `${formatTwoDigits(hoursRemaining)}:${formatTwoDigits(minutesRemaining)}:${formatTwoDigits(secondsRemaining)}`;
+
+            const titleEl = document.getElementById('nextPrayerTitle');
+            const timerEl = document.getElementById('nextPrayerCountdown');
+
+            if (titleEl) titleEl.innerText = `متبقي على صلاة ${nextPrayer.name}`;
+            if (timerEl) timerEl.innerText = countdownStr;
+
+            // كارت إضافي في مودال المواقيت عند فتحها
+            const modalNextPrayerEl = document.getElementById('modalNextPrayerBox');
+            if (modalNextPrayerEl) {
+                modalNextPrayerEl.innerHTML = `
+                    <div style="background: #FFFDF0; border: 1px solid #C59B27; border-radius: 12px; padding: 10px 14px; text-align: center; margin-bottom: 12px; color: #1B4332;">
+                        <span style="font-weight: bold; font-size: 0.92rem;">الصلاة القادمة: صلاة ${nextPrayer.name}</span>
+                        <div style="font-size: 1.1rem; color: #C59B27; font-weight: 800; margin-top: 2px;">متبقي ${hoursRemaining > 0 ? hoursRemaining + ' ساعة و ' : ''}${minutesRemaining} دقيقة و ${secondsRemaining} ثانية</div>
+                    </div>
+                `;
+            }
+
+            // الفحص التلقائي لموعد الأذان
+            const hoursStr = formatTwoDigits(now.getHours());
+            const minutesStr = formatTwoDigits(now.getMinutes());
+            const currentTimeStr = `${hoursStr}:${minutesStr}`;
 
             prayerTimes.forEach(p => {
                 if (p.time === currentTimeStr && lastTriggeredPrayer !== p.name + "_" + currentTimeStr) {
@@ -536,7 +613,7 @@
             });
         }
 
-        setInterval(checkPrayerTimesAuto, 10000);
+        setInterval(updatePrayerTimer, 1000);
 
         function triggerAdhanNotification(prayerName) {
             const savedUrl = localStorage.getItem('elresalah_selected_muazzin') || muazzins[0].url;
@@ -560,6 +637,8 @@
 
             let html = `
                 <div>
+                    <div id="modalNextPrayerBox"></div>
+
                     <div class="notice-box">
                         <i class="fa-solid fa-bell"></i> سيتم تشغيل الأذان تلقائياً في موقته وعند تجربة التشغيل بالأسفل.
                     </div>
@@ -586,6 +665,7 @@
             `;
             document.getElementById('modal-body').innerHTML = html;
             document.getElementById('modal').style.display = 'flex';
+            updatePrayerTimer();
         }
 
         function saveMuazzin(url) {
@@ -599,11 +679,12 @@
             playAudioUrl(url, muazzinName);
         }
 
-        // --- الأذكار المباشرة الناطقة ---
+        // --- الأذكار المباشرة الناطقة مع ملفات صوتية سريعة استجابة ---
         const azkarCategories = [
             {
                 title: "أذكار الصباح",
                 textToRead: "أصبحنا وأصبح الملك لله والحمد لله لا إله إلا الله وحده لا شريك له. اللهم بك أصبحنا وبك أمسينا وبك نحيا وبك نموت وإليك النشور.",
+                audioUrl: "https://server8.mp3quran.net/afs/113.mp3",
                 items: [
                     { text: "أَصْبَحْنَا وَأَصْبَحَ المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", count: 1 },
                     { text: "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ.", count: 1 },
@@ -613,6 +694,7 @@
             {
                 title: "أذكار المساء",
                 textToRead: "أمسينَا وأمسى الملك لله والحمد لله لا إله إلا الله وحده لا شريك له. اللهم بك أمسينا وبك أصبحنا وبك نحيا وبك نموت وإليك المصير.",
+                audioUrl: "https://server8.mp3quran.net/afs/114.mp3",
                 items: [
                     { text: "أَمْسَيْنَا وَأَمْسَى المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", count: 1 },
                     { text: "اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ المَصِيرُ.", count: 1 },
@@ -622,6 +704,7 @@
             {
                 title: "أذكار ما بعد الصلاة والادعية",
                 textToRead: "أستغفر الله، أستغفر الله، أستغفر الله. اللهم أنت السلام ومنك السلام تباركت يا ذا الجلال والإكرام.",
+                audioUrl: null,
                 items: [
                     { text: "أَسْتَغْفِرُ اللَّهَ (ثَلاَثاً)، اللَّهُمَّ أَنْتَ السَّلاَمُ وَمِنْكَ السَّلاَمُ.", count: 1 },
                     { text: "سُبْحَانَ اللَّهِ (33) ، الْحَمْدُ لِلَّهِ (33) ، اللَّهُ أَكْبَرُ (33)", count: 33 }
@@ -653,8 +736,8 @@
                     <div class="azkar-item">
                         <div class="azkar-title-row">
                             <span class="azkar-title">${cat.title}</span>
-                            <button class="audio-btn" onclick="speakText('${cat.textToRead}', '${cat.title}')">
-                                <i class="fa-solid fa-volume-high"></i> نطق الأذكار 🔊
+                            <button class="audio-btn" onclick="speakText('${cat.textToRead}', '${cat.title}', ${cat.audioUrl ? `'${cat.audioUrl}'` : 'null'})">
+                                <i class="fa-solid fa-volume-high"></i> تشغيل / نطق الأذكار 🔊
                             </button>
                         </div>
                         ${itemsHTML}
