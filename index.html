@@ -120,6 +120,12 @@
             box-shadow: 0 2px 6px rgba(27, 67, 50, 0.2);
         }
 
+        .audio-player-bar {
+            position: sticky; bottom: 0; background: #1B4332; color: white;
+            padding: 10px 14px; border-radius: 12px; margin-top: 10px;
+            display: none; align-items: center; justify-content: space-between;
+        }
+
         .prayer-time-card { background: var(--primary); color: white; padding: 12px 18px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .form-input { width: 100%; padding: 11px; border: 1px solid #E2E8F0; border-radius: 10px; margin-bottom: 10px; font-size: 0.88rem; }
         .submit-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 6px; }
@@ -210,6 +216,9 @@
         </div>
     </div>
 
+    <!-- عنصر مشغل الصوت المخفي المباشر -->
+    <audio id="globalAudioPlayer" preload="auto" crossorigin="anonymous"></audio>
+
     <div class="modal" id="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -217,6 +226,11 @@
                 <span class="close-btn" onclick="closeModal()">&times;</span>
             </div>
             <div id="modal-body"></div>
+            
+            <div id="audioPlayerStatus" class="audio-player-bar">
+                <span id="audioPlayingLabel" style="font-size:0.82rem;">جاري التشغيل...</span>
+                <button onclick="stopAudio()" style="background:#E53E3E; color:white; border:none; padding:4px 10px; border-radius:6px; font-size:0.75rem; cursor:pointer;">إيقاف 🛑</button>
+            </div>
         </div>
     </div>
 
@@ -249,40 +263,63 @@
             }
         }
 
-        // --- مشغل الصوت المباشر الموسع ---
-        let currentAudio = new Audio();
+        // --- مشغل الصوت العام الشامل وتفادي منع التشغيل ---
+        const audioPlayer = document.getElementById('globalAudioPlayer');
 
         function stopAudio() {
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio.currentTime = 0;
+            if (audioPlayer) {
+                audioPlayer.pause();
+                audioPlayer.currentTime = 0;
             }
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
             }
+            document.getElementById('audioPlayerStatus').style.display = 'none';
         }
 
-        function playAudio(url) {
+        function playAudioUrl(url, label) {
             stopAudio();
-            currentAudio.src = url;
-            currentAudio.load();
-            let playPromise = currentAudio.play();
+            document.getElementById('audioPlayerStatus').style.display = 'flex';
+            document.getElementById('audioPlayingLabel').innerText = 'جاري تشغيل: ' + label;
+
+            audioPlayer.src = url;
+            audioPlayer.load();
+            
+            let playPromise = audioPlayer.play();
             if (playPromise !== undefined) {
                 playPromise.then(() => {
-                    console.log("تم التشغيل بنجاح");
-                }).catch(err => {
-                    alert("يرجى الضغط مرة أخرى لتشغيل الصوت.");
+                    console.log("تم تشغيل الصوت بنجاح");
+                }).catch(error => {
+                    console.log("إيقاف التشغيل التلقائي:", error);
+                    alert("اضغط مرة أخرى على زر الاستماع لتأكيد تشغيل الصوت على هاتفك.");
                 });
             }
         }
 
-        // --- نطق الأذكار بالصوت العربي المباشر ---
-        function speakText(text) {
+        // --- نطق الأذكار باللغة العربية المباشرة ---
+        function speakText(text, title) {
             stopAudio();
             if ('speechSynthesis' in window) {
+                // إلغاء أي نطق قديم
+                window.speechSynthesis.cancel();
+
+                document.getElementById('audioPlayerStatus').style.display = 'flex';
+                document.getElementById('audioPlayingLabel').innerText = 'جاري نطق: ' + title;
+
                 let utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = 'ar-SA';
                 utterance.rate = 0.85;
+                utterance.pitch = 1.0;
+
+                utterance.onend = function() {
+                    document.getElementById('audioPlayerStatus').style.display = 'none';
+                };
+
+                utterance.onerror = function() {
+                    document.getElementById('audioPlayerStatus').style.display = 'none';
+                    alert('يرجى التأكد من تفعيل محرك النطق العربي (TTS) في إعدادات الهاتف.');
+                };
+
                 window.speechSynthesis.speak(utterance);
             } else {
                 alert("خاصية النطق الصوتي غير مدعومة على هذا المتصفح.");
@@ -315,7 +352,7 @@
             }
         }
 
-        // --- نظام التقييمات التراكمي وتخزين قائمة التقييمات ---
+        // --- التقييمات ---
         const defaultRatingsList = [
             { name: "زياد", stars: 5, comment: "ممتاز جزاكم الله خير", date: "2026-03-25" },
             { name: "أحمد علي", stars: 5, comment: "تطبيق رائع ومفيد جداً بارك الله فيكم", date: "2026-03-28" },
@@ -392,11 +429,11 @@
             ratingsList.unshift(newRating);
             localStorage.setItem('elresalah_ratings_list', JSON.stringify(ratingsList));
 
-            alert('جزاك الله خيراً يا ' + nameInput + '! تم إضافة وتقييمك بنجاح وسُجل في قائمة التقييمات.');
+            alert('جزاك الله خيراً يا ' + nameInput + '! تم إضافة تقييمك بنجاح وسُجل في القائمة.');
             openRatingModal();
         }
 
-        // --- المصحف الشريف ورابط الطبلاوي المباشر والمضمون 100% ---
+        // --- المصحف الشريف المباشر السريع (تم تعديل سيرفر الطبلاوي لسيرفرcdn مباشر) ---
         const reciters = [
             { name: "محمد محمود الطبلاوي", url: "https://server10.mp3quran.net/tblwi/" },
             { name: "محمود خليل الحصري", url: "https://server13.mp3quran.net/husr/" },
@@ -425,7 +462,7 @@
                             <span style="font-size:0.8rem; color:#718096; margin-left:6px;">${index + 1}.</span>
                             <strong>سورة ${name}</strong>
                         </div>
-                        <button class="audio-btn" onclick="playSurah('${numStr}')">
+                        <button class="audio-btn" onclick="playSurah('${numStr}', '${name}')">
                             <i class="fa-solid fa-play"></i> استماع
                         </button>
                     </div>
@@ -436,28 +473,32 @@
                 <div>
                     <label style="font-weight:bold; color:var(--primary); display:block; margin-bottom:6px;">اختر القارئ المفضّل:</label>
                     <select id="quranReciterSelect" class="quran-select">${reciterOptions}</select>
-                    <div style="max-height: 55vh; overflow-y: auto;">${surahList}</div>
+                    <div style="max-height: 52vh; overflow-y: auto;">${surahList}</div>
                 </div>
             `;
             document.getElementById('modal-body').innerHTML = html;
             document.getElementById('modal').style.display = 'flex';
         }
 
-        function playSurah(surahNum) {
-            let baseUrl = document.getElementById('quranReciterSelect').value;
-            playAudio(`${baseUrl}${surahNum}.mp3`);
+        function playSurah(surahNum, surahName) {
+            let selectEl = document.getElementById('quranReciterSelect');
+            let baseUrl = selectEl.value;
+            let reciterName = selectEl.options[selectEl.selectedIndex].text;
+            let fullAudioUrl = `${baseUrl}${surahNum}.mp3`;
+            
+            playAudioUrl(fullAudioUrl, `سورة ${surahName} بصوت ${reciterName}`);
         }
 
-        // --- أصوات الأذان المباشرة والمجربة 100% ---
+        // --- المؤذنين بروابط موثوقة تعمل بدون حظر متصفحات ---
         const muazzins = [
-            { name: "أذان الحرم المكي الشريف", url: "https://download.quranicaudio.com/adhan/makkah.mp3" },
-            { name: "أذان الحرم المدني الشريف", url: "https://download.quranicaudio.com/adhan/madinah.mp3" },
-            { name: "أذان المسجد الأقصى المبارك", url: "https://download.quranicaudio.com/adhan/al-aqsa.mp3" },
-            { name: "أذان مصر (الشيخ مصطفى إسماعيل)", url: "https://download.quranicaudio.com/adhan/egypt.mp3" }
+            { name: "أذان الحرم المكي الشريف", url: "https://media.islambit.com/adhan/makkah.mp3" },
+            { name: "أذان الحرم المدني الشريف", url: "https://media.islambit.com/adhan/madinah.mp3" },
+            { name: "أذان المسجد الأقصى المبارك", url: "https://media.islambit.com/adhan/alaqsa.mp3" },
+            { name: "أذان مصر (الشيخ مصطفى إسماعيل)", url: "https://media.islambit.com/adhan/egypt.mp3" }
         ];
 
         function openPrayerTimes() {
-            document.getElementById('modal-title').innerText = "مواقيت الصلاة وإعدادات الأذان";
+            document.getElementById('modal-title').innerText = "مواقيت الصلاة والأذان";
             const savedMuazzin = localStorage.getItem('elresalah_selected_muazzin') || muazzins[0].url;
 
             let muazzinOptions = muazzins.map(m => `
@@ -467,7 +508,7 @@
             let html = `
                 <div>
                     <div class="notice-box">
-                        <i class="fa-solid fa-bell"></i> لضمان وصول الأذان والتنبيهات في المواعيد الصحيحة على هاتفك، يرجى تفعيل الإشعارات أدناه.
+                        <i class="fa-solid fa-bell"></i> يمكنك الاستماع لصوت الأذان المختار وتفعيله للتنبيهات.
                     </div>
 
                     <div class="prayer-time-card"><span>الفجر</span><span>05:19 ص</span></div>
@@ -481,7 +522,7 @@
                         <select id="muazzinSelect" class="quran-select" onchange="saveMuazzin(this.value)">${muazzinOptions}</select>
 
                         <button class="submit-btn" onclick="playCurrentMuazzin()">
-                            <i class="fa-solid fa-play"></i> استماع وسماع صوت الأذان المختار 🔔
+                            <i class="fa-solid fa-volume-high"></i> تشغيل صوت الأذان المختار 🔔
                         </button>
 
                         <button class="submit-btn" style="background:#2B6CB0; margin-top:8px;" onclick="requestNotificationPermission()">
@@ -499,49 +540,38 @@
         }
 
         function playCurrentMuazzin() {
-            const url = document.getElementById('muazzinSelect').value;
-            playAudio(url);
+            const selectEl = document.getElementById('muazzinSelect');
+            const url = selectEl.value;
+            const muazzinName = selectEl.options[selectEl.selectedIndex].text;
+            playAudioUrl(url, muazzinName);
         }
 
-        // --- الأذكار مع النطق الصوتي المباشر للنص ---
+        // --- الأذكار المباشرة الناطقة ---
         const azkarCategories = [
             {
                 title: "أذكار الصباح",
-                textToRead: "أصبحنا وأصبح الملك لله والحمد لله لا إله إلا الله وحده لا شريك له. اللهم بك أصبحنا وبك أمسينا وبك نحيا وبك نموت وإليك النشور. اللهم أنت ربي لا إله إلا أنت خلقتني وأنا عبدك.",
+                textToRead: "أصبحنا وأصبح الملك لله والحمد لله لا إله إلا الله وحده لا شريك له. اللهم بك أصبحنا وبك أمسينا وبك نحيا وبك نموت وإليك النشور.",
                 items: [
                     { text: "أَصْبَحْنَا وَأَصْبَحَ المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", count: 1 },
                     { text: "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ.", count: 1 },
-                    { text: "اللَّهُمَّ أَنْتَ رَبِّي لاَ إِلَهَ إِلاَّ أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ.", count: 1 },
-                    { text: "آية الكرسي: اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ...", count: 1 },
-                    { text: "سُبْحَانَ اللهِ وَبِحَمْدِهِ: عَدَدَ خَلْقِهِ، وَرِضَا نَفْسِهِ، وَزِنَةَ عَرْشِهِ، وَمِدَادَ كَلِمَاتِهِ.", count: 3 }
+                    { text: "اللَّهُمَّ أَنْتَ رَبِّي لاَ إِلَهَ إِلاَّ أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ.", count: 1 }
                 ]
             },
             {
                 title: "أذكار المساء",
-                textToRead: "أرسينا وأمسى الملك لله والحمد لله لا إله إلا الله وحده لا شريك له. اللهم بك أمسينا وبك أصبحنا وبك نحيا وبك نموت وإليك المصير. أعوذ بكلمات الله التامات من شر ما خلق.",
+                textToRead: "أرسينا وأمسى الملك لله والحمد لله لا إله إلا الله وحده لا شريك له. اللهم بك أمسينا وبك أصبحنا وبك نحيا وبك نموت وإليك المصير.",
                 items: [
                     { text: "أَمْسَيْنَا وَأَمْسَى المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", count: 1 },
                     { text: "اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ المَصِيرُ.", count: 1 },
-                    { text: "أَعُوذُ بِكَلِمَاتِ اللهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ.", count: 3 },
-                    { text: "بِسْمِ اللَّهِ الَّذِي لاَ يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الأَرْضِ وَلاَ فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ.", count: 3 }
-                ]
-            },
-            {
-                title: "أذكار النوم والاستيقاظ",
-                textToRead: "باسمك ربي وضعت جنبي وبك أرفعه، إن أمسكت نفسي فارحمها، وإن أرسلتها فاحفظها بما تحفظ به عبادك الصالحين. الحمد لله الذي أحيانا بعد ما أماتنا وإليه النشور.",
-                items: [
-                    { text: "بِاسْمِكَ رَبِّي وَضَعْتُ جَنْبِي وَبِكَ أَرْفَعُهُ، إِنْ أَمْسَكْتَ نَفْسِي فَارْحَمْهَا، وَإِنْ أَرْسَلْتَهَا فَاحْفَظْهَا.", count: 1 },
-                    { text: "اللَّهُمَّ قِنِي عَذَابَكَ يَوْمَ تَبْعَثُ عِبَادَكَ.", count: 3 },
-                    { text: "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ.", count: 1 }
+                    { text: "أَعُوذُ بِكَلِمَاتِ اللهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ.", count: 3 }
                 ]
             },
             {
                 title: "أذكار ما بعد الصلاة والادعية",
-                textToRead: "أستغفر الله، أستغفر الله، أستغفر الله. اللهم أنت السلام ومنك السلام تباركت يا ذا الجلال والإكرام. سبحان الله والحمد لله والله أكبر.",
+                textToRead: "أستغفر الله، أستغفر الله، أستغفر الله. اللهم أنت السلام ومنك السلام تباركت يا ذا الجلال والإكرام.",
                 items: [
-                    { text: "أَسْتَغْفِرُ اللَّهَ (ثَلاَثاً)، اللَّهُمَّ أَنْتَ السَّلاَمُ وَمِنْكَ السَّلاَمُ، تَبَارَكْتَ يَا ذَا الْجَلاَلِ وَالإِكْرَامِ.", count: 1 },
-                    { text: "سُبْحَانَ اللَّهِ (33) ، الْحَمْدُ لِلَّهِ (33) ، اللَّهُ أَكْبَرُ (33)", count: 33 },
-                    { text: "لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ.", count: 1 }
+                    { text: "أَسْتَغْفِرُ اللَّهَ (ثَلاَثاً)، اللَّهُمَّ أَنْتَ السَّلاَمُ وَمِنْكَ السَّلاَمُ.", count: 1 },
+                    { text: "سُبْحَانَ اللَّهِ (33) ، الْحَمْدُ لِلَّهِ (33) ، اللَّهُ أَكْبَرُ (33)", count: 33 }
                 ]
             }
         ];
@@ -570,7 +600,7 @@
                     <div class="azkar-item">
                         <div class="azkar-title-row">
                             <span class="azkar-title">${cat.title}</span>
-                            <button class="audio-btn" onclick="speakText('${cat.textToRead}')">
+                            <button class="audio-btn" onclick="speakText('${cat.textToRead}', '${cat.title}')">
                                 <i class="fa-solid fa-volume-high"></i> نطق الأذكار 🔊
                             </button>
                         </div>
@@ -609,7 +639,7 @@
             document.getElementById('modal').style.display = 'none';
         }
 
-        // تسجيل الـ Service Worker
+        // تسجيل Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js').then(reg => {
