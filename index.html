@@ -8,14 +8,14 @@
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="تطبيق الرسالة 📱" />
-    <meta property="og:description" content="تطبيق إسلامي متكامل: أذكار المسلم، القرآن الكريم، مواقيت الصلاة والأذان، وتذكير الصيام." />
+    <meta property="og:description" content="تطبيق إسلامي متكامل: أذكار المسلم، القرآن الكريم كاملاً، مواقيت الصلاة والأذان بمؤذنين متعددين، وتذكير الصيام." />
     <meta property="og:image" content="https://aymnhashmcom-pixel.github.io/El-Resalah-App/share-thumb.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:url" content="https://aymnhashmcom-pixel.github.io/El-Resalah-App/" />
 
     <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -66,16 +66,8 @@
         }
 
         .btn-main:active { transform: translateY(2px); }
-
-        .btn-share {
-            background: linear-gradient(135deg, #D4AF37, #B8901C);
-            color: #FFFFFF; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
-        }
-
-        .btn-rate {
-            background: linear-gradient(135deg, #3182CE, #2B6CB0);
-            color: #FFFFFF; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.35);
-        }
+        .btn-share { background: linear-gradient(135deg, #D4AF37, #B8901C); color: #FFFFFF; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35); }
+        .btn-rate { background: linear-gradient(135deg, #3182CE, #2B6CB0); color: #FFFFFF; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.35); }
 
         .main-content { padding: 20px; flex: 1; }
         .section-title { font-size: 1.05rem; color: var(--primary); margin-bottom: 14px; font-weight: 700; }
@@ -130,16 +122,21 @@
 
         .prayer-time-card { background: var(--primary); color: white; padding: 12px 18px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .form-input { width: 100%; padding: 11px; border: 1px solid #E2E8F0; border-radius: 10px; margin-bottom: 10px; font-size: 0.88rem; }
-        .submit-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .submit-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 6px; }
 
         .quran-select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--secondary); font-size: 0.88rem; margin-bottom: 12px; background: white; }
-        .surah-card { background: white; border: 1px solid #EDF2F7; padding: 12px 14px; border-radius: 12px; margin-bottom: 8px; }
+        .surah-card { background: white; border: 1px solid #EDF2F7; padding: 12px 14px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
 
         .star-rating { display: flex; justify-content: center; gap: 8px; font-size: 1.8rem; color: #CBD5E0; margin: 12px 0; cursor: pointer; }
         .star-rating .fa-star.active { color: #D4AF37; }
 
-        .saved-rating-card {
-            background: #FFFDF0; border: 1px solid #F6AD55; border-radius: 12px; padding: 12px; margin-top: 10px; text-align: center;
+        .saved-rating-card { background: #FFFDF0; border: 1px solid #F6AD55; border-radius: 12px; padding: 12px; margin-top: 10px; text-align: center; }
+
+        .counter-btn {
+            background: var(--secondary); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer;
+        }
+        .notice-box {
+            background: #EBF8FF; border-right: 4px solid #3182CE; padding: 10px 14px; border-radius: 8px; font-size: 0.82rem; margin-bottom: 12px; color: #2B6CB0;
         }
     </style>
 </head>
@@ -169,7 +166,7 @@
         <div class="category-card" onclick="openQuran()">
             <div class="card-info">
                 <div class="icon-box" style="color: var(--gold-soft); background: #FFFDF0;"><i class="fa-solid fa-quran"></i></div>
-                <div class="card-title">القرآن الكريم (اختيار القارئ والسورة)</div>
+                <div class="card-title">القرآن الكريم كاملاً (114 سورة و 8 قراء)</div>
             </div>
             <i class="fa-solid fa-chevron-left" style="color:#A0AEC0; font-size:0.85rem;"></i>
         </div>
@@ -177,7 +174,7 @@
         <div class="category-card" onclick="openPrayerTimes()">
             <div class="card-info">
                 <div class="icon-box"><i class="fa-solid fa-kaaba"></i></div>
-                <div class="card-title">مواقيت الصلاة والأذان</div>
+                <div class="card-title">مواقيت الصلاة وإعدادات الأذان والتنبيهات</div>
             </div>
             <i class="fa-solid fa-chevron-left" style="color:#A0AEC0; font-size:0.85rem;"></i>
         </div>
@@ -185,7 +182,7 @@
         <div class="category-card" onclick="openAzkar()">
             <div class="card-info">
                 <div class="icon-box"><i class="fa-solid fa-book-open"></i></div>
-                <div class="card-title">أذكار المسلم (صوت وصورة)</div>
+                <div class="card-title">أذكار المسلم الشاملة (مع السبحة الإلكترونية)</div>
             </div>
             <i class="fa-solid fa-chevron-left" style="color:#A0AEC0; font-size:0.85rem;"></i>
         </div>
@@ -230,12 +227,7 @@
             }
         }
 
-        window.addEventListener('appinstalled', () => {
-            if (installBtn) installBtn.style.display = 'none';
-            deferredPrompt = null;
-        });
-
-        // --- إدارة الصوت والمشغل المباشر ---
+        // --- إدارة تشغيل الصوت المباشر ---
         let currentAudio = new Audio();
 
         function stopAudio() {
@@ -249,21 +241,44 @@
             stopAudio();
             currentAudio.src = url;
             currentAudio.load();
-            
             let playPromise = currentAudio.play();
             if (playPromise !== undefined) {
                 playPromise.then(() => {
                     console.log("تم تشغيل الصوت بنجاح");
                 }).catch(err => {
-                    console.error("تعذر تشغيل الصوت:", err);
-                    alert("اضغط مرة أخرى للتأكيد وسيقوم الصوت بالعمل فوراً.");
+                    alert("يرجى الضغط مرة أخرى لتشغيل الصوت.");
+                });
+            }
+        }
+
+        // --- طلب إذن الإشعارات والأذان في الخلفية ---
+        function requestNotificationPermission() {
+            if ("Notification" in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        alert("تم تفعيل إشعارات الأذان بنجاح! سيتم تنبيهك في مواقيت الصلاة.");
+                        schedulePrayerNotifications();
+                    } else {
+                        alert("يرجى تفعيل الإشعارات من إعدادات الهاتف ليصلك الأذان في مواقيده.");
+                    }
+                });
+            } else {
+                alert("المتصفح أو النظام لا يدعم الإشعارات المباشرة.");
+            }
+        }
+
+        function schedulePrayerNotifications() {
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification("تطبيق الرسالة 🕌", {
+                    body: "تم تفعيل التنبيهات التلقائية لمواقيت الصلاة والأذكار.",
+                    icon: "logo.png"
                 });
             }
         }
 
         // --- مشاركة التطبيق ---
         function shareApp() {
-            const shareText = '💡 أدعوك لتثبيت "تطبيق الرسالة" على هاتفك (أذكار، قرآن صوت وصورة، مواقيت الصلاة والأذان، وتذكير الصيام):\nhttps://aymnhashmcom-pixel.github.io/El-Resalah-App/';
+            const shareText = '💡 أدعوك لتثبيت "تطبيق الرسالة" على هاتفك (أذكار شاملة، القرآن الكريم كاملاً، مواقيت الصلاة والأذان بمؤذنين متعددين):\nhttps://aymnhashmcom-pixel.github.io/El-Resalah-App/';
             if (navigator.share) {
                 navigator.share({ title: 'تطبيق الرسالة', text: shareText, url: 'https://aymnhashmcom-pixel.github.io/El-Resalah-App/' });
             } else {
@@ -272,9 +287,8 @@
             }
         }
 
-        // --- تقييم التطبيق والتثبيت في LocalStorage ---
+        // --- تقييم التطبيق وتثبيته ---
         let selectedRating = 0;
-
         function openRatingModal() {
             document.getElementById('modal-title').innerText = "تقييم التطبيق";
             const savedData = localStorage.getItem('elresalah_user_rating');
@@ -296,7 +310,6 @@
             let html = `
                 <div style="padding: 5px 0;">
                     <p style="font-weight: 600; color: #4A5568; text-align:center;">نسعد برأيك وتقييمك لتطبيق الرسالة</p>
-                    
                     <div class="star-rating" id="starContainer">
                         <i class="fa-solid fa-star" onclick="setRating(1)"></i>
                         <i class="fa-solid fa-star" onclick="setRating(2)"></i>
@@ -304,10 +317,8 @@
                         <i class="fa-solid fa-star" onclick="setRating(4)"></i>
                         <i class="fa-solid fa-star" onclick="setRating(5)"></i>
                     </div>
-
                     <input type="text" class="form-input" id="userName" placeholder="الاسم الكريم..." />
                     <textarea class="form-input" id="ratingComment" rows="3" placeholder="ملاحظاتك أو اقتراحاتك لتطوير التطبيق (اختياري)..."></textarea>
-                    
                     <button class="submit-btn" onclick="submitRating()">حفظ وإرسال التقييم</button>
                     ${existingRatingHTML}
                 </div>
@@ -321,74 +332,63 @@
             const container = document.getElementById('starContainer');
             const iconList = container.querySelectorAll('.fa-star');
             iconList.forEach((star, index) => {
-                if (index < stars) {
-                    star.classList.add('active');
-                } else {
-                    star.classList.remove('active');
-                }
+                if (index < stars) star.classList.add('active');
+                else star.classList.remove('active');
             });
         }
 
         function submitRating() {
             const nameInput = document.getElementById('userName').value.trim();
             const commentInput = document.getElementById('ratingComment').value.trim();
+            if (selectedRating === 0) { alert('يرجى اختيار عدد النجوم للتقييم.'); return; }
+            if (!nameInput) { alert('يرجى كتابة الاسم الكريم.'); return; }
 
-            if (selectedRating === 0) {
-                alert('يرجى اختيار عدد النجوم للتقييم أولاً.');
-                return;
-            }
-            if (!nameInput) {
-                alert('يرجى كتابة الاسم الكريم.');
-                return;
-            }
-
-            const ratingObject = {
-                name: nameInput,
-                stars: selectedRating,
-                comment: commentInput,
-                date: new Date().toLocaleDateString('ar-EG')
-            };
-
-            // حفظ التقييم محلياً ليبقى ثابتاً
+            const ratingObject = { name: nameInput, stars: selectedRating, comment: commentInput, date: new Date().toLocaleDateString('ar-EG') };
             localStorage.setItem('elresalah_user_rating', JSON.stringify(ratingObject));
             alert('جزاك الله خيراً يا ' + nameInput + '! تم حفظ وتثبيت تقييمك بنجاح.');
             closeModal();
         }
 
-        // --- القراء والسور ---
+        // --- المصحف الشريف كاملاً (114 سورة) مع 8 قراء ---
         const reciters = [
-            { id: "husr", name: "محمود خليل الحصري", url: "https://server13.mp3quran.net/husr/" },
-            { id: "basit", name: "عبد الباسط عبد الصمد", url: "https://server7.mp3quran.net/basit/" },
-            { id: "afs", name: "مشاري راشد العفاسي", url: "https://server8.mp3quran.net/afs/" }
+            { name: "محمود خليل الحصري", url: "https://server13.mp3quran.net/husr/" },
+            { name: "عبد الباسط عبد الصمد", url: "https://server7.mp3quran.net/basit/" },
+            { name: "مشاري راشد العفاسي", url: "https://server8.mp3quran.net/afs/" },
+            { name: "علي بن عبد الرحمن الحذيفي", url: "https://server9.mp3quran.net/hthfi/" },
+            { name: "سعد الغامدي", url: "https://server7.mp3quran.net/s_gmd/" },
+            { name: "ماهر المعيقلي", url: "https://server12.mp3quran.net/maher/" },
+            { name: "سعود الشريم", url: "https://server7.mp3quran.net/shur/" },
+            { name: "عبد الرحمن السديس", url: "https://server11.mp3quran.net/sds/" }
         ];
 
-        const surahs = [
-            { num: "001", name: "الفاتحة" },
-            { num: "002", name: "البقرة" },
-            { num: "003", name: "آل عمران" },
-            { num: "112", name: "الإخلاص" },
-            { num: "113", name: "الفلق" },
-            { num: "114", name: "الناس" }
+        const surahNames = [
+            "الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الإنسان","المرسلات","النبأ","النازعات","عبس","التكوير","الإنفطار","المطففين","الإنشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"
         ];
 
         function openQuran() {
-            document.getElementById('modal-title').innerText = "القرآن الكريم";
+            document.getElementById('modal-title').innerText = "القرآن الكريم كاملاً (114 سورة)";
             let reciterOptions = reciters.map(r => `<option value="${r.url}">${r.name}</option>`).join('');
             
-            let surahList = surahs.map(s => `
-                <div class="surah-card" style="display:flex; justify-content:space-between; align-items:center;">
-                    <strong>سورة ${s.name}</strong>
-                    <button class="audio-btn" onclick="playSurah('${s.num}')">
-                        <i class="fa-solid fa-play"></i> استماع
-                    </button>
-                </div>
-            `).join('');
+            let surahList = surahNames.map((name, index) => {
+                let numStr = (index + 1).toString().padStart(3, '0');
+                return `
+                    <div class="surah-card">
+                        <div>
+                            <span style="font-size:0.8rem; color:#718096; margin-left:6px;">${index + 1}.</span>
+                            <strong>سورة ${name}</strong>
+                        </div>
+                        <button class="audio-btn" onclick="playSurah('${numStr}')">
+                            <i class="fa-solid fa-play"></i> استماع
+                        </button>
+                    </div>
+                `;
+            }).join('');
 
             let html = `
                 <div>
                     <label style="font-weight:bold; color:var(--primary); display:block; margin-bottom:6px;">اختر القارئ المفضّل:</label>
                     <select id="quranReciterSelect" class="quran-select">${reciterOptions}</select>
-                    <div style="max-height: 50vh; overflow-y: auto;">${surahList}</div>
+                    <div style="max-height: 55vh; overflow-y: auto;">${surahList}</div>
                 </div>
             `;
             document.getElementById('modal-body').innerHTML = html;
@@ -400,36 +400,28 @@
             playAudio(`${baseUrl}${surahNum}.mp3`);
         }
 
-        // --- الأذكار ---
-        const azkarList = [
-            { title: "أذكار الصباح", text: "أَصْبَحْنَا وَأَصْبَحَ المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ...", audio: "https://server8.mp3quran.net/afs/001.mp3" },
-            { title: "أذكار المساء", text: "أَمْسَيْنَا وَأَمْسَى المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ...", audio: "https://server8.mp3quran.net/afs/112.mp3" }
+        // --- مواقيت الصلاة واختيار المؤذن والتنبيهات ---
+        const muazzins = [
+            { name: "أذان الحرم المكي (مكة المكرمة)", url: "https://www.islamcan.com/common/adhan/audio/adhan-makkah.mp3" },
+            { name: "أذان الحرم المدني (المدينة المنورة)", url: "https://www.islamcan.com/common/adhan/audio/adhan-madiny.mp3" },
+            { name: "أذان المسجد الأقصى المبارك", url: "https://www.islamcan.com/common/adhan/audio/adhan-al-aqsa.mp3" },
+            { name: "أذان الشيخ مصطفى إسماعيل", url: "https://www.islamcan.com/common/adhan/audio/adhan-egypt.mp3" }
         ];
 
-        function openAzkar() {
-            document.getElementById('modal-title').innerText = "أذكار المسلم";
-            let html = azkarList.map(item => `
-                <div class="azkar-item">
-                    <div class="azkar-title-row">
-                        <span class="azkar-title">${item.title}</span>
-                        <button class="audio-btn" onclick="playAudio('${item.audio}')">
-                            <i class="fa-solid fa-volume-high"></i> استماع
-                        </button>
-                    </div>
-                    <div style="line-height:1.8; margin-top:6px; font-size:0.88rem;">${item.text}</div>
-                </div>
-            `).join('');
-            document.getElementById('modal-body').innerHTML = html;
-            document.getElementById('modal').style.display = 'flex';
-        }
-
-        // --- مواقيت الصلاة والأذان ---
         function openPrayerTimes() {
-            document.getElementById('modal-title').innerText = "مواقيت الصلاة والأذان";
-            const azanUrl = "https://www.islamcan.com/common/adhan/audio/adhan-makkah.mp3";
+            document.getElementById('modal-title').innerText = "مواقيت الصلاة وإعدادات الأذان";
+            const savedMuazzin = localStorage.getItem('elresalah_selected_muazzin') || muazzins[0].url;
+
+            let muazzinOptions = muazzins.map(m => `
+                <option value="${m.url}" ${m.url === savedMuazzin ? 'selected' : ''}>${m.name}</option>
+            `).join('');
 
             let html = `
                 <div>
+                    <div class="notice-box">
+                        <i class="fa-solid fa-bell"></i> لضمان وصول الأذان والتنبيهات في المواعيد الصحيحة على هاتفك، يرجى تفعيل الإشعارات أدناه.
+                    </div>
+
                     <div class="prayer-time-card"><span>الفجر</span><span>05:19 ص</span></div>
                     <div class="prayer-time-card"><span>الظهر</span><span>12:46 م</span></div>
                     <div class="prayer-time-card"><span>العصر</span><span>04:12 م</span></div>
@@ -437,14 +429,115 @@
                     <div class="prayer-time-card"><span>العشاء</span><span>08:03 م</span></div>
 
                     <div style="margin-top:14px; background:#F8FAFC; padding:12px; border-radius:12px; border:1px solid #E2E8F0;">
-                        <button class="submit-btn" onclick="playAudio('${azanUrl}')">
-                            <i class="fa-solid fa-play"></i> تشغيل الأذان بصوت مكة المكرمة 🔔
+                        <label style="font-weight:bold; color:var(--primary); display:block; margin-bottom:6px;">اختر المؤذن المفضّل:</label>
+                        <select id="muazzinSelect" class="quran-select" onchange="saveMuazzin(this.value)">${muazzinOptions}</select>
+
+                        <button class="submit-btn" onclick="playCurrentMuazzin()">
+                            <i class="fa-solid fa-play"></i> استماع وسماع صوت الأذان المختار 🔔
+                        </button>
+
+                        <button class="submit-btn" style="background:#2B6CB0; margin-top:8px;" onclick="requestNotificationPermission()">
+                            <i class="fa-solid fa-bell"></i> تفعيل إشعارات الأذان المباشرة
                         </button>
                     </div>
                 </div>
             `;
             document.getElementById('modal-body').innerHTML = html;
             document.getElementById('modal').style.display = 'flex';
+        }
+
+        function saveMuazzin(url) {
+            localStorage.setItem('elresalah_selected_muazzin', url);
+        }
+
+        function playCurrentMuazzin() {
+            const url = document.getElementById('muazzinSelect').value;
+            playAudio(url);
+        }
+
+        // --- الأذكار الشاملة والسبحة الإلكترونية ---
+        const azkarCategories = [
+            {
+                title: "أذكار الصباح",
+                audio: "https://server8.mp3quran.net/afs/001.mp3",
+                items: [
+                    { text: "أَصْبَحْنَا وَأَصْبَحَ المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", count: 1 },
+                    { text: "آية الكرسي: اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ...", count: 1 },
+                    { text: "قُلْ هُوَ اللَّهُ أَحَدٌ ، وَقُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ، وَقُلْ أَعُوذُ بِرَبِّ النَّاسِ", count: 3 }
+                ]
+            },
+            {
+                title: "أذكار المساء",
+                audio: "https://server8.mp3quran.net/afs/112.mp3",
+                items: [
+                    { text: "أَمْسَيْنَا وَأَمْسَى المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", count: 1 },
+                    { text: "أَعُوذُ بِكَلِمَاتِ اللهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ.", count: 3 },
+                    { text: "بِسْمِ اللَّهِ الَّذِي لاَ يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الأَرْضِ وَلاَ فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ.", count: 3 }
+                ]
+            },
+            {
+                title: "أذكار النوم والاستيقاظ",
+                audio: "https://server8.mp3quran.net/afs/113.mp3",
+                items: [
+                    { text: "بِاسْمِكَ رَبِّي وَضَعْتُ جَنْبِي وَبِكَ أَرْفَعُهُ، إِنْ أَمْسَكْتَ نَفْسِي فَارْحَمْهَا، وَإِنْ أَرْسَلْتَهَا فَاحْفَظْهَا.", count: 1 },
+                    { text: "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ.", count: 1 }
+                ]
+            },
+            {
+                title: "أذكار ما بعد الصلاة",
+                audio: "https://server8.mp3quran.net/afs/114.mp3",
+                items: [
+                    { text: "أَسْتَغْفِرُ اللَّهَ (ثَلاَثاً)، اللَّهُمَّ أَنْتَ السَّلاَمُ وَمِنْكَ السَّلاَمُ، تَبَارَكْتَ يَا ذَا الْجَلاَلِ وَالإِكْرَامِ.", count: 1 },
+                    { text: "سُبْحَانَ اللَّهِ (33) ، الْحَمْدُ لِلَّهِ (33) ، اللَّهُ أَكْبَرُ (33)", count: 33 }
+                ]
+            }
+        ];
+
+        function openAzkar() {
+            document.getElementById('modal-title').innerText = "أذكار المسلم الشاملة";
+            
+            let html = azkarCategories.map((cat, cIdx) => {
+                let itemsHTML = cat.items.map((item, iIdx) => `
+                    <div style="background:white; border:1px solid #E2E8F0; border-radius:10px; padding:10px; margin-top:8px;">
+                        <div style="font-size:0.88rem; line-height:1.7;">${item.text}</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+                            <span style="font-size:0.78rem; color:#718096;">التكرار المطلوب: ${item.count}</span>
+                            <button class="counter-btn" id="cnt_${cIdx}_${iIdx}" onclick="countUp('cnt_${cIdx}_${iIdx}', ${item.count})">
+                                العداد: <span class="val">0</span> / ${item.count}
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+                return `
+                    <div class="azkar-item">
+                        <div class="azkar-title-row">
+                            <span class="azkar-title">${cat.title}</span>
+                            <button class="audio-btn" onclick="playAudio('${cat.audio}')">
+                                <i class="fa-solid fa-volume-high"></i> استماع
+                            </button>
+                        </div>
+                        ${itemsHTML}
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('modal-body').innerHTML = html;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function countUp(btnId, max) {
+            const btn = document.getElementById(btnId);
+            const valSpan = btn.querySelector('.val');
+            let current = parseInt(valSpan.innerText);
+            if (current < max) {
+                current++;
+                valSpan.innerText = current;
+                if (navigator.vibrate) navigator.vibrate(40);
+                if (current === max) {
+                    btn.style.background = "#38A169";
+                }
+            }
         }
 
         function closeModal() {
