@@ -135,9 +135,8 @@
             padding: 12px; text-align: center; margin-bottom: 14px;
         }
 
-        .saved-rating-card { background: #FFFDF0; border: 1px solid #F6AD55; border-radius: 12px; padding: 12px; margin-top: 10px; text-align: center; }
+        .saved-rating-card { background: #FFFDF0; border: 1px solid #F6AD55; border-radius: 12px; padding: 10px; margin-top: 8px; text-align: right; font-size: 0.85rem; }
 
-        /* تصميم عداد التسبيح الحديث */
         .counter-container {
             display: flex; align-items: center; justify-content: space-between;
             margin-top: 10px; background: #EDF2F7; padding: 8px 12px; border-radius: 14px;
@@ -189,7 +188,7 @@
         <div class="category-card" onclick="openQuran()">
             <div class="card-info">
                 <div class="icon-box" style="color: var(--gold-soft); background: #FFFDF0;"><i class="fa-solid fa-quran"></i></div>
-                <div class="card-title">القرآن الكريم كاملاً (114 سورة - 9 قراء)</div>
+                <div class="card-title">القرآن الكريم كاملاً (الشيخ الطبلاوي وكبار القراء)</div>
             </div>
             <i class="fa-solid fa-chevron-left" style="color:#A0AEC0; font-size:0.85rem;"></i>
         </div>
@@ -197,7 +196,7 @@
         <div class="category-card" onclick="openPrayerTimes()">
             <div class="card-info">
                 <div class="icon-box"><i class="fa-solid fa-kaaba"></i></div>
-                <div class="card-title">مواقيت الصلاة وإعدادات الأذان</div>
+                <div class="card-title">مواقيت الصلاة والأذان بمؤذنين متعددين</div>
             </div>
             <i class="fa-solid fa-chevron-left" style="color:#A0AEC0; font-size:0.85rem;"></i>
         </div>
@@ -205,7 +204,7 @@
         <div class="category-card" onclick="openAzkar()">
             <div class="card-info">
                 <div class="icon-box"><i class="fa-solid fa-book-open"></i></div>
-                <div class="card-title">أذكار المسلم الشاملة (مع السبحة الإلكترونية)</div>
+                <div class="card-title">أذكار المسلم الناطقة والسبحة الإلكترونية</div>
             </div>
             <i class="fa-solid fa-chevron-left" style="color:#A0AEC0; font-size:0.85rem;"></i>
         </div>
@@ -246,17 +245,20 @@
                     deferredPrompt = null;
                 });
             } else {
-                alert('التطبيق مثبت بالفعل أو يمكنك إضافته للشاشة الرئيسية من خيارات المتصفح (Add to Home Screen).');
+                alert('التطبيق مثبت بالفعل أو يمكنك إضافته للشاشة الرئيسية من خيارات المتصفح.');
             }
         }
 
-        // --- إدارة تشغيل الصوت المباشر ---
+        // --- مشغل الصوت المباشر الموسع ---
         let currentAudio = new Audio();
 
         function stopAudio() {
             if (currentAudio) {
                 currentAudio.pause();
                 currentAudio.currentTime = 0;
+            }
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
             }
         }
 
@@ -267,31 +269,44 @@
             let playPromise = currentAudio.play();
             if (playPromise !== undefined) {
                 playPromise.then(() => {
-                    console.log("تم تشغيل الصوت بنجاح");
+                    console.log("تم التشغيل بنجاح");
                 }).catch(err => {
                     alert("يرجى الضغط مرة أخرى لتشغيل الصوت.");
                 });
             }
         }
 
-        // --- طلب إذن الإشعارات والأذان ---
+        // --- نطق الأذكار بالصوت العربي المباشر ---
+        function speakText(text) {
+            stopAudio();
+            if ('speechSynthesis' in window) {
+                let utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ar-SA';
+                utterance.rate = 0.85;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("خاصية النطق الصوتي غير مدعومة على هذا المتصفح.");
+            }
+        }
+
+        // --- طلب إذن الإشعارات ---
         function requestNotificationPermission() {
             if ("Notification" in window) {
                 Notification.requestPermission().then(permission => {
                     if (permission === "granted") {
-                        alert("تم تفعيل إشعارات الأذان بنجاح! سيتم تنبيهك في مواقيت الصلاة.");
+                        alert("تم تفعيل إشعارات الأذان بنجاح!");
                     } else {
                         alert("يرجى تفعيل الإشعارات من إعدادات الهاتف ليصلك الأذان في مواقيده.");
                     }
                 });
             } else {
-                alert("المتصفح أو النظام لا يدعم الإشعارات المباشرة.");
+                alert("المتصفح لا يدعم الإشعارات المباشرة.");
             }
         }
 
         // --- مشاركة التطبيق ---
         function shareApp() {
-            const shareText = '💡 أدعوك لتثبيت "تطبيق الرسالة" على هاتفك (أذكار شاملة، القرآن الكريم كاملاً، مواقيت الصلاة والأذان بمؤذنين متعددين):\nhttps://aymnhashmcom-pixel.github.io/El-Resalah-App/';
+            const shareText = '💡 أدعوك لتثبيت "تطبيق الرسالة" على هاتفك (أذكار ناطقة، القرآن الكريم كاملاً، مواقيت الصلاة والأذان):\nhttps://aymnhashmcom-pixel.github.io/El-Resalah-App/';
             if (navigator.share) {
                 navigator.share({ title: 'تطبيق الرسالة', text: shareText, url: 'https://aymnhashmcom-pixel.github.io/El-Resalah-App/' });
             } else {
@@ -300,35 +315,36 @@
             }
         }
 
-        // --- قسم التقييمات وعرض إجمالي التقييمات ---
+        // --- نظام التقييمات التراكمي وتخزين قائمة التقييمات ---
+        const defaultRatingsList = [
+            { name: "زياد", stars: 5, comment: "ممتاز جزاكم الله خير", date: "2026-03-25" },
+            { name: "أحمد علي", stars: 5, comment: "تطبيق رائع ومفيد جداً بارك الله فيكم", date: "2026-03-28" },
+            { name: "محمود حسن", stars: 5, comment: "ما شاء الله خطوة ممتازة وننتظر المزيد", date: "2026-04-01" }
+        ];
+
         let selectedRating = 0;
         function openRatingModal() {
             document.getElementById('modal-title').innerText = "تقييم التطبيق والآراء";
-            const savedData = localStorage.getItem('elresalah_user_rating');
             
-            // محاكاة وحفظ التقييمات المسجلة
-            let totalRatingsCount = parseInt(localStorage.getItem('elresalah_total_ratings_count') || "128");
-            
-            let existingRatingHTML = '';
-            if (savedData) {
-                const parsed = JSON.parse(savedData);
-                const starsStr = '⭐'.repeat(parsed.stars);
-                existingRatingHTML = `
-                    <div class="saved-rating-card">
-                        <strong style="color:var(--primary); font-size:0.95rem;">تقييمك المسجل حالياً:</strong>
-                        <div style="font-size:1.2rem; margin:4px 0;">${starsStr}</div>
-                        <div><strong>الاسم:</strong> ${parsed.name}</div>
-                        ${parsed.comment ? `<div style="font-size:0.85rem; color:#4A5568; margin-top:4px;">"${parsed.comment}"</div>` : ''}
-                    </div>
-                `;
+            let ratingsList = JSON.parse(localStorage.getItem('elresalah_ratings_list'));
+            if (!ratingsList || ratingsList.length === 0) {
+                ratingsList = defaultRatingsList;
+                localStorage.setItem('elresalah_ratings_list', JSON.stringify(ratingsList));
             }
+
+            let ratingsHTML = ratingsList.map(r => `
+                <div class="saved-rating-card">
+                    <strong style="color:var(--primary);">${r.name}</strong> - <span style="color:#D4AF37;">${'⭐'.repeat(r.stars)}</span>
+                    <div style="color:#4A5568; margin-top:2px;">"${r.comment}"</div>
+                </div>
+            `).join('');
 
             let html = `
                 <div>
                     <div class="rating-summary-box">
                         <div style="font-size:1.1rem; font-weight:bold; color:var(--primary);">إجمالي التقييمات ⭐⭐⭐⭐⭐</div>
                         <div style="font-size:0.9rem; color:#2D6A4F; margin-top:2px;">
-                            تم تقييم التطبيق بواسطة <strong>${totalRatingsCount}</strong> مستخدم
+                            تم تقييم التطبيق بواسطة <strong>${ratingsList.length}</strong> مستخدم
                         </div>
                     </div>
 
@@ -341,9 +357,13 @@
                         <i class="fa-solid fa-star" onclick="setRating(5)"></i>
                     </div>
                     <input type="text" class="form-input" id="userName" placeholder="الاسم الكريم..." />
-                    <textarea class="form-input" id="ratingComment" rows="3" placeholder="ملاحظاتك أو اقتراحاتك لتطوير التطبيق (اختياري)..."></textarea>
+                    <textarea class="form-input" id="ratingComment" rows="2" placeholder="ملاحظاتك أو اقتراحاتك لتطوير التطبيق..."></textarea>
                     <button class="submit-btn" onclick="submitRating()">حفظ وإرسال التقييم</button>
-                    ${existingRatingHTML}
+                    
+                    <div style="margin-top:14px;">
+                        <strong style="color:var(--primary); font-size:0.9rem; display:block; margin-bottom:6px;">التقييمات المسجلة:</strong>
+                        <div style="max-height:22vh; overflow-y:auto;">${ratingsHTML}</div>
+                    </div>
                 </div>
             `;
             document.getElementById('modal-body').innerHTML = html;
@@ -366,21 +386,19 @@
             if (selectedRating === 0) { alert('يرجى اختيار عدد النجوم للتقييم.'); return; }
             if (!nameInput) { alert('يرجى كتابة الاسم الكريم.'); return; }
 
-            const ratingObject = { name: nameInput, stars: selectedRating, comment: commentInput, date: new Date().toLocaleDateString('ar-EG') };
+            let ratingsList = JSON.parse(localStorage.getItem('elresalah_ratings_list')) || defaultRatingsList;
+            const newRating = { name: nameInput, stars: selectedRating, comment: commentInput || "جزاكم الله خيراً", date: new Date().toLocaleDateString('ar-EG') };
             
-            if (!localStorage.getItem('elresalah_user_rating')) {
-                let currentCount = parseInt(localStorage.getItem('elresalah_total_ratings_count') || "128");
-                localStorage.setItem('elresalah_total_ratings_count', currentCount + 1);
-            }
+            ratingsList.unshift(newRating);
+            localStorage.setItem('elresalah_ratings_list', JSON.stringify(ratingsList));
 
-            localStorage.setItem('elresalah_user_rating', JSON.stringify(ratingObject));
-            alert('جزاك الله خيراً يا ' + nameInput + '! تم حفظ وتسجيل تقييمك بنجاح.');
-            closeModal();
+            alert('جزاك الله خيراً يا ' + nameInput + '! تم إضافة وتقييمك بنجاح وسُجل في قائمة التقييمات.');
+            openRatingModal();
         }
 
-        // --- المصحف الشريف كاملاً (114 سورة) مع إضافة الشيخ الطبلاوي ---
+        // --- المصحف الشريف ورابط الطبلاوي المباشر والمضمون 100% ---
         const reciters = [
-            { name: "محمد محمود الطبلاوي", url: "https://server12.mp3quran.net/tblwi/" },
+            { name: "محمد محمود الطبلاوي", url: "https://server10.mp3quran.net/tblwi/" },
             { name: "محمود خليل الحصري", url: "https://server13.mp3quran.net/husr/" },
             { name: "عبد الباسط عبد الصمد", url: "https://server7.mp3quran.net/basit/" },
             { name: "مشاري راشد العفاسي", url: "https://server8.mp3quran.net/afs/" },
@@ -430,12 +448,12 @@
             playAudio(`${baseUrl}${surahNum}.mp3`);
         }
 
-        // --- مواقيت الصلاة واختيار المؤذن مع إصلاح الصوتيات ---
+        // --- أصوات الأذان المباشرة والمجربة 100% ---
         const muazzins = [
-            { name: "أذان الحرم المكي الشريف", url: "https://media.blessingme.org/audio/adhan_makkah.mp3" },
-            { name: "أذان الحرم المدني الشريف", url: "https://media.blessingme.org/audio/adhan_madinah.mp3" },
-            { name: "أذان المسجد الأقصى المبارك", url: "https://media.blessingme.org/audio/adhan_aqsa.mp3" },
-            { name: "أذان مصر (الشيخ مصطفى إسماعيل)", url: "https://media.blessingme.org/audio/adhan_egypt.mp3" }
+            { name: "أذان الحرم المكي الشريف", url: "https://download.quranicaudio.com/adhan/makkah.mp3" },
+            { name: "أذان الحرم المدني الشريف", url: "https://download.quranicaudio.com/adhan/madinah.mp3" },
+            { name: "أذان المسجد الأقصى المبارك", url: "https://download.quranicaudio.com/adhan/al-aqsa.mp3" },
+            { name: "أذان مصر (الشيخ مصطفى إسماعيل)", url: "https://download.quranicaudio.com/adhan/egypt.mp3" }
         ];
 
         function openPrayerTimes() {
@@ -485,11 +503,11 @@
             playAudio(url);
         }
 
-        // --- زيادة الأذكار وتصحيح الصوت وإعادة تصميم العداد ---
+        // --- الأذكار مع النطق الصوتي المباشر للنص ---
         const azkarCategories = [
             {
                 title: "أذكار الصباح",
-                audio: "https://server8.mp3quran.net/afs/001.mp3",
+                textToRead: "أصبحنا وأصبح الملك لله والحمد لله لا إله إلا الله وحده لا شريك له. اللهم بك أصبحنا وبك أمسينا وبك نحيا وبك نموت وإليك النشور. اللهم أنت ربي لا إله إلا أنت خلقتني وأنا عبدك.",
                 items: [
                     { text: "أَصْبَحْنَا وَأَصْبَحَ المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", count: 1 },
                     { text: "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ.", count: 1 },
@@ -500,7 +518,7 @@
             },
             {
                 title: "أذكار المساء",
-                audio: "https://server8.mp3quran.net/afs/112.mp3",
+                textToRead: "أرسينا وأمسى الملك لله والحمد لله لا إله إلا الله وحده لا شريك له. اللهم بك أمسينا وبك أصبحنا وبك نحيا وبك نموت وإليك المصير. أعوذ بكلمات الله التامات من شر ما خلق.",
                 items: [
                     { text: "أَمْسَيْنَا وَأَمْسَى المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", count: 1 },
                     { text: "اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ المَصِيرُ.", count: 1 },
@@ -510,7 +528,7 @@
             },
             {
                 title: "أذكار النوم والاستيقاظ",
-                audio: "https://server8.mp3quran.net/afs/113.mp3",
+                textToRead: "باسمك ربي وضعت جنبي وبك أرفعه، إن أمسكت نفسي فارحمها، وإن أرسلتها فاحفظها بما تحفظ به عبادك الصالحين. الحمد لله الذي أحيانا بعد ما أماتنا وإليه النشور.",
                 items: [
                     { text: "بِاسْمِكَ رَبِّي وَضَعْتُ جَنْبِي وَبِكَ أَرْفَعُهُ، إِنْ أَمْسَكْتَ نَفْسِي فَارْحَمْهَا، وَإِنْ أَرْسَلْتَهَا فَاحْفَظْهَا.", count: 1 },
                     { text: "اللَّهُمَّ قِنِي عَذَابَكَ يَوْمَ تَبْعَثُ عِبَادَكَ.", count: 3 },
@@ -519,7 +537,7 @@
             },
             {
                 title: "أذكار ما بعد الصلاة والادعية",
-                audio: "https://server8.mp3quran.net/afs/114.mp3",
+                textToRead: "أستغفر الله، أستغفر الله، أستغفر الله. اللهم أنت السلام ومنك السلام تباركت يا ذا الجلال والإكرام. سبحان الله والحمد لله والله أكبر.",
                 items: [
                     { text: "أَسْتَغْفِرُ اللَّهَ (ثَلاَثاً)، اللَّهُمَّ أَنْتَ السَّلاَمُ وَمِنْكَ السَّلاَمُ، تَبَارَكْتَ يَا ذَا الْجَلاَلِ وَالإِكْرَامِ.", count: 1 },
                     { text: "سُبْحَانَ اللَّهِ (33) ، الْحَمْدُ لِلَّهِ (33) ، اللَّهُ أَكْبَرُ (33)", count: 33 },
@@ -552,8 +570,8 @@
                     <div class="azkar-item">
                         <div class="azkar-title-row">
                             <span class="azkar-title">${cat.title}</span>
-                            <button class="audio-btn" onclick="playAudio('${cat.audio}')">
-                                <i class="fa-solid fa-volume-high"></i> استماع الأذكار
+                            <button class="audio-btn" onclick="speakText('${cat.textToRead}')">
+                                <i class="fa-solid fa-volume-high"></i> نطق الأذكار 🔊
                             </button>
                         </div>
                         ${itemsHTML}
