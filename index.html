@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#1B4332">
+    <meta name="theme-color" content="#0096C7">
     <title>تطبيق الرسالة</title>
 
     <meta property="og:type" content="website" />
@@ -20,14 +20,17 @@
 
     <style>
         :root {
-            --bg-color: #F4F7F4;
-            --primary: #1B4332;
-            --secondary: #2D6A4F;
-            --accent: #E8F5E9;
-            --gold-soft: #C59B27;
-            --text-dark: #2B2D42;
-            --shadow-soft: 0 8px 20px rgba(27, 67, 50, 0.12);
-            --shadow-btn: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --bg-color: #E0F7FA;
+            --primary: #0077B6;
+            --primary-dark: #023E8A;
+            --secondary: #00B4D8;
+            --accent: #90E0EF;
+            --light-cyan: #CAF0F8;
+            --gold-soft: #D4AF37;
+            --text-dark: #03045E;
+            --shadow-soft: 0 8px 24px rgba(0, 119, 182, 0.18);
+            --shadow-btn: 0 6px 15px rgba(0, 180, 216, 0.25);
+            --card-bg: #FFFFFF;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -40,152 +43,156 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 0 25px rgba(0,0,0,0.06);
+            box-shadow: 0 0 30px rgba(0,119,182,0.15);
         }
 
         .header-card {
-            background: linear-gradient(145deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary), var(--secondary));
             color: white; padding: 25px 20px 22px;
-            border-radius: 0 0 24px 24px; text-align: center;
+            border-radius: 0 0 28px 28px; text-align: center;
             box-shadow: var(--shadow-soft);
         }
 
-        .header-card h1 { font-size: 1.75rem; color: #E8F5E9; margin-bottom: 4px; font-weight: 700; }
-        .sub-title { font-size: 0.9rem; color: #F3E5AB; font-weight: 600; margin-bottom: 8px; }
-        .header-card p { font-size: 0.85rem; opacity: 0.92; font-style: italic; }
+        .header-card h1 { font-size: 1.8rem; color: #FFFFFF; margin-bottom: 4px; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+        .sub-title { font-size: 0.92rem; color: var(--light-cyan); font-weight: 700; margin-bottom: 8px; }
+        .header-card p { font-size: 0.85rem; opacity: 0.95; font-style: italic; color: #E0F7FA; }
 
         .next-prayer-banner {
-            background: #C59B27;
+            background: linear-gradient(135deg, #0096C7, #0077B6);
             color: #FFFFFF;
             margin: 14px 20px 0;
-            padding: 10px 16px;
-            border-radius: 12px;
+            padding: 12px 18px;
+            border-radius: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 0.88rem;
             font-weight: 700;
-            box-shadow: 0 4px 10px rgba(197, 155, 39, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 150, 199, 0.3);
         }
 
         .azkar-timer-banner {
-            background: #2D6A4F;
+            background: linear-gradient(135deg, #023E8A, #0077B6);
             color: #FFFFFF;
             margin: 8px 20px 0;
-            padding: 8px 16px;
-            border-radius: 12px;
+            padding: 10px 18px;
+            border-radius: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 0.82rem;
             font-weight: 700;
+            box-shadow: 0 4px 12px rgba(2, 62, 138, 0.25);
         }
 
         .fasting-timer-banner {
-            background: #8C6239;
+            background: linear-gradient(135deg, #7B2CBF, #5A189A);
             color: #FFFFFF;
             margin: 8px 20px 0;
-            padding: 8px 16px;
-            border-radius: 12px;
+            padding: 10px 18px;
+            border-radius: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 0.82rem;
             font-weight: 700;
+            box-shadow: 0 4px 12px rgba(123, 44, 191, 0.3);
         }
 
         .action-bar { display: flex; gap: 8px; padding: 16px 20px 0; flex-wrap: wrap; }
 
         .btn-main {
-            flex: 1; background: linear-gradient(135deg, #2D6A4F, #1B4332);
-            color: #FFFFFF; border: none; padding: 11px 8px; border-radius: 12px;
-            font-weight: 700; font-size: 0.82rem; cursor: pointer;
+            flex: 1; background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: #FFFFFF; border: none; padding: 12px 10px; border-radius: 14px;
+            font-weight: 700; font-size: 0.84rem; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 6px;
-            box-shadow: 0 4px 14px rgba(27, 67, 50, 0.3); transition: all 0.2s ease;
+            box-shadow: var(--shadow-btn); transition: all 0.2s ease;
             white-space: nowrap;
         }
 
-        .btn-main:active { transform: translateY(2px); }
-        .btn-share { background: linear-gradient(135deg, #D4AF37, #B8901C); color: #FFFFFF; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35); }
-        .btn-rate { background: linear-gradient(135deg, #3182CE, #2B6CB0); color: #FFFFFF; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.35); }
+        .btn-main:active { transform: translateY(2px); scale: 0.98; }
+        .btn-share { background: linear-gradient(135deg, #FFB703, #FB8500); color: #FFFFFF; box-shadow: 0 4px 14px rgba(251, 133, 0, 0.35); }
+        .btn-rate { background: linear-gradient(135deg, #48CAE4, #0077B6); color: #FFFFFF; box-shadow: 0 4px 14px rgba(72, 202, 228, 0.35); }
 
         .main-content { padding: 20px; flex: 1; }
-        .section-title { font-size: 1.05rem; color: var(--primary); margin-bottom: 14px; font-weight: 700; }
+        .section-title { font-size: 1.1rem; color: var(--primary-dark); margin-bottom: 14px; font-weight: 800; border-right: 4px solid var(--secondary); padding-right: 8px; }
 
         .category-card {
-            background: #FFFFFF; border-radius: 16px; padding: 16px; margin-bottom: 12px;
+            background: var(--card-bg); border-radius: 18px; padding: 16px; margin-bottom: 12px;
             display: flex; align-items: center; justify-content: space-between;
-            box-shadow: var(--shadow-btn); border: 1px solid rgba(45, 106, 79, 0.08);
+            box-shadow: 0 4px 15px rgba(0, 119, 182, 0.08); border: 1px solid rgba(0, 180, 216, 0.15);
             cursor: pointer; transition: all 0.2s ease;
         }
 
-        .category-card:active { transform: scale(0.98); background-color: #F0F7F4; }
+        .category-card:active { transform: scale(0.98); background-color: var(--light-cyan); }
         .card-info { display: flex; align-items: center; gap: 14px; }
         
         .icon-box {
-            width: 44px; height: 44px; border-radius: 12px;
-            background: #E8F5E9; color: var(--primary);
-            display: flex; align-items: center; justify-content: center; font-size: 1.25rem;
+            width: 48px; height: 48px; border-radius: 14px;
+            background: var(--light-cyan); color: var(--primary);
+            display: flex; align-items: center; justify-content: center; font-size: 1.35rem;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        .card-title { font-size: 0.98rem; font-weight: 700; color: #2D3748; }
+        .card-title { font-size: 0.98rem; font-weight: 700; color: var(--primary-dark); }
 
         .modal {
             display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.45); z-index: 1000; align-items: flex-end;
-            backdrop-filter: blur(2px);
+            background: rgba(3, 4, 94, 0.5); z-index: 1000; align-items: flex-end;
+            backdrop-filter: blur(4px);
         }
 
         .modal-content {
             background: white; width: 100%; max-width: 480px; margin: 0 auto;
-            border-radius: 22px 22px 0 0; padding: 20px; max-height: 85vh; overflow-y: auto;
+            border-radius: 26px 26px 0 0; padding: 22px; max-height: 85vh; overflow-y: auto;
         }
 
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #edf2f7; padding-bottom: 10px; }
-        .close-btn { font-size: 1.4rem; cursor: pointer; color: #A0AEC0; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 2px solid var(--light-cyan); padding-bottom: 10px; }
+        .close-btn { font-size: 1.5rem; cursor: pointer; color: #A0AEC0; }
 
         .azkar-item {
-            background: #F8FAFC; border-right: 4px solid var(--secondary);
-            padding: 14px; border-radius: 12px; margin-bottom: 12px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            background: #F4FBFD; border-right: 4px solid var(--secondary);
+            padding: 14px; border-radius: 14px; margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
         }
 
         .azkar-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .azkar-title { color: var(--primary); font-weight: 700; font-size: 0.95rem; }
+        .azkar-title { color: var(--primary-dark); font-weight: 700; font-size: 0.98rem; }
         
         .audio-btn {
-            background: var(--primary); color: white; border: none; padding: 7px 14px;
-            border-radius: 10px; font-size: 0.8rem; font-weight: 600;
+            background: linear-gradient(135deg, var(--secondary), var(--primary)); color: white; border: none; padding: 8px 16px;
+            border-radius: 12px; font-size: 0.8rem; font-weight: 700;
             cursor: pointer; display: flex; align-items: center; gap: 6px;
-            box-shadow: 0 2px 6px rgba(27, 67, 50, 0.2);
+            box-shadow: 0 3px 8px rgba(0, 180, 216, 0.3);
         }
 
         .audio-player-bar {
-            position: sticky; bottom: 0; background: #1B4332; color: white;
-            padding: 10px 14px; border-radius: 12px; margin-top: 10px;
+            position: sticky; bottom: 0; background: var(--primary-dark); color: white;
+            padding: 12px 16px; border-radius: 14px; margin-top: 10px;
             display: none; align-items: center; justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        .prayer-time-card { background: var(--primary); color: white; padding: 12px 18px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .form-input { width: 100%; padding: 11px; border: 1px solid #E2E8F0; border-radius: 10px; margin-bottom: 10px; font-size: 0.88rem; }
-        .submit-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 6px; }
+        .prayer-time-card { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 14px 18px; border-radius: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,119,182,0.2); }
+        .form-input { width: 100%; padding: 12px; border: 1px solid var(--accent); border-radius: 12px; margin-bottom: 10px; font-size: 0.9rem; background: #F8FDFE; }
+        .submit-btn { width: 100%; background: linear-gradient(135deg, var(--secondary), var(--primary)); color: white; border: none; padding: 13px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 6px; box-shadow: var(--shadow-btn); }
 
-        .quran-select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--secondary); font-size: 0.88rem; margin-bottom: 12px; background: white; }
-        .surah-card { background: white; border: 1px solid #EDF2F7; padding: 12px 14px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .quran-select { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid var(--secondary); font-size: 0.9rem; margin-bottom: 12px; background: white; font-weight: 600; color: var(--primary-dark); }
+        .surah-card { background: white; border: 1px solid var(--accent); padding: 12px 14px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
 
         .star-rating { display: flex; justify-content: center; gap: 8px; font-size: 1.8rem; color: #CBD5E0; margin: 12px 0; cursor: pointer; }
-        .star-rating .fa-star.active { color: #D4AF37; }
+        .star-rating .fa-star.active { color: #FFB703; }
 
         .rating-summary-box {
-            background: #E8F5E9; border: 1px solid #A3E635; border-radius: 12px;
+            background: var(--light-cyan); border: 1px solid var(--accent); border-radius: 14px;
             padding: 12px; text-align: center; margin-bottom: 14px;
         }
 
-        .saved-rating-card { background: #FFFDF0; border: 1px solid #F6AD55; border-radius: 12px; padding: 10px; margin-top: 8px; text-align: right; font-size: 0.85rem; }
+        .saved-rating-card { background: #FFFDF0; border: 1px solid #FFB703; border-radius: 12px; padding: 10px; margin-top: 8px; text-align: right; font-size: 0.85rem; }
 
         .counter-container {
             display: flex; align-items: center; justify-content: space-between;
-            margin-top: 10px; background: #EDF2F7; padding: 8px 12px; border-radius: 14px;
+            margin-top: 10px; background: var(--light-cyan); padding: 8px 12px; border-radius: 14px;
         }
 
         .counter-ring-btn {
@@ -193,7 +200,7 @@
             color: white; border: none; width: 65px; height: 65px; border-radius: 50%;
             font-size: 0.95rem; font-weight: bold; cursor: pointer; display: flex;
             flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 4px 10px rgba(27,67,50,0.3); transition: transform 0.1s;
+            box-shadow: 0 4px 12px rgba(0,180,216,0.35); transition: transform 0.1s;
         }
 
         .counter-ring-btn:active { transform: scale(0.92); }
@@ -204,7 +211,17 @@
         }
 
         .notice-box {
-            background: #EBF8FF; border-right: 4px solid #3182CE; padding: 10px 14px; border-radius: 8px; font-size: 0.82rem; margin-bottom: 12px; color: #2B6CB0;
+            background: #E0F7FA; border-right: 4px solid var(--primary); padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 12px; color: var(--primary-dark); font-weight: 600;
+        }
+
+        .fasting-btn-group {
+            display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;
+        }
+        .fasting-tab-btn {
+            flex: 1; min-width: 120px; padding: 10px; border-radius: 12px; border: 1px solid var(--secondary); background: white; color: var(--primary-dark); font-weight: 700; font-size: 0.82rem; cursor: pointer; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .fasting-tab-btn.active {
+            background: linear-gradient(135deg, var(--secondary), var(--primary)); color: white; border: none;
         }
 
         .compass-container {
@@ -266,10 +283,10 @@
 
         <div class="category-card" onclick="openQuran()">
             <div class="card-info">
-                <div class="icon-box" style="color: var(--gold-soft); background: #FFFDF0;"><i class="fa-solid fa-quran"></i></div>
+                <div class="icon-box" style="color: #D4AF37; background: #FFFDF0;"><i class="fa-solid fa-quran"></i></div>
                 <div class="card-title">القرآن الكريم كاملاً (الشيخ الطبلاوي وكبار القراء)</div>
             </div>
-            <i class="fa-solid fa-chevron-left" style="color:#A0AEC0; font-size:0.85rem;"></i>
+            <i class="fa-solid fa-chevron-left" style="color:#0077B6; font-size:0.85rem;"></i>
         </div>
 
         <div class="category-card" onclick="openPrayerTimes()">
@@ -277,15 +294,23 @@
                 <div class="icon-box"><i class="fa-solid fa-kaaba"></i></div>
                 <div class="card-title">مواقيت الصلاة، الأذان، والإقامة حسب المحافظة</div>
             </div>
-            <i class="fa-solid fa-chevron-left" style="color:#A0AEC0; font-size:0.85rem;"></i>
+            <i class="fa-solid fa-chevron-left" style="color:#0077B6; font-size:0.85rem;"></i>
+        </div>
+
+        <div class="category-card" onclick="openFastingSection()">
+            <div class="card-info">
+                <div class="icon-box" style="color:#7B2CBF; background:#F3E8FF;"><i class="fa-solid fa-calendar-check"></i></div>
+                <div class="card-title">تنبيه ومواعيد صيام (الفرض، السنة، ورمضان)</div>
+            </div>
+            <i class="fa-solid fa-chevron-left" style="color:#0077B6; font-size:0.85rem;"></i>
         </div>
 
         <div class="category-card" onclick="openQiblaCompass()">
             <div class="card-info">
-                <div class="icon-box" style="color:#C59B27;"><i class="fa-solid fa-compass"></i></div>
+                <div class="icon-box" style="color:#D4AF37;"><i class="fa-solid fa-compass"></i></div>
                 <div class="card-title">تحديد اتجاه القبلة الشريفة</div>
             </div>
-            <i class="fa-solid fa-chevron-left" style="color:#A0AEC0; font-size:0.85rem;"></i>
+            <i class="fa-solid fa-chevron-left" style="color:#0077B6; font-size:0.85rem;"></i>
         </div>
 
         <div class="category-card" onclick="openAzkar()">
@@ -293,7 +318,7 @@
                 <div class="icon-box"><i class="fa-solid fa-book-open"></i></div>
                 <div class="card-title">أذكار المسلم والصيام والسبحة الإلكترونية</div>
             </div>
-            <i class="fa-solid fa-chevron-left" style="color:#A0AEC0; font-size:0.85rem;"></i>
+            <i class="fa-solid fa-chevron-left" style="color:#0077B6; font-size:0.85rem;"></i>
         </div>
     </div>
 
@@ -303,14 +328,14 @@
     <div class="modal" id="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modal-title" style="color: var(--primary);"></h3>
+                <h3 id="modal-title" style="color: var(--primary-dark);"></h3>
                 <span class="close-btn" onclick="closeModal()">&times;</span>
             </div>
             <div id="modal-body"></div>
             
             <div id="audioPlayerStatus" class="audio-player-bar">
-                <span id="audioPlayingLabel" style="font-size:0.82rem;">جاري التشغيل...</span>
-                <button onclick="stopAudio()" style="background:#E53E3E; color:white; border:none; padding:5px 12px; border-radius:6px; font-size:0.8rem; font-weight:bold; cursor:pointer;">إيقاف 🛑</button>
+                <span id="audioPlayingLabel" style="font-size:0.85rem; font-weight:600;">جاري التشغيل...</span>
+                <button onclick="stopAudio()" style="background:#E53E3E; color:white; border:none; padding:6px 14px; border-radius:8px; font-size:0.8rem; font-weight:bold; cursor:pointer;">إيقاف 🛑</button>
             </div>
         </div>
     </div>
@@ -458,7 +483,6 @@
             let playPromise = audioPlayer.play();
             if (playPromise !== undefined) {
                 playPromise.then(() => {}).catch(error => {
-                    // في حالة تعذر تشغيل الرابط نقوم بالنطق التلقائي
                     speakText(label, label);
                 });
             }
@@ -534,21 +558,21 @@
 
             let ratingsHTML = ratingsList.map(r => `
                 <div class="saved-rating-card">
-                    <strong style="color:var(--primary);">${r.name}</strong> - <span style="color:#D4AF37;">${'⭐'.repeat(r.stars)}</span>
-                    <div style="color:#4A5568; margin-top:2px;">"${r.comment}"</div>
+                    <strong style="color:var(--primary-dark);">${r.name}</strong> - <span style="color:#FFB703;">${'⭐'.repeat(r.stars)}</span>
+                    <div style="color:#03045E; margin-top:2px;">"${r.comment}"</div>
                 </div>
             `).join('');
 
             let html = `
                 <div>
                     <div class="rating-summary-box">
-                        <div style="font-size:1.1rem; font-weight:bold; color:var(--primary);">إجمالي التقييمات ⭐⭐⭐⭐⭐</div>
-                        <div style="font-size:0.9rem; color:#2D6A4F; margin-top:2px;">
+                        <div style="font-size:1.1rem; font-weight:bold; color:var(--primary-dark);">إجمالي التقييمات ⭐⭐⭐⭐⭐</div>
+                        <div style="font-size:0.9rem; color:var(--primary); margin-top:2px;">
                             تم تقييم التطبيق بواسطة <strong>${ratingsList.length}</strong> مستخدم
                         </div>
                     </div>
 
-                    <p style="font-weight: 600; color: #4A5568; text-align:center;">نسعد برأيك وتقييمك لتطبيق الرسالة</p>
+                    <p style="font-weight: 600; color: #03045E; text-align:center;">نسعد برأيك وتقييمك لتطبيق الرسالة</p>
                     <div class="star-rating" id="starContainer">
                         <i class="fa-solid fa-star" onclick="setRating(1)"></i>
                         <i class="fa-solid fa-star" onclick="setRating(2)"></i>
@@ -561,7 +585,7 @@
                     <button class="submit-btn" onclick="submitRating()">حفظ وإرسال التقييم</button>
                     
                     <div style="margin-top:14px;">
-                        <strong style="color:var(--primary); font-size:0.9rem; display:block; margin-bottom:6px;">التقييمات المسجلة:</strong>
+                        <strong style="color:var(--primary-dark); font-size:0.9rem; display:block; margin-bottom:6px;">التقييمات المسجلة:</strong>
                         <div style="max-height:22vh; overflow-y:auto;">${ratingsHTML}</div>
                     </div>
                 </div>
@@ -596,17 +620,17 @@
             openRatingModal();
         }
 
-        /* المصحف الشريف - سيرفرات المعتمدة للشيخ الطبلاوي وكبار القراء */
+        /* المصحف الشريف - السيرفرات المعتمدة والسريعة */
         const reciters = [
-            { name: "محمد محمود الطبلاوي", url: "https://server10.mp3quran.net/tblwi/" },
-            { name: "محمود خليل الحصري", url: "https://server13.mp3quran.net/husr/" },
-            { name: "عبد الباسط عبد الصمد", url: "https://server7.mp3quran.net/basit/" },
-            { name: "مشاري راشد العفاسي", url: "https://server8.mp3quran.net/afs/" },
-            { name: "علي بن عبد الرحمن الحذيفي", url: "https://server9.mp3quran.net/hthfi/" },
-            { name: "سعد الغامدي", url: "https://server7.mp3quran.net/s_gmd/" },
-            { name: "ماهر المعيقلي", url: "https://server12.mp3quran.net/maher/" },
-            { name: "سعود الشريم", url: "https://server7.mp3quran.net/shur/" },
-            { name: "عبد الرحمن السديس", url: "https://server11.mp3quran.net/sds/" }
+            { name: "الشيخ محمد محمود الطبلاوي", url: "https://server10.mp3quran.net/tblwi/" },
+            { name: "الشيخ محمود خليل الحصري", url: "https://server13.mp3quran.net/husr/" },
+            { name: "الشيخ عبد الباسط عبد الصمد", url: "https://server7.mp3quran.net/basit/" },
+            { name: "الشيخ مشاري راشد العفاسي", url: "https://server8.mp3quran.net/afs/" },
+            { name: "الشيخ علي بن عبد الرحمن الحذيفي", url: "https://server9.mp3quran.net/hthfi/" },
+            { name: "الشيخ سعد الغامدي", url: "https://server7.mp3quran.net/s_gmd/" },
+            { name: "الشيخ ماهر المعيقلي", url: "https://server12.mp3quran.net/maher/" },
+            { name: "الشيخ سعود الشريم", url: "https://server7.mp3quran.net/shur/" },
+            { name: "الشيخ عبد الرحمن السديس", url: "https://server11.mp3quran.net/sds/" }
         ];
 
         const surahNames = [
@@ -622,7 +646,7 @@
                 return `
                     <div class="surah-card">
                         <div>
-                            <span style="font-size:0.8rem; color:#718096; margin-left:6px;">${index + 1}.</span>
+                            <span style="font-size:0.8rem; color:#0077B6; font-weight:bold; margin-left:6px;">${index + 1}.</span>
                             <strong>سورة ${name}</strong>
                         </div>
                         <button class="audio-btn" onclick="playSurah('${numStr}', '${name}')">
@@ -634,7 +658,7 @@
 
             let html = `
                 <div>
-                    <label style="font-weight:bold; color:var(--primary); display:block; margin-bottom:6px;">اختر القارئ المفضّل:</label>
+                    <label style="font-weight:bold; color:var(--primary-dark); display:block; margin-bottom:6px;">اختر القارئ المفضّل:</label>
                     <select id="quranReciterSelect" class="quran-select">${reciterOptions}</select>
                     <div style="max-height: 52vh; overflow-y: auto;">${surahList}</div>
                 </div>
@@ -764,18 +788,6 @@
 
             if (azkarTitleEl) azkarTitleEl.innerText = `متبقي على ${targetAzkar}`;
             if (azkarCountdownEl) azkarCountdownEl.innerText = `${formatTwoDigits(h)}:${formatTwoDigits(m)}:${formatTwoDigits(s)}`;
-
-            const hoursStr = formatTwoDigits(Math.floor(currentMinutes / 60));
-            const minutesStr = formatTwoDigits(currentMinutes % 60);
-            const currentTimeStr = `${hoursStr}:${minutesStr}`;
-
-            if (currentTimeStr === fajr.time && lastTriggeredAzkar !== "fajr_" + currentTimeStr) {
-                lastTriggeredAzkar = "fajr_" + currentTimeStr;
-                triggerAzkarNotification("أذكار الصباح", "https://media.blubrry.com/muslim_azkar/archive.org/download/Azkar_Sabah_And_Masaa/Azkar_Sabah.mp3");
-            } else if (currentTimeStr === asr.time && lastTriggeredAzkar !== "asr_" + currentTimeStr) {
-                lastTriggeredAzkar = "asr_" + currentTimeStr;
-                triggerAzkarNotification("أذكار المساء", "https://media.blubrry.com/muslim_azkar/archive.org/download/Azkar_Sabah_And_Masaa/Azkar_Masaa.mp3");
-            }
         }
 
         function updateFastingTimer(prayers, currentMinutes, currentSeconds) {
@@ -828,8 +840,7 @@
                 navigator.serviceWorker.ready.then(registration => {
                     registration.showNotification(`حان الآن موعد صلاة ${prayerName}`, {
                         body: `الله أكبر الله أكبر.. حان وقت الصلاة بحسب توقيت ${getSelectedGovernorate()}`,
-                        icon: "https://aymnhashmcom-pixel.github.io/El-Resalah-App/share-thumb.jpg",
-                        vibrate: [200, 100, 200]
+                        icon: "https://aymnhashmcom-pixel.github.io/El-Resalah-App/share-thumb.jpg"
                     });
                 });
             }
@@ -842,20 +853,6 @@
                 navigator.serviceWorker.ready.then(registration => {
                     registration.showNotification(`حان الآن موعد إقامة صلاة ${prayerName}`, {
                         body: `قد قامت الصلاة.. قد قامت الصلاة`,
-                        icon: "https://aymnhashmcom-pixel.github.io/El-Resalah-App/share-thumb.jpg",
-                        vibrate: [300, 100, 300]
-                    });
-                });
-            }
-        }
-
-        function triggerAzkarNotification(title, audioUrl) {
-            playAudioUrl(audioUrl, title);
-
-            if ("Notification" in window && Notification.permission === "granted") {
-                navigator.serviceWorker.ready.then(registration => {
-                    registration.showNotification(`حان الآن موعد ${title}`, {
-                        body: `اضغط للاستماع وقراءة ${title}`,
                         icon: "https://aymnhashmcom-pixel.github.io/El-Resalah-App/share-thumb.jpg"
                     });
                 });
@@ -880,16 +877,16 @@
                 <div class="prayer-time-card">
                     <div>
                         <strong>صلاة ${p.name}</strong>
-                        <div style="font-size:0.75rem; opacity:0.85; margin-top:2px;">الإقامة: ${p.iqamaTime} (بعد ${p.iqamaDelay} د)</div>
+                        <div style="font-size:0.78rem; opacity:0.9; margin-top:2px;">الإقامة: ${p.iqamaTime} (بعد ${p.iqamaDelay} د)</div>
                     </div>
-                    <span style="font-weight:bold; font-size:1.05rem;">${p.time}</span>
+                    <span style="font-weight:bold; font-size:1.1rem;">${p.time}</span>
                 </div>
             `).join('');
 
             let html = `
                 <div>
-                    <div style="margin-bottom:12px; background:#E8F5E9; padding:10px; border-radius:12px; border:1px solid #2D6A4F;">
-                        <label style="font-weight:bold; color:var(--primary); display:block; margin-bottom:4px;">اختر المحافظة لتعديل التوقيت:</label>
+                    <div style="margin-bottom:12px; background:var(--light-cyan); padding:10px; border-radius:14px; border:1px solid var(--secondary);">
+                        <label style="font-weight:bold; color:var(--primary-dark); display:block; margin-bottom:4px;">اختر المحافظة لتعديل التوقيت:</label>
                         <select id="govSelect" class="quran-select" style="margin-bottom:0;" onchange="changeGovernorate(this.value)">${govOptions}</select>
                     </div>
 
@@ -899,18 +896,18 @@
 
                     ${prayerCardsHTML}
 
-                    <div style="margin-top:14px; background:#F8FAFC; padding:12px; border-radius:12px; border:1px solid #E2E8F0;">
-                        <label style="font-weight:bold; color:var(--primary); display:block; margin-bottom:6px;">اختر المؤذن المفضّل:</label>
+                    <div style="margin-top:14px; background:#F8FDFE; padding:12px; border-radius:14px; border:1px solid var(--accent);">
+                        <label style="font-weight:bold; color:var(--primary-dark); display:block; margin-bottom:6px;">اختر المؤذن المفضّل:</label>
                         <select id="muazzinSelect" class="quran-select" onchange="saveMuazzin(this.value)">${muazzinOptions}</select>
 
                         <button class="submit-btn" onclick="playCurrentMuazzin()">
                             <i class="fa-solid fa-volume-high"></i> تجربة صوت الأذان المختار 🔔
                         </button>
-                        <button class="submit-btn" style="background:#2D6A4F; margin-top:6px;" onclick="playAudioUrl('${iqamaAudioUrl}', 'إقامة الصلاة')">
+                        <button class="submit-btn" style="background:linear-gradient(135deg, #023E8A, #0077B6); margin-top:8px;" onclick="playAudioUrl('${iqamaAudioUrl}', 'إقامة الصلاة')">
                             <i class="fa-solid fa-bullhorn"></i> تجربة صوت إقامة الصلاة 🕌
                         </button>
 
-                        <button class="submit-btn" style="background:#2B6CB0; margin-top:8px;" onclick="requestNotificationPermission()">
+                        <button class="submit-btn" style="background:linear-gradient(135deg, #0096C7, #00B4D8); margin-top:8px;" onclick="requestNotificationPermission()">
                             <i class="fa-solid fa-bell"></i> تفعيل إشعارات الأذان والإقامة بالخلفية
                         </button>
                     </div>
@@ -937,20 +934,83 @@
             playAudioUrl(url, muazzinName);
         }
 
+        /* قسم مخصص لصيام الفرض والسنة ورمضان */
+        function openFastingSection() {
+            document.getElementById('modal-title').innerText = "تنبيهات ومواعيد الصيام";
+            showFastingTab('ramadan');
+        }
+
+        function showFastingTab(type) {
+            let contentHTML = '';
+            const computedPrayers = calculatePrayerTimes();
+            const fajr = computedPrayers.find(p => p.name === "الفجر").time;
+            const maghrib = computedPrayers.find(p => p.name === "المغرب").time;
+
+            if (type === 'ramadan') {
+                contentHTML = `
+                    <div style="background:#F3E8FF; border:1px solid #7B2CBF; border-radius:14px; padding:14px; text-align:center; margin-bottom:12px;">
+                        <h4 style="color:#5A189A; margin-bottom:6px;"><i class="fa-solid fa-moon"></i> صيام شهر رمضان المبارك</h4>
+                        <p style="font-size:0.88rem; color:#3C096C;">اللهم بلغنا رمضان ووفقنا فيه للصيام والقيام وإيمانًا واحتسابًا.</p>
+                        <div style="margin-top:10px; background:white; padding:10px; border-radius:10px; font-weight:bold; color:#7B2CBF;">
+                            إمساكية اليوم: الفجر (${fajr}) | الإفطار: المغرب (${maghrib})
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'sunnah') {
+                contentHTML = `
+                    <div style="background:#E0F7FA; border:1px solid var(--secondary); border-radius:14px; padding:14px; margin-bottom:12px;">
+                        <h4 style="color:var(--primary-dark); margin-bottom:6px; text-align:center;"><i class="fa-solid fa-star"></i> صيام التطوع والسنة</h4>
+                        <ul style="font-size:0.85rem; color:var(--primary-dark); line-height:1.8; padding-right:18px;">
+                            <li><strong>صيام الإثنين والخميس:</strong> تُعرض فيهما الأعمال على الله.</li>
+                            <li><strong>الأيام البيض (الليالي القمرية):</strong> ١٣، ١٤، ١٥ من كل شهر هجري.</li>
+                            <li><strong>صوم يوم عرفة وست من شوال وعاشوراء.</strong></li>
+                        </ul>
+                    </div>
+                `;
+            } else if (type === 'azkar') {
+                contentHTML = `
+                    <div style="background:#FFFDF0; border:1px solid #FFB703; border-radius:14px; padding:12px;">
+                        <h4 style="color:#D4AF37; margin-bottom:8px;"><i class="fa-solid fa-hand-holding-heart"></i> أدعية وأذكار الصائم</h4>
+                        <div style="font-size:0.88rem; line-height:1.7; color:#333;">
+                            <p style="margin-bottom:6px;"><strong>عند الإفطار:</strong> "ذَهَبَ الظَّمَأُ وَابْتَلَّتِ الْعُرُوقُ وَثَبَتَ الأَجْرُ إِنْ شَاءَ اللَّهُ"</p>
+                            <p style="margin-bottom:6px;"><strong>دعاء إضافي:</strong> "اللَّهُمَّ إِنِّي أَسْأَلُكَ بِرَحْمَتِكَ الَّتِي وَسِعَتْ كُلَّ شَيْءٍ أَنْ تَغْفِرَ لِي"</p>
+                            <p><strong>عند السباب أو الخصام:</strong> "إِنِّي صَائِمٌ.. إِنِّي صَائِمٌ"</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            let html = `
+                <div>
+                    <div class="fasting-btn-group">
+                        <button class="fasting-tab-btn ${type === 'ramadan' ? 'active' : ''}" onclick="showFastingTab('ramadan')">شهر رمضان</button>
+                        <button class="fasting-tab-btn ${type === 'sunnah' ? 'active' : ''}" onclick="showFastingTab('sunnah')">صيام السنة</button>
+                        <button class="fasting-tab-btn ${type === 'azkar' ? 'active' : ''}" onclick="showFastingTab('azkar')">أدعية الصائم</button>
+                    </div>
+                    ${contentHTML}
+                    <button class="submit-btn" style="background:linear-gradient(135deg, #7B2CBF, #5A189A); margin-top:10px;" onclick="speakText('ذهب الظمأ وابتلت العروق وثبت الأجر إن شاء الله', 'دعاء الإفطار')">
+                        <i class="fa-solid fa-volume-high"></i> الاستماع لدعاء الإفطار 🔊
+                    </button>
+                </div>
+            `;
+            document.getElementById('modal-body').innerHTML = html;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
         /* بوصلة اتجاه القبلة */
         function openQiblaCompass() {
             document.getElementById('modal-title').innerText = "تحديد اتجاه القبلة الشريفة";
             
             let html = `
                 <div class="compass-container">
-                    <p style="font-size:0.85rem; color:#4A5568; margin-bottom:12px; text-align:center;">
+                    <p style="font-size:0.85rem; color:var(--primary-dark); margin-bottom:12px; text-align:center;">
                         ضع الهاتف أفقياً واستدر حتى يتجه الرمز الذهبي نحو الأعلى لتحديد القبلة.
                     </p>
                     <div class="compass-disc" id="compassDisc">
                         <div class="compass-arrow"></div>
                         <div class="kaaba-icon-box"><i class="fa-solid fa-kaaba"></i></div>
                     </div>
-                    <div id="compassDegree" style="margin-top:14px; font-weight:bold; color:var(--primary); font-size:1rem;">
+                    <div id="compassDegree" style="margin-top:14px; font-weight:bold; color:var(--primary-dark); font-size:1rem;">
                         جاري قراءة بوصلة الجهاز...
                     </div>
                 </div>
@@ -1012,8 +1072,7 @@
                     { text: "ذَهَبَ الظَّمَأُ وَابْتَلَّتِ الْعُرُوقُ وَثَبَتَ الأَجْرُ إِنْ شَاءَ اللَّهُ (عند الإفطار)", count: 1 },
                     { text: "اللَّهُمَّ إِنِّي أَسْأَلُكَ بِرَحْمَتِكَ الَّتِي وَسِعَتْ كُلَّ شَيْءٍ أَنْ تَغْفِرَ لِي (عند الإفطار)", count: 1 },
                     { text: "اللَّهُمَّ لَكَ صُمْتُ وَعَلَى رِزْقِكَ أَفْطَرْتُ", count: 1 },
-                    { text: "إِنِّي صَائِمٌ.. إِنِّي صَائِمٌ (عند السباب أو الخصام أثناء الصوم)", count: 2 },
-                    { text: "أَفْطَرَ عِنْدَكُمُ الصَّائِمُونَ، وَأَكَلَ طَعَامَكُمُ الأَبْرَارُ، وَصَلَّتْ عَلَيْكُمُ المَلاَئِكَةُ (دعاء لمن أفطر عند أهل بيت)", count: 1 }
+                    { text: "إِنِّي صَائِمٌ.. إِنِّي صَائِمٌ (عند السباب أو الخصام أثناء الصوم)", count: 2 }
                 ]
             },
             {
@@ -1032,11 +1091,11 @@
             
             let html = azkarCategories.map((cat, cIdx) => {
                 let itemsHTML = cat.items.map((item, iIdx) => `
-                    <div style="background:white; border:1px solid #E2E8F0; border-radius:12px; padding:12px; margin-top:10px;">
-                        <div style="font-size:0.9rem; line-height:1.7; font-weight:600; color:#2D3748;">${item.text}</div>
+                    <div style="background:white; border:1px solid var(--accent); border-radius:14px; padding:12px; margin-top:10px;">
+                        <div style="font-size:0.92rem; line-height:1.7; font-weight:600; color:var(--primary-dark);">${item.text}</div>
                         <div class="counter-container">
                             <div>
-                                <span style="font-size:0.78rem; color:#718096; display:block;">المطلوب: ${item.count}</span>
+                                <span style="font-size:0.78rem; color:#0077B6; font-weight:600; display:block;">المطلوب: ${item.count}</span>
                                 <button class="reset-btn" onclick="resetCount('cnt_${cIdx}_${iIdx}')">إعادة</button>
                             </div>
                             <button class="counter-ring-btn" id="cnt_${cIdx}_${iIdx}" onclick="countUp('cnt_${cIdx}_${iIdx}', ${item.count})">
@@ -1052,7 +1111,7 @@
                         <div class="azkar-title-row">
                             <span class="azkar-title">${cat.title}</span>
                             <button class="audio-btn" onclick="speakText('${cat.textToRead}', '${cat.title}', ${cat.audioUrl ? `'${cat.audioUrl}'` : 'null'})">
-                                <i class="fa-solid fa-volume-high"></i> تشغيل / نطق الأذكار 🔊
+                                <i class="fa-solid fa-volume-high"></i> تشغيل / نطق 🔊
                             </button>
                         </div>
                         ${itemsHTML}
