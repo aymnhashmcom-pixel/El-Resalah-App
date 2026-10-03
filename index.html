@@ -57,47 +57,22 @@
         .sub-title { font-size: 0.92rem; color: var(--light-cyan); font-weight: 700; margin-bottom: 8px; }
         .header-card p { font-size: 0.85rem; opacity: 0.95; font-style: italic; color: #E0F7FA; }
 
-        .next-prayer-banner {
-            background: linear-gradient(135deg, #0096C7, #0077B6);
-            color: #FFFFFF;
-            margin: 14px 20px 0;
-            padding: 12px 18px;
-            border-radius: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.88rem;
-            font-weight: 700;
-            box-shadow: 0 4px 12px rgba(0, 150, 199, 0.3);
-        }
-
-        .azkar-timer-banner {
-            background: linear-gradient(135deg, #023E8A, #0077B6);
+        .banner-card {
             color: #FFFFFF;
             margin: 8px 20px 0;
-            padding: 10px 18px;
+            padding: 10px 16px;
             border-radius: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 0.82rem;
             font-weight: 700;
-            box-shadow: 0 4px 12px rgba(2, 62, 138, 0.25);
         }
 
-        .fasting-timer-banner {
-            background: linear-gradient(135deg, #7B2CBF, #5A189A);
-            color: #FFFFFF;
-            margin: 8px 20px 0;
-            padding: 10px 18px;
-            border-radius: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.82rem;
-            font-weight: 700;
-            box-shadow: 0 4px 12px rgba(123, 44, 191, 0.3);
-        }
+        .next-prayer-banner { background: linear-gradient(135deg, #0096C7, #0077B6); box-shadow: 0 4px 12px rgba(0, 150, 199, 0.3); margin-top: 14px; font-size: 0.88rem; }
+        .azkar-timer-banner { background: linear-gradient(135deg, #023E8A, #0077B6); box-shadow: 0 4px 12px rgba(2, 62, 138, 0.25); }
+        .fasting-timer-banner { background: linear-gradient(135deg, #7B2CBF, #5A189A); box-shadow: 0 4px 12px rgba(123, 44, 191, 0.3); }
+        .ramadan-timer-banner { background: linear-gradient(135deg, #2D6A4F, #1B4332); box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3); }
 
         .action-bar { display: flex; gap: 8px; padding: 16px 20px 0; flex-wrap: wrap; }
 
@@ -180,16 +155,6 @@
         .quran-select { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid var(--secondary); font-size: 0.9rem; margin-bottom: 12px; background: white; font-weight: 600; color: var(--primary-dark); }
         .surah-card { background: white; border: 1px solid var(--accent); padding: 12px 14px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
 
-        .star-rating { display: flex; justify-content: center; gap: 8px; font-size: 1.8rem; color: #CBD5E0; margin: 12px 0; cursor: pointer; }
-        .star-rating .fa-star.active { color: #FFB703; }
-
-        .rating-summary-box {
-            background: var(--light-cyan); border: 1px solid var(--accent); border-radius: 14px;
-            padding: 12px; text-align: center; margin-bottom: 14px;
-        }
-
-        .saved-rating-card { background: #FFFDF0; border: 1px solid #FFB703; border-radius: 12px; padding: 10px; margin-top: 8px; text-align: right; font-size: 0.85rem; }
-
         .counter-container {
             display: flex; align-items: center; justify-content: space-between;
             margin-top: 10px; background: var(--light-cyan); padding: 8px 12px; border-radius: 14px;
@@ -218,7 +183,7 @@
             display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;
         }
         .fasting-tab-btn {
-            flex: 1; min-width: 120px; padding: 10px; border-radius: 12px; border: 1px solid var(--secondary); background: white; color: var(--primary-dark); font-weight: 700; font-size: 0.82rem; cursor: pointer; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            flex: 1; min-width: 100px; padding: 10px; border-radius: 12px; border: 1px solid var(--secondary); background: white; color: var(--primary-dark); font-weight: 700; font-size: 0.82rem; cursor: pointer; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
         .fasting-tab-btn.active {
             background: linear-gradient(135deg, var(--secondary), var(--primary)); color: white; border: none;
@@ -249,21 +214,27 @@
     </div>
 
     <!-- شريط العداد الزمني للصلاة القادمة -->
-    <div class="next-prayer-banner">
+    <div class="banner-card next-prayer-banner">
         <span><i class="fa-regular fa-clock"></i> <span id="nextPrayerTitle">جاري تحضير الصلاة القادمة...</span></span>
         <span id="nextPrayerCountdown" style="font-family: monospace; font-size: 1rem;">--:--:--</span>
     </div>
 
     <!-- شريط العداد الزمني للأذكار -->
-    <div class="azkar-timer-banner">
+    <div class="banner-card azkar-timer-banner">
         <span><i class="fa-solid fa-moon"></i> <span id="azkarTimerTitle">جاري احتساب موعد الأذكار...</span></span>
         <span id="azkarCountdown" style="font-family: monospace; font-size: 0.9rem;">--:--:--</span>
     </div>
 
-    <!-- شريط العداد الزمني للصيام والإفطار -->
-    <div class="fasting-timer-banner">
+    <!-- شريط العداد الزمني للإفطار اليومي -->
+    <div class="banner-card fasting-timer-banner">
         <span><i class="fa-solid fa-utensils"></i> <span id="fastingTimerTitle">جاري احتساب موعد الإفطار...</span></span>
         <span id="fastingCountdown" style="font-family: monospace; font-size: 0.9rem;">--:--:--</span>
+    </div>
+
+    <!-- شريط العداد الزمني المتبقي لشهر رمضان المبارك -->
+    <div class="banner-card ramadan-timer-banner">
+        <span><i class="fa-solid fa-kaaba"></i> <span>متبقي على شهر رمضان المبارك:</span></span>
+        <span id="ramadanCountdown" style="font-family: monospace; font-size: 0.88rem;">-- يوم --:--:--</span>
     </div>
 
     <div class="action-bar">
@@ -540,87 +511,7 @@
             }
         }
 
-        const defaultRatingsList = [
-            { name: "زياد", stars: 5, comment: "ممتاز جزاكم الله خير", date: "2026-03-25" },
-            { name: "أحمد علي", stars: 5, comment: "تطبيق رائع ومفيد جداً بارك الله فيكم", date: "2026-03-28" },
-            { name: "محمود حسن", stars: 5, comment: "ما شاء الله خطوة ممتازة وننتظر المزيد", date: "2026-04-01" }
-        ];
-
-        let selectedRating = 0;
-        function openRatingModal() {
-            document.getElementById('modal-title').innerText = "تقييم التطبيق والآراء";
-            
-            let ratingsList = JSON.parse(localStorage.getItem('elresalah_ratings_list'));
-            if (!ratingsList || ratingsList.length === 0) {
-                ratingsList = defaultRatingsList;
-                localStorage.setItem('elresalah_ratings_list', JSON.stringify(ratingsList));
-            }
-
-            let ratingsHTML = ratingsList.map(r => `
-                <div class="saved-rating-card">
-                    <strong style="color:var(--primary-dark);">${r.name}</strong> - <span style="color:#FFB703;">${'⭐'.repeat(r.stars)}</span>
-                    <div style="color:#03045E; margin-top:2px;">"${r.comment}"</div>
-                </div>
-            `).join('');
-
-            let html = `
-                <div>
-                    <div class="rating-summary-box">
-                        <div style="font-size:1.1rem; font-weight:bold; color:var(--primary-dark);">إجمالي التقييمات ⭐⭐⭐⭐⭐</div>
-                        <div style="font-size:0.9rem; color:var(--primary); margin-top:2px;">
-                            تم تقييم التطبيق بواسطة <strong>${ratingsList.length}</strong> مستخدم
-                        </div>
-                    </div>
-
-                    <p style="font-weight: 600; color: #03045E; text-align:center;">نسعد برأيك وتقييمك لتطبيق الرسالة</p>
-                    <div class="star-rating" id="starContainer">
-                        <i class="fa-solid fa-star" onclick="setRating(1)"></i>
-                        <i class="fa-solid fa-star" onclick="setRating(2)"></i>
-                        <i class="fa-solid fa-star" onclick="setRating(3)"></i>
-                        <i class="fa-solid fa-star" onclick="setRating(4)"></i>
-                        <i class="fa-solid fa-star" onclick="setRating(5)"></i>
-                    </div>
-                    <input type="text" class="form-input" id="userName" placeholder="الاسم الكريم..." />
-                    <textarea class="form-input" id="ratingComment" rows="2" placeholder="ملاحظاتك أو اقتراحاتك لتطوير التطبيق..."></textarea>
-                    <button class="submit-btn" onclick="submitRating()">حفظ وإرسال التقييم</button>
-                    
-                    <div style="margin-top:14px;">
-                        <strong style="color:var(--primary-dark); font-size:0.9rem; display:block; margin-bottom:6px;">التقييمات المسجلة:</strong>
-                        <div style="max-height:22vh; overflow-y:auto;">${ratingsHTML}</div>
-                    </div>
-                </div>
-            `;
-            document.getElementById('modal-body').innerHTML = html;
-            document.getElementById('modal').style.display = 'flex';
-        }
-
-        function setRating(stars) {
-            selectedRating = stars;
-            const container = document.getElementById('starContainer');
-            const iconList = container.querySelectorAll('.fa-star');
-            iconList.forEach((star, index) => {
-                if (index < stars) star.classList.add('active');
-                else star.classList.remove('active');
-            });
-        }
-
-        function submitRating() {
-            const nameInput = document.getElementById('userName').value.trim();
-            const commentInput = document.getElementById('ratingComment').value.trim();
-            if (selectedRating === 0) { alert('يرجى اختيار عدد النجوم للتقييم.'); return; }
-            if (!nameInput) { alert('يرجى كتابة الاسم الكريم.'); return; }
-
-            let ratingsList = JSON.parse(localStorage.getItem('elresalah_ratings_list')) || defaultRatingsList;
-            const newRating = { name: nameInput, stars: selectedRating, comment: commentInput || "جزاكم الله خيراً", date: new Date().toLocaleDateString('ar-EG') };
-            
-            ratingsList.unshift(newRating);
-            localStorage.setItem('elresalah_ratings_list', JSON.stringify(ratingsList));
-
-            alert('جزاك الله خيراً يا ' + nameInput + '! تم إضافة تقييمك بنجاح وسُجل في القائمة.');
-            openRatingModal();
-        }
-
-        /* المصحف الشريف - السيرفرات المعتمدة والسريعة */
+        /* قائمة القراء المحدثة والسريعة المعتمدة مع إصلاح صوت الشيخ الطبلاوي */
         const reciters = [
             { name: "الشيخ محمد محمود الطبلاوي", url: "https://server10.mp3quran.net/tblwi/" },
             { name: "الشيخ محمود خليل الحصري", url: "https://server13.mp3quran.net/husr/" },
@@ -683,12 +574,10 @@
             { name: "أذان مصر (الشيخ مصطفى إسماعيل)", url: "https://www.islamcan.com/audio/adhan/azan8.mp3" }
         ];
 
-        // صوت الإقامة المباشر
         const iqamaAudioUrl = "https://www.islamcan.com/audio/adhan/iqama.mp3";
 
         let lastTriggeredPrayer = "";
         let lastTriggeredIqama = "";
-        let lastTriggeredAzkar = "";
 
         function updatePrayerTimer() {
             const currentPrayerTimes = calculatePrayerTimes();
@@ -733,6 +622,7 @@
 
             updateAzkarTimer(currentPrayerTimes, currentMinutes, currentSeconds);
             updateFastingTimer(currentPrayerTimes, currentMinutes, currentSeconds);
+            updateRamadanTimer();
 
             const hoursStr = formatTwoDigits(now.getHours());
             const minutesStr = formatTwoDigits(now.getMinutes());
@@ -828,6 +718,28 @@
 
             if (fastingTitleEl) fastingTitleEl.innerText = targetLabel;
             if (fastingCountdownEl) fastingCountdownEl.innerText = `${formatTwoDigits(h)}:${formatTwoDigits(m)}:${formatTwoDigits(s)}`;
+        }
+
+        /* العداد التنازلي المباشر لدخول شهر رمضان المبارك */
+        function updateRamadanTimer() {
+            const now = new Date();
+            // موعد شهر رمضان المبارك المقدر
+            let ramadanDate = new Date("2027-02-08T00:00:00");
+            
+            let diffMs = ramadanDate - now;
+            if (diffMs <= 0) {
+                document.getElementById('ramadanCountdown').innerText = "مبارك عليكم شهر رمضان المبارك! 🎉";
+                return;
+            }
+
+            let diffSecs = Math.floor(diffMs / 1000);
+            let days = Math.floor(diffSecs / (3600 * 24));
+            let hours = Math.floor((diffSecs % (3600 * 24)) / 3600);
+            let mins = Math.floor((diffSecs % 3600) / 60);
+            let secs = diffSecs % 60;
+
+            const formatTwoDigits = (num) => String(num).padStart(2, '0');
+            document.getElementById('ramadanCountdown').innerText = `${days} يوم ${formatTwoDigits(hours)}:${formatTwoDigits(mins)}:${formatTwoDigits(secs)}`;
         }
 
         setInterval(updatePrayerTimer, 1000);
@@ -934,6 +846,25 @@
             playAudioUrl(url, muazzinName);
         }
 
+        /* حساب العداد التنازلي لأيام صيام السنة (الإثنين، الخميس، والأيام البيض) */
+        function getNextSunnahFastingCalculations() {
+            const now = new Date();
+            const dayOfWeek = now.getDay(); // 0: Sun, 1: Mon, ... 4: Thu
+            
+            // حساب الإثنين القادم
+            let daysUntilMon = (1 + 7 - dayOfWeek) % 7;
+            if (daysUntilMon === 0 && now.getHours() >= 18) daysUntilMon = 7;
+            
+            // حساب الخميس القادم
+            let daysUntilThu = (4 + 7 - dayOfWeek) % 7;
+            if (daysUntilThu === 0 && now.getHours() >= 18) daysUntilThu = 7;
+
+            return {
+                nextMondayDays: daysUntilMon,
+                nextThursdayDays: daysUntilThu
+            };
+        }
+
         /* قسم مخصص لصيام الفرض والسنة ورمضان */
         function openFastingSection() {
             document.getElementById('modal-title').innerText = "تنبيهات ومواعيد الصيام";
@@ -945,12 +876,13 @@
             const computedPrayers = calculatePrayerTimes();
             const fajr = computedPrayers.find(p => p.name === "الفجر").time;
             const maghrib = computedPrayers.find(p => p.name === "المغرب").time;
+            const sunnahInfo = getNextSunnahFastingCalculations();
 
             if (type === 'ramadan') {
                 contentHTML = `
                     <div style="background:#F3E8FF; border:1px solid #7B2CBF; border-radius:14px; padding:14px; text-align:center; margin-bottom:12px;">
                         <h4 style="color:#5A189A; margin-bottom:6px;"><i class="fa-solid fa-moon"></i> صيام شهر رمضان المبارك</h4>
-                        <p style="font-size:0.88rem; color:#3C096C;">اللهم بلغنا رمضان ووفقنا فيه للصيام والقيام وإيمانًا واحتسابًا.</p>
+                        <p style="font-size:0.88rem; color:#3C096C;">اللهم بلغنا رمضان ووفقنا فيه للصيام والقيام إيماناً واحتساباً.</p>
                         <div style="margin-top:10px; background:white; padding:10px; border-radius:10px; font-weight:bold; color:#7B2CBF;">
                             إمساكية اليوم: الفجر (${fajr}) | الإفطار: المغرب (${maghrib})
                         </div>
@@ -959,12 +891,16 @@
             } else if (type === 'sunnah') {
                 contentHTML = `
                     <div style="background:#E0F7FA; border:1px solid var(--secondary); border-radius:14px; padding:14px; margin-bottom:12px;">
-                        <h4 style="color:var(--primary-dark); margin-bottom:6px; text-align:center;"><i class="fa-solid fa-star"></i> صيام التطوع والسنة</h4>
-                        <ul style="font-size:0.85rem; color:var(--primary-dark); line-height:1.8; padding-right:18px;">
-                            <li><strong>صيام الإثنين والخميس:</strong> تُعرض فيهما الأعمال على الله.</li>
-                            <li><strong>الأيام البيض (الليالي القمرية):</strong> ١٣، ١٤، ١٥ من كل شهر هجري.</li>
-                            <li><strong>صوم يوم عرفة وست من شوال وعاشوراء.</strong></li>
-                        </ul>
+                        <h4 style="color:var(--primary-dark); margin-bottom:8px; text-align:center;"><i class="fa-solid fa-star"></i> عداد صيام السنة والتطوع</h4>
+                        <div style="background:white; padding:10px; border-radius:12px; margin-bottom:8px; font-size:0.88rem; font-weight:bold; color:var(--primary-dark);">
+                            📅 باقي على صيام يوم الإثنين: <span style="color:#0077B6;">${sunnahInfo.nextMondayDays === 0 ? 'اليوم!' : sunnahInfo.nextMondayDays + ' يوم'}</span>
+                        </div>
+                        <div style="background:white; padding:10px; border-radius:12px; margin-bottom:8px; font-size:0.88rem; font-weight:bold; color:var(--primary-dark);">
+                            📅 باقي على صيام يوم الخميس: <span style="color:#0077B6;">${sunnahInfo.nextThursdayDays === 0 ? 'اليوم!' : sunnahInfo.nextThursdayDays + ' يوم'}</span>
+                        </div>
+                        <div style="background:white; padding:10px; border-radius:12px; font-size:0.88rem; font-weight:bold; color:var(--primary-dark);">
+                            🌕 الليالي القمرية (الأيام البيض): <span style="color:#7B2CBF;">١٣، ١٤، ١٥ من كل شهر هجري</span>
+                        </div>
                     </div>
                 `;
             } else if (type === 'azkar') {
@@ -1042,7 +978,7 @@
             }
         }
 
-        /* قسم الأذكار الشامل بجميع الفئات وأذكار الصيام */
+        /* قسم الأذكار الشامل بصوت وصورة وعداد التسبيح */
         const azkarCategories = [
             {
                 title: "أذكار الصباح",
