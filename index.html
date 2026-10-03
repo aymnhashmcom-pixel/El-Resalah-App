@@ -8,7 +8,7 @@
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="تطبيق الرسالة 📱" />
-    <meta property="og:description" content="تطبيق إسلامي متكامل: أذكار المسلم، القرآن الكريم كاملاً، مواقيت الصلاة والأذان والإقامة، وتحديد اتجاه القبلة." />
+    <meta property="og:description" content="تطبيق إسلامي متكامل: أذكار المسلم، أذكار الصيام، القرآن الكريم كاملاً، مواقيت الصلاة والأذان والإقامة، وتحديد اتجاه القبلة." />
     <meta property="og:image" content="https://aymnhashmcom-pixel.github.io/El-Resalah-App/share-thumb.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -70,6 +70,19 @@
 
         .azkar-timer-banner {
             background: #2D6A4F;
+            color: #FFFFFF;
+            margin: 8px 20px 0;
+            padding: 8px 16px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .fasting-timer-banner {
+            background: #8C6239;
             color: #FFFFFF;
             margin: 8px 20px 0;
             padding: 8px 16px;
@@ -194,7 +207,6 @@
             background: #EBF8FF; border-right: 4px solid #3182CE; padding: 10px 14px; border-radius: 8px; font-size: 0.82rem; margin-bottom: 12px; color: #2B6CB0;
         }
 
-        /* تصميم البوصلة */
         .compass-container {
             display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0;
         }
@@ -229,6 +241,12 @@
     <div class="azkar-timer-banner">
         <span><i class="fa-solid fa-moon"></i> <span id="azkarTimerTitle">جاري احتساب موعد الأذكار...</span></span>
         <span id="azkarCountdown" style="font-family: monospace; font-size: 0.9rem;">--:--:--</span>
+    </div>
+
+    <!-- شريط العداد الزمني للصيام والإفطار -->
+    <div class="fasting-timer-banner">
+        <span><i class="fa-solid fa-utensils"></i> <span id="fastingTimerTitle">جاري احتساب موعد الإفطار...</span></span>
+        <span id="fastingCountdown" style="font-family: monospace; font-size: 0.9rem;">--:--:--</span>
     </div>
 
     <div class="action-bar">
@@ -273,7 +291,7 @@
         <div class="category-card" onclick="openAzkar()">
             <div class="card-info">
                 <div class="icon-box"><i class="fa-solid fa-book-open"></i></div>
-                <div class="card-title">أذكار المسلم الناطقة والتلقائية والسبحة الإلكترونية</div>
+                <div class="card-title">أذكار المسلم والصيام والسبحة الإلكترونية</div>
             </div>
             <i class="fa-solid fa-chevron-left" style="color:#A0AEC0; font-size:0.85rem;"></i>
         </div>
@@ -440,7 +458,8 @@
             let playPromise = audioPlayer.play();
             if (playPromise !== undefined) {
                 playPromise.then(() => {}).catch(error => {
-                    alert("اضغط على الصفحة مرة واحدة للسماح بالتشغيل الصوتي تلقائياً.");
+                    // في حالة تعذر تشغيل الرابط نقوم بالنطق التلقائي
+                    speakText(label, label);
                 });
             }
         }
@@ -577,7 +596,7 @@
             openRatingModal();
         }
 
-        /* المصحف الشريف - السيرفرات المعتمدة للشيخ الطبلاوي وكبار القراء */
+        /* المصحف الشريف - سيرفرات المعتمدة للشيخ الطبلاوي وكبار القراء */
         const reciters = [
             { name: "محمد محمود الطبلاوي", url: "https://server10.mp3quran.net/tblwi/" },
             { name: "محمود خليل الحصري", url: "https://server13.mp3quran.net/husr/" },
@@ -689,6 +708,7 @@
             if (timerEl) timerEl.innerText = countdownStr;
 
             updateAzkarTimer(currentPrayerTimes, currentMinutes, currentSeconds);
+            updateFastingTimer(currentPrayerTimes, currentMinutes, currentSeconds);
 
             const hoursStr = formatTwoDigits(now.getHours());
             const minutesStr = formatTwoDigits(now.getMinutes());
@@ -756,6 +776,46 @@
                 lastTriggeredAzkar = "asr_" + currentTimeStr;
                 triggerAzkarNotification("أذكار المساء", "https://media.blubrry.com/muslim_azkar/archive.org/download/Azkar_Sabah_And_Masaa/Azkar_Masaa.mp3");
             }
+        }
+
+        function updateFastingTimer(prayers, currentMinutes, currentSeconds) {
+            const fajr = prayers.find(p => p.name === "الفجر");
+            const maghrib = prayers.find(p => p.name === "المغرب");
+
+            const [fH, fM] = fajr.time.split(':').map(Number);
+            const fajrMins = fH * 60 + fM;
+
+            const [mH, mM] = maghrib.time.split(':').map(Number);
+            const maghribMins = mH * 60 + mM;
+
+            let targetLabel = "";
+            let targetMins = 0;
+
+            if (currentMinutes >= fajrMins && currentMinutes < maghribMins) {
+                targetLabel = "متبقي على موعد الإفطار (المغرب)";
+                targetMins = maghribMins;
+            } else if (currentMinutes < fajrMins) {
+                targetLabel = "متبقي على إمساكية الصوم (الفجر)";
+                targetMins = fajrMins;
+            } else {
+                targetLabel = "متبقي على السحور وإمساكية الغد";
+                targetMins = (24 * 60) + fajrMins;
+            }
+
+            let diffSecs = (targetMins * 60) - (currentMinutes * 60 + currentSeconds);
+            if (diffSecs < 0) diffSecs = 0;
+
+            const h = Math.floor(diffSecs / 3600);
+            const m = Math.floor((diffSecs % 3600) / 60);
+            const s = diffSecs % 60;
+
+            const formatTwoDigits = (num) => String(num).padStart(2, '0');
+
+            const fastingTitleEl = document.getElementById('fastingTimerTitle');
+            const fastingCountdownEl = document.getElementById('fastingCountdown');
+
+            if (fastingTitleEl) fastingTitleEl.innerText = targetLabel;
+            if (fastingCountdownEl) fastingCountdownEl.innerText = `${formatTwoDigits(h)}:${formatTwoDigits(m)}:${formatTwoDigits(s)}`;
         }
 
         setInterval(updatePrayerTimer, 1000);
@@ -884,7 +944,7 @@
             let html = `
                 <div class="compass-container">
                     <p style="font-size:0.85rem; color:#4A5568; margin-bottom:12px; text-align:center;">
-                        ضع الهاتف بشكل أفقياً واستدر حتى يتجه الرمز الذهبي نحو الأعلى لتحديد القبلة.
+                        ضع الهاتف أفقياً واستدر حتى يتجه الرمز الذهبي نحو الأعلى لتحديد القبلة.
                     </p>
                     <div class="compass-disc" id="compassDisc">
                         <div class="compass-arrow"></div>
@@ -908,13 +968,12 @@
         function handleCompass(event) {
             let heading = event.alpha;
             if (typeof event.webkitCompassHeading !== "undefined") {
-                heading = event.webkitCompassHeading; // لأجهزة آيفون
+                heading = event.webkitCompassHeading;
             }
             if (heading !== null && heading !== undefined) {
                 let compassDisc = document.getElementById('compassDisc');
                 let compassDegree = document.getElementById('compassDegree');
                 if (compassDisc && compassDegree) {
-                    // اتجاه مكة التقريبي من مصر حوالي 136 درجة
                     let qiblaAngle = 136;
                     let rotateDeg = qiblaAngle - heading;
                     compassDisc.style.transform = `rotate(${rotateDeg}deg)`;
@@ -923,7 +982,7 @@
             }
         }
 
-        /* الأذكار المباشرة الناطقة مع الملفات الصوتية الصحيحة الأذان والأذكار */
+        /* قسم الأذكار الشامل بجميع الفئات وأذكار الصيام */
         const azkarCategories = [
             {
                 title: "أذكار الصباح",
@@ -943,6 +1002,18 @@
                     { text: "أَمْسَيْنَا وَأَمْسَى المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", count: 1 },
                     { text: "اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ المَصِيرُ.", count: 1 },
                     { text: "أَعُوذُ بِكَلِمَاتِ اللهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ.", count: 3 }
+                ]
+            },
+            {
+                title: "أذكار وأدعية الصيام (الفرض والسنة)",
+                textToRead: "ذهب الظمأ وابتلت العروق وثبت الأجر إن شاء الله. اللهم إني أسألك برحمتك التي وسعت كل شيء أن تغفر لي.",
+                audioUrl: null,
+                items: [
+                    { text: "ذَهَبَ الظَّمَأُ وَابْتَلَّتِ الْعُرُوقُ وَثَبَتَ الأَجْرُ إِنْ شَاءَ اللَّهُ (عند الإفطار)", count: 1 },
+                    { text: "اللَّهُمَّ إِنِّي أَسْأَلُكَ بِرَحْمَتِكَ الَّتِي وَسِعَتْ كُلَّ شَيْءٍ أَنْ تَغْفِرَ لِي (عند الإفطار)", count: 1 },
+                    { text: "اللَّهُمَّ لَكَ صُمْتُ وَعَلَى رِزْقِكَ أَفْطَرْتُ", count: 1 },
+                    { text: "إِنِّي صَائِمٌ.. إِنِّي صَائِمٌ (عند السباب أو الخصام أثناء الصوم)", count: 2 },
+                    { text: "أَفْطَرَ عِنْدَكُمُ الصَّائِمُونَ، وَأَكَلَ طَعَامَكُمُ الأَبْرَارُ، وَصَلَّتْ عَلَيْكُمُ المَلاَئِكَةُ (دعاء لمن أفطر عند أهل بيت)", count: 1 }
                 ]
             },
             {
