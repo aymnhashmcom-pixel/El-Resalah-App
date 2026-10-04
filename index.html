@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0096C7">
+    <meta name="theme-color" content="#0077B6">
     <title>تطبيق الرسالة</title>
 
     <meta property="og:type" content="website" />
@@ -149,7 +149,6 @@
         }
 
         .prayer-time-card { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 14px 18px; border-radius: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,119,182,0.2); }
-        .form-input { width: 100%; padding: 12px; border: 1px solid var(--accent); border-radius: 12px; margin-bottom: 10px; font-size: 0.9rem; background: #F8FDFE; }
         .submit-btn { width: 100%; background: linear-gradient(135deg, var(--secondary), var(--primary)); color: white; border: none; padding: 13px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 6px; box-shadow: var(--shadow-btn); }
 
         .quran-select { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid var(--secondary); font-size: 0.9rem; margin-bottom: 12px; background: white; font-weight: 600; color: var(--primary-dark); }
@@ -179,30 +178,14 @@
             background: #E0F7FA; border-right: 4px solid var(--primary); padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 12px; color: var(--primary-dark); font-weight: 600;
         }
 
-        .fasting-btn-group {
-            display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;
-        }
-        .fasting-tab-btn {
-            flex: 1; min-width: 100px; padding: 10px; border-radius: 12px; border: 1px solid var(--secondary); background: white; color: var(--primary-dark); font-weight: 700; font-size: 0.82rem; cursor: pointer; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        }
-        .fasting-tab-btn.active {
-            background: linear-gradient(135deg, var(--secondary), var(--primary)); color: white; border: none;
-        }
+        .fasting-btn-group { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+        .fasting-tab-btn { flex: 1; min-width: 100px; padding: 10px; border-radius: 12px; border: 1px solid var(--secondary); background: white; color: var(--primary-dark); font-weight: 700; font-size: 0.82rem; cursor: pointer; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .fasting-tab-btn.active { background: linear-gradient(135deg, var(--secondary), var(--primary)); color: white; border: none; }
 
-        .compass-container {
-            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0;
-        }
-        .compass-disc {
-            width: 200px; height: 200px; border-radius: 50%; border: 6px solid var(--primary);
-            position: relative; background: #FFFDF0; box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            display: flex; align-items: center; justify-content: center; transition: transform 0.2s ease-out;
-        }
-        .compass-arrow {
-            width: 8px; height: 90px; background: #E53E3E; position: absolute; top: 10px; border-radius: 4px;
-        }
-        .kaaba-icon-box {
-            position: absolute; font-size: 1.8rem; color: var(--gold-soft); top: 25px;
-        }
+        .compass-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0; }
+        .compass-disc { width: 200px; height: 200px; border-radius: 50%; border: 6px solid var(--primary); position: relative; background: #FFFDF0; box-shadow: 0 8px 20px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; transition: transform 0.2s ease-out; }
+        .compass-arrow { width: 8px; height: 90px; background: #E53E3E; position: absolute; top: 10px; border-radius: 4px; }
+        .kaaba-icon-box { position: absolute; font-size: 1.8rem; color: var(--gold-soft); top: 25px; }
     </style>
 </head>
 <body>
@@ -213,25 +196,22 @@
         <p>«عَلَيْكُمْ بِسُنَّتِي وَسُنَّةِ الْخُلَفَاءِ الرَّاشِدِينَ»</p>
     </div>
 
-    <!-- شريط العداد الزمني للصلاة القادمة -->
+    <!-- العدادات الزمانية -->
     <div class="banner-card next-prayer-banner">
         <span><i class="fa-regular fa-clock"></i> <span id="nextPrayerTitle">جاري تحضير الصلاة القادمة...</span></span>
         <span id="nextPrayerCountdown" style="font-family: monospace; font-size: 1rem;">--:--:--</span>
     </div>
 
-    <!-- شريط العداد الزمني للأذكار -->
     <div class="banner-card azkar-timer-banner">
         <span><i class="fa-solid fa-moon"></i> <span id="azkarTimerTitle">جاري احتساب موعد الأذكار...</span></span>
         <span id="azkarCountdown" style="font-family: monospace; font-size: 0.9rem;">--:--:--</span>
     </div>
 
-    <!-- شريط العداد الزمني للإفطار اليومي -->
     <div class="banner-card fasting-timer-banner">
         <span><i class="fa-solid fa-utensils"></i> <span id="fastingTimerTitle">جاري احتساب موعد الإفطار...</span></span>
         <span id="fastingCountdown" style="font-family: monospace; font-size: 0.9rem;">--:--:--</span>
     </div>
 
-    <!-- شريط العداد الزمني المتبقي لشهر رمضان المبارك -->
     <div class="banner-card ramadan-timer-banner">
         <span><i class="fa-solid fa-kaaba"></i> <span>متبقي على شهر رمضان المبارك:</span></span>
         <span id="ramadanCountdown" style="font-family: monospace; font-size: 0.88rem;">-- يوم --:--:--</span>
@@ -243,9 +223,6 @@
         </button>
         <button class="btn-main btn-share" onclick="shareApp()">
             <i class="fa-solid fa-share-nodes"></i> مشاركة التطبيق
-        </button>
-        <button class="btn-main btn-rate" onclick="openRatingModal()">
-            <i class="fa-solid fa-star"></i> تقييم التطبيق
         </button>
     </div>
 
@@ -293,8 +270,8 @@
         </div>
     </div>
 
-    <!-- مشغل الصوت المباشر الشامل -->
-    <audio id="globalAudioPlayer" preload="auto"></audio>
+    <!-- مشغل الصوت الشامل -->
+    <audio id="globalAudioPlayer" preload="auto" crossorigin="anonymous"></audio>
 
     <div class="modal" id="modal">
         <div class="modal-content">
@@ -385,10 +362,6 @@
         let deferredPrompt = null;
         const installBtn = document.getElementById('installBtn');
 
-        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-            if (installBtn) installBtn.style.display = 'none';
-        }
-
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -398,34 +371,26 @@
         function installApp() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        if (installBtn) installBtn.style.display = 'none';
-                    }
-                    deferredPrompt = null;
-                });
+                deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
             } else {
-                alert('التطبيق مثبت بالفعل أو يمكنك إضافته للشاشة الرئيسية من خيارات المتصفح.');
+                alert('التطبيق جاهز ومثبت بالفعل على هاتفك.');
             }
         }
 
         const audioPlayer = document.getElementById('globalAudioPlayer');
 
+        // فتح حظر الصوت في متصفحات الموبايل بلمسة واحدة
         document.body.addEventListener('click', function unlockAudio() {
             audioPlayer.play().then(() => {
                 audioPlayer.pause();
                 audioPlayer.currentTime = 0;
             }).catch(() => {});
-            document.body.removeEventListener('click', unlockAudio);
         }, { once: true });
 
         function stopAudio() {
             if (audioPlayer) {
                 audioPlayer.pause();
                 audioPlayer.currentTime = 0;
-            }
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
             }
             const statusBar = document.getElementById('audioPlayerStatus');
             if (statusBar) statusBar.style.display = 'none';
@@ -442,58 +407,28 @@
             audioPlayer.src = url;
             audioPlayer.load();
 
+            // دعم التحكم وتشغيل الصوت عند إغلاق الشاشة
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: label,
                     artist: "تطبيق الرسالة",
-                    album: "الأذان والأذكار والقرآن الكريم",
-                    artwork: [{ src: "https://aymnhashmcom-pixel.github.io/El-Resalah-App/share-thumb.jpg", sizes: "512x512", type: "image/jpeg" }]
+                    album: "القرآن والأذان والأذكار",
+                    artwork: [{ src: "logo.png", sizes: "512x512", type: "image/png" }]
                 });
             }
 
-            let playPromise = audioPlayer.play();
-            if (playPromise !== undefined) {
-                playPromise.then(() => {}).catch(error => {
-                    speakText(label, label);
-                });
-            }
-        }
-
-        function speakText(text, title, directAudioUrl = null) {
-            stopAudio();
-            if (directAudioUrl) {
-                playAudioUrl(directAudioUrl, title);
-                return;
-            }
-
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const statusBar = document.getElementById('audioPlayerStatus');
-                const statusLabel = document.getElementById('audioPlayingLabel');
-
-                if (statusBar) statusBar.style.display = 'flex';
-                if (statusLabel) statusLabel.innerText = 'جاري نطق: ' + title;
-
-                let utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'ar-SA';
-                utterance.rate = 0.85;
-
-                utterance.onend = function() { if (statusBar) statusBar.style.display = 'none'; };
-                utterance.onerror = function() { if (statusBar) statusBar.style.display = 'none'; };
-
-                window.speechSynthesis.speak(utterance);
-            } else {
-                alert("خاصية النطق الصوتي غير مدعومة على هذا المتصفح.");
-            }
+            audioPlayer.play().catch(err => {
+                console.log("Audio play error: ", err);
+            });
         }
 
         function requestNotificationPermission() {
             if ("Notification" in window) {
                 Notification.requestPermission().then(permission => {
                     if (permission === "granted") {
-                        alert("تم تفعيل إشعارات الأذان والإقامة والأذكار بنجاح!");
+                        alert("تم تفعيل إشعارات الأذان والإقامة والأذكار بنجاح في الخلفية!");
                     } else {
-                        alert("يرجى تفعيل الإشعارات من إعدادات الهاتف يصلك الأذان والأذكار في مواقيتها.");
+                        alert("يرجى تفعيل الإشعارات من إعدادات متصفح الهاتف ليصلك الأذان بالخلفية.");
                     }
                 });
             } else {
@@ -502,7 +437,7 @@
         }
 
         function shareApp() {
-            const shareText = '💡 أدعوك لتثبيت "تطبيق الرسالة" على هاتفك (أذكار ناطقة، القرآن الكريم كاملاً، مواقيت الصلاة والأذان والإقامة، وتحديد القبلة):\nhttps://aymnhashmcom-pixel.github.io/El-Resalah-App/';
+            const shareText = '💡 أدعوك لتثبيت "تطبيق الرسالة" على هاتفك (أذكار، القرآن الكريم، مواقيت الصلاة والأذان، وتحديد القبلة):\nhttps://aymnhashmcom-pixel.github.io/El-Resalah-App/';
             if (navigator.share) {
                 navigator.share({ title: 'تطبيق الرسالة', text: shareText, url: 'https://aymnhashmcom-pixel.github.io/El-Resalah-App/' });
             } else {
@@ -511,7 +446,7 @@
             }
         }
 
-        /* قائمة القراء المحدثة والسريعة المعتمدة مع إصلاح صوت الشيخ الطبلاوي */
+        /* قائمة القراء المحدثة بالروابط السريعة والمباشرة المضمونة */
         const reciters = [
             { name: "الشيخ محمد محمود الطبلاوي", url: "https://server10.mp3quran.net/tblwi/" },
             { name: "الشيخ محمود خليل الحصري", url: "https://server13.mp3quran.net/husr/" },
@@ -720,10 +655,8 @@
             if (fastingCountdownEl) fastingCountdownEl.innerText = `${formatTwoDigits(h)}:${formatTwoDigits(m)}:${formatTwoDigits(s)}`;
         }
 
-        /* العداد التنازلي المباشر لدخول شهر رمضان المبارك */
         function updateRamadanTimer() {
             const now = new Date();
-            // موعد شهر رمضان المبارك المقدر
             let ramadanDate = new Date("2027-02-08T00:00:00");
             
             let diffMs = ramadanDate - now;
@@ -752,7 +685,7 @@
                 navigator.serviceWorker.ready.then(registration => {
                     registration.showNotification(`حان الآن موعد صلاة ${prayerName}`, {
                         body: `الله أكبر الله أكبر.. حان وقت الصلاة بحسب توقيت ${getSelectedGovernorate()}`,
-                        icon: "https://aymnhashmcom-pixel.github.io/El-Resalah-App/share-thumb.jpg"
+                        icon: "logo.png"
                     });
                 });
             }
@@ -765,7 +698,7 @@
                 navigator.serviceWorker.ready.then(registration => {
                     registration.showNotification(`حان الآن موعد إقامة صلاة ${prayerName}`, {
                         body: `قد قامت الصلاة.. قد قامت الصلاة`,
-                        icon: "https://aymnhashmcom-pixel.github.io/El-Resalah-App/share-thumb.jpg"
+                        icon: "logo.png"
                     });
                 });
             }
@@ -846,26 +779,19 @@
             playAudioUrl(url, muazzinName);
         }
 
-        /* حساب العداد التنازلي لأيام صيام السنة (الإثنين، الخميس، والأيام البيض) */
         function getNextSunnahFastingCalculations() {
             const now = new Date();
-            const dayOfWeek = now.getDay(); // 0: Sun, 1: Mon, ... 4: Thu
+            const dayOfWeek = now.getDay();
             
-            // حساب الإثنين القادم
             let daysUntilMon = (1 + 7 - dayOfWeek) % 7;
             if (daysUntilMon === 0 && now.getHours() >= 18) daysUntilMon = 7;
             
-            // حساب الخميس القادم
             let daysUntilThu = (4 + 7 - dayOfWeek) % 7;
             if (daysUntilThu === 0 && now.getHours() >= 18) daysUntilThu = 7;
 
-            return {
-                nextMondayDays: daysUntilMon,
-                nextThursdayDays: daysUntilThu
-            };
+            return { nextMondayDays: daysUntilMon, nextThursdayDays: daysUntilThu };
         }
 
-        /* قسم مخصص لصيام الفرض والسنة ورمضان */
         function openFastingSection() {
             document.getElementById('modal-title').innerText = "تنبيهات ومواعيد الصيام";
             showFastingTab('ramadan');
@@ -877,6 +803,8 @@
             const fajr = computedPrayers.find(p => p.name === "الفجر").time;
             const maghrib = computedPrayers.find(p => p.name === "المغرب").time;
             const sunnahInfo = getNextSunnahFastingCalculations();
+
+            const fastingDuaAudioUrl = "https://server10.mp3quran.net/download/azkar/12/035.mp3";
 
             if (type === 'ramadan') {
                 contentHTML = `
@@ -924,7 +852,7 @@
                         <button class="fasting-tab-btn ${type === 'azkar' ? 'active' : ''}" onclick="showFastingTab('azkar')">أدعية الصائم</button>
                     </div>
                     ${contentHTML}
-                    <button class="submit-btn" style="background:linear-gradient(135deg, #7B2CBF, #5A189A); margin-top:10px;" onclick="speakText('ذهب الظمأ وابتلت العروق وثبت الأجر إن شاء الله', 'دعاء الإفطار')">
+                    <button class="submit-btn" style="background:linear-gradient(135deg, #7B2CBF, #5A189A); margin-top:10px;" onclick="playAudioUrl('${fastingDuaAudioUrl}', 'دعاء الإفطار')">
                         <i class="fa-solid fa-volume-high"></i> الاستماع لدعاء الإفطار 🔊
                     </button>
                 </div>
@@ -933,7 +861,6 @@
             document.getElementById('modal').style.display = 'flex';
         }
 
-        /* بوصلة اتجاه القبلة */
         function openQiblaCompass() {
             document.getElementById('modal-title').innerText = "تحديد اتجاه القبلة الشريفة";
             
@@ -978,12 +905,11 @@
             }
         }
 
-        /* قسم الأذكار الشامل بصوت وصورة وعداد التسبيح */
+        /* روابط الأذكار المباشرة والموثوقة */
         const azkarCategories = [
             {
                 title: "أذكار الصباح",
-                textToRead: "أصبحنا وأصبح الملك لله والحمد لله لا إله إلا الله وحده لا شريك له. اللهم بك أصبحنا وبك أمسينا وبك نحيا وبك نموت وإليك النشور.",
-                audioUrl: "https://media.blubrry.com/muslim_azkar/archive.org/download/Azkar_Sabah_And_Masaa/Azkar_Sabah.mp3",
+                audioUrl: "https://server10.mp3quran.net/download/azkar/12/001.mp3",
                 items: [
                     { text: "أَصْبَحْنَا وَأَصْبَحَ المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", count: 1 },
                     { text: "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ.", count: 1 },
@@ -992,8 +918,7 @@
             },
             {
                 title: "أذكار المساء",
-                textToRead: "أمسينَا وأمسى الملك لله والحمد لله لا إله إلا الله وحده لا شريك له. اللهم بك أمسينا وبك أصبحنا وبك نحيا وبك نموت وإليك المصير.",
-                audioUrl: "https://media.blubrry.com/muslim_azkar/archive.org/download/Azkar_Sabah_And_Masaa/Azkar_Masaa.mp3",
+                audioUrl: "https://server10.mp3quran.net/download/azkar/12/002.mp3",
                 items: [
                     { text: "أَمْسَيْنَا وَأَمْسَى المُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.", count: 1 },
                     { text: "اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ المَصِيرُ.", count: 1 },
@@ -1002,8 +927,7 @@
             },
             {
                 title: "أذكار وأدعية الصيام (الفرض والسنة)",
-                textToRead: "ذهب الظمأ وابتلت العروق وثبت الأجر إن شاء الله. اللهم إني أسألك برحمتك التي وسعت كل شيء أن تغفر لي.",
-                audioUrl: null,
+                audioUrl: "https://server10.mp3quran.net/download/azkar/12/035.mp3",
                 items: [
                     { text: "ذَهَبَ الظَّمَأُ وَابْتَلَّتِ الْعُرُوقُ وَثَبَتَ الأَجْرُ إِنْ شَاءَ اللَّهُ (عند الإفطار)", count: 1 },
                     { text: "اللَّهُمَّ إِنِّي أَسْأَلُكَ بِرَحْمَتِكَ الَّتِي وَسِعَتْ كُلَّ شَيْءٍ أَنْ تَغْفِرَ لِي (عند الإفطار)", count: 1 },
@@ -1013,8 +937,7 @@
             },
             {
                 title: "أذكار ما بعد الصلاة والأدعية",
-                textToRead: "أستغفر الله، أستغفر الله، أستغفر الله. اللهم أنت السلام ومنك السلام تباركت يا ذا الجلال والإكرام.",
-                audioUrl: null,
+                audioUrl: "https://server10.mp3quran.net/download/azkar/12/006.mp3",
                 items: [
                     { text: "أَسْتَغْفِرُ اللَّهَ (ثَلاَثاً)، اللَّهُمَّ أَنْتَ السَّلاَمُ وَمِنْكَ السَّلاَمُ تَبَارَكْتَ يَا ذَا الْجَلاَلِ وَالإِكْرَامِ.", count: 1 },
                     { text: "سُبْحَانَ اللَّهِ (33) ، الْحَمْدُ لِلَّهِ (33) ، اللَّهُ أَكْبَرُ (33)", count: 33 }
@@ -1046,8 +969,8 @@
                     <div class="azkar-item">
                         <div class="azkar-title-row">
                             <span class="azkar-title">${cat.title}</span>
-                            <button class="audio-btn" onclick="speakText('${cat.textToRead}', '${cat.title}', ${cat.audioUrl ? `'${cat.audioUrl}'` : 'null'})">
-                                <i class="fa-solid fa-volume-high"></i> تشغيل / نطق 🔊
+                            <button class="audio-btn" onclick="playAudioUrl('${cat.audioUrl}', '${cat.title}')">
+                                <i class="fa-solid fa-volume-high"></i> تشغيل الصوت 🔊
                             </button>
                         </div>
                         ${itemsHTML}
@@ -1091,7 +1014,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js').then(reg => {
-                    console.log('SW Registered:', reg.scope);
+                    console.log('SW Registered successfully:', reg.scope);
                 }).catch(err => {
                     console.log('SW Registration Failed:', err);
                 });
