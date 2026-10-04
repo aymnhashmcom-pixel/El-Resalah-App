@@ -1,23 +1,25 @@
 {
-  "name": "تطبيق الرسالة",
+  "name": "تطبيق الرسالة - أذكار ومواقيت الصلاة",
   "short_name": "الرسالة",
-  "description": "اتباع هدي النبي ﷺ في الصلاة والأذكار والصيام",
-  "start_url": "./",
+  "description": "اتباع هدي النبي ﷺ في الصلاة والأذكار والصيام والقرآن الكريم",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#1B4332",
-  "theme_color": "#1B4332",
+  "background_color": "#E0F7FA",
+  "theme_color": "#0077B6",
   "icons": [
     {
       "src": "logo.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "logo.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
